@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.db import get_questions_df, get_topics_hierarchy
 from analysis.trend_analyzer import topic_frequency_by_year, find_hot_cold_topics, detect_cycles
 from analysis.predictor_v2 import predict_topics_v2, backtest, HOLDOUT_YEARS
-from analysis.predictor_v3 import predict_chapters_v3, backtest_v3
+from analysis.predictor_v3 import predict_chapters_v3, predict_microtopics_v3, backtest_v3
 from analysis.predictor import predict_topics
 from analysis.deep_analysis import (
     get_topic_deep_dive, get_topic_tree, get_syllabus_coverage,
@@ -295,12 +295,22 @@ def get_predictions_v2(db, year, exam):
 def get_predictions_v3(db, year, exam, k):
     return predict_chapters_v3(db, target_year=year, exam=exam, top_k=k)
 
-# v3: chapter-level predictions (primary)
+@st.cache_data(ttl=300)
+def get_predictions_micro_v3(db, year, exam, k):
+    return predict_microtopics_v3(db, target_year=year, exam=exam, top_k=k)
+
+# v3 micro-topic level (primary for Predictions tab)
+preds_micro = get_predictions_micro_v3(DB_PATH, target_year, exam_filter, max(top_n * 3, 150))
+active_micro = [p for p in preds_micro if p["syllabus_status"] != "REMOVED"]
+if selected_subject != "All":
+    active_micro = [p for p in active_micro if p["subject"] == selected_subject]
+pred_list = active_micro[:top_n]
+
+# v3 chapter-level (for blueprint simulator + backtest)
 preds_v3 = get_predictions_v3(DB_PATH, target_year, exam_filter, max(top_n, 50))
 active_v3 = [p for p in preds_v3 if p["syllabus_status"] != "REMOVED"]
 if selected_subject != "All":
     active_v3 = [p for p in active_v3 if p["subject"] == selected_subject]
-pred_list = active_v3[:top_n]
 
 # v2: micro-topic level (for deep analysis / lesson plan)
 predictions_v2 = get_predictions_v2(DB_PATH, target_year, exam_filter)
@@ -326,36 +336,35 @@ with tab_main:
     # ── SECTION 1: KPI STRIP ──
     st.markdown('<div class="section-divider">Executive Summary</div>', unsafe_allow_html=True)
 
-    all_active_ch = [p for p in preds_v3 if p["syllabus_status"] != "REMOVED"]
+    all_active_micro = [p for p in preds_micro if p["syllabus_status"] != "REMOVED"]
     if selected_subject != "All":
-        all_active_ch = [p for p in all_active_ch if p["subject"] == selected_subject]
+        all_active_micro = [p for p in all_active_micro if p["subject"] == selected_subject]
 
-    high_prob = sum(1 for p in all_active_ch if p["appearance_probability"] >= 0.7)
+    high_prob = sum(1 for p in all_active_micro if p["appearance_probability"] >= 0.7)
     total_exp_qs = sum(p["expected_questions"] for p in pred_list)
-    new_topics = sum(1 for p in preds_v3 if p["syllabus_status"] == "NEW")
-    removed_topics = sum(1 for p in preds_v3 if p["syllabus_status"] == "REMOVED")
+    new_topics = sum(1 for p in preds_micro if p["syllabus_status"] == "NEW")
+    removed_topics = sum(1 for p in preds_micro if p["syllabus_status"] == "REMOVED")
     avg_conf = np.mean([p["confidence_score"] for p in pred_list]) if pred_list else 0
-    rising = sum(1 for p in all_active_ch[:30] if p["trend_direction"] == "RISING")
-    declining = sum(1 for p in all_active_ch[:30] if p["trend_direction"] == "DECLINING")
+    rising = sum(1 for p in all_active_micro[:50] if p["trend_direction"] == "RISING")
+    declining = sum(1 for p in all_active_micro[:50] if p["trend_direction"] == "DECLINING")
     shift = "More rising topics" if rising > declining * 1.5 else "Classic topics leading" if declining > rising * 1.5 else "Balanced mix"
 
-    # Subject balance
     from collections import Counter
     subj_dist = Counter(p["subject"] for p in pred_list)
     subj_str = " | ".join(f"{s}: {c}" for s, c in subj_dist.most_common())
 
     k1, k2, k3, k4, k5 = st.columns(5)
-    k1.metric("High-Prob Chapters", f"{high_prob} (>70%)")
+    k1.metric("High-Prob Micro-Topics", f"{high_prob} (>70%)")
     k2.metric(f"Expected Qs (Top {top_n})", f"~{total_exp_qs:.0f}")
     k3.metric("Syllabus Changes", f"+{new_topics} new", delta=f"-{removed_topics} removed", delta_color="inverse")
     k4.metric("Model Confidence", f"{avg_conf:.0%}")
     k5.metric("Pattern Shift", shift)
 
-    st.caption(f"{len(all_active_ch)} unique chapters | {len(pred_list)} in shortlist | Subject split: {subj_str} | {len(filtered):,} questions in DB")
+    st.caption(f"{len(all_active_micro)} unique micro-topics | {len(pred_list)} in shortlist | Subject split: {subj_str} | {len(filtered):,} questions in DB")
 
-    # ── SECTION 2: MAIN PREDICTION TABLE (Chapter-Level v3) ──
-    st.markdown('<div class="section-divider">Ranked Chapter Predictions</div>', unsafe_allow_html=True)
-    st.caption("Each row = one unique chapter. No duplicate slots. Subject-balanced ranking.")
+    # ── SECTION 2: MAIN PREDICTION TABLE (Micro-Topic-Level v3) ──
+    st.markdown('<div class="section-divider">Ranked Micro-Topic Predictions</div>', unsafe_allow_html=True)
+    st.caption("Each row = one unique micro-topic. Subject-balanced ranking. Parent chapter shown for context.")
 
     TREND_ICONS = {"RISING": "↑ Rising", "STABLE": "→ Stable", "DECLINING": "↓ Declining", "NEW": "★ New", "REMOVED": "✗ Removed"}
     TREND_COLORS = {"↑ Rising": "#10b981", "→ Stable": "#6366f1", "↓ Declining": "#f43f5e", "★ New": "#a855f7", "✗ Removed": "#94a3b8"}
@@ -365,6 +374,7 @@ with tab_main:
         table_rows.append({
             "#": i,
             "Subject": p["subject"],
+            "Micro-Topic": p["micro_topic"],
             "Chapter": p["chapter"],
             "P(Appear)": p["appearance_probability"],
             "Exp. Qs": p["expected_questions"],
@@ -375,7 +385,6 @@ with tab_main:
             "Diff.": round(p["likely_difficulty"], 1),
             "Syllabus": p["syllabus_status"],
             "Confidence": p["confidence"],
-            "Top Micro-Topic": p["top_micro_topic"],
         })
 
     tbl = pd.DataFrame(table_rows)
@@ -392,8 +401,7 @@ with tab_main:
     # Downloads
     dc1, dc2 = st.columns(2)
     dl_data = [{
-        "Subject": p["subject"], "Chapter": p["chapter"],
-        "Top_Micro_Topic": p["top_micro_topic"],
+        "Subject": p["subject"], "Chapter": p["chapter"], "Micro_Topic": p["micro_topic"],
         "Appearance_Prob": p["appearance_probability"],
         "Expected_Qs": p["expected_questions"],
         "Qs_Min": p["expected_qs_min"], "Qs_Max": p["expected_qs_max"],
@@ -402,7 +410,7 @@ with tab_main:
         "Syllabus": p["syllabus_status"], "Confidence": p["confidence"],
         "Confidence_Score": p["confidence_score"],
         "Appearances": p["total_appearances"], "Last_Asked": p["last_appeared"],
-    } for p in preds_v3]
+    } for p in preds_micro]
     dl_df = pd.DataFrame(dl_data)
     with dc1:
         st.download_button(f"Download Top {top_n} (CSV)", dl_df.head(top_n).to_csv(index=False),
@@ -411,10 +419,11 @@ with tab_main:
         st.download_button(f"Download ALL {len(dl_df)} (CSV)", dl_df.to_csv(index=False),
                            f"all_{target_year}.csv", "text/csv")
 
-    # ── SECTION 3: TOP CHAPTER PROBABILITY + EXPECTED QUESTIONS ──
-    st.markdown('<div class="section-divider">Chapter Probability & Expected Weightage</div>', unsafe_allow_html=True)
+    # ── SECTION 3: TOP MICRO-TOPIC PROBABILITY + EXPECTED QUESTIONS ──
+    st.markdown('<div class="section-divider">Micro-Topic Probability & Expected Weightage</div>', unsafe_allow_html=True)
 
     bar_data = pd.DataFrame([{
+        "Micro-Topic": p["micro_topic"],
         "Chapter": p["chapter"],
         "Probability": p["appearance_probability"],
         "Confidence": p["confidence"],
@@ -422,23 +431,22 @@ with tab_main:
         "Format": ", ".join(p["likely_formats"][:2]),
     } for p in pred_list[:15]])
 
-    # Side-by-side: probability bar + expected questions bar
     bar_col1, bar_col2 = st.columns(2)
 
     with bar_col1:
         fig = px.bar(
-            bar_data, x="Probability", y="Chapter", orientation="h",
+            bar_data, x="Probability", y="Micro-Topic", orientation="h",
             color="Confidence", color_discrete_map=CONF_COLORS,
             text=bar_data["Probability"].apply(lambda x: f"{x:.0%}"),
-            custom_data=["Expected Qs", "Format"],
+            custom_data=["Chapter", "Expected Qs", "Format"],
         )
         fig.update_traces(
             textposition="outside", textfont_size=11,
-            hovertemplate="<b>%{y}</b><br>P(Appear): %{x:.0%}<br>Exp Qs: %{customdata[0]}<br>Format: %{customdata[1]}<extra></extra>",
+            hovertemplate="<b>%{y}</b><br>Chapter: %{customdata[0]}<br>P(Appear): %{x:.0%}<br>Exp Qs: %{customdata[1]}<br>Format: %{customdata[2]}<extra></extra>",
         )
         fig.update_layout(
-            **PLOT_LAYOUT, title="P(Chapter Appears)",
-            height=max(380, len(bar_data) * 30),
+            **PLOT_LAYOUT, title="P(Micro-Topic Appears)",
+            height=max(380, len(bar_data) * 32),
             yaxis=dict(autorange="reversed", title=""),
             xaxis=dict(title="Appearance Probability", tickformat=".0%", range=[0, 1.12]),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
@@ -447,14 +455,18 @@ with tab_main:
 
     with bar_col2:
         fig = px.bar(
-            bar_data, x="Expected Qs", y="Chapter", orientation="h",
+            bar_data, x="Expected Qs", y="Micro-Topic", orientation="h",
             color="Confidence", color_discrete_map=CONF_COLORS,
             text=bar_data["Expected Qs"].apply(lambda x: f"{x:.1f}"),
+            custom_data=["Chapter"],
         )
-        fig.update_traces(textposition="outside", textfont_size=11)
+        fig.update_traces(
+            textposition="outside", textfont_size=11,
+            hovertemplate="<b>%{y}</b><br>Chapter: %{customdata[0]}<br>Exp Qs: %{x:.1f}<extra></extra>",
+        )
         fig.update_layout(
             **PLOT_LAYOUT, title="Expected Questions (if appears)",
-            height=max(380, len(bar_data) * 30),
+            height=max(380, len(bar_data) * 32),
             yaxis=dict(autorange="reversed", title=""),
             xaxis=dict(title="Expected Questions"),
             showlegend=False,
@@ -476,11 +488,13 @@ with tab_main:
                               legend=dict(orientation="h", yanchor="bottom", y=1.02))
             st.plotly_chart(fig, use_container_width=True)
 
-        # Interactive topic trend
-        trend_choices = [p["chapter"] for p in pred_list[:10]]
+        # Interactive micro-topic trend
+        trend_choices = [f"{p['micro_topic']} ({p['chapter']})" for p in pred_list[:10]]
+        trend_map = {f"{p['micro_topic']} ({p['chapter']})": p["micro_topic"] for p in pred_list[:10]}
         if trend_choices:
-            sel_trend = st.selectbox("Topic weightage trend", trend_choices, key="trend_sel")
-            topic_yr = filtered[filtered["topic"] == sel_trend].groupby("year").size().reset_index(name="count")
+            sel_trend = st.selectbox("Micro-topic weightage trend", trend_choices, key="trend_sel")
+            sel_micro_name = trend_map.get(sel_trend, "")
+            topic_yr = filtered[filtered["micro_topic"] == sel_micro_name].groupby("year").size().reset_index(name="count")
             if not topic_yr.empty:
                 fig = px.bar(topic_yr, x="year", y="count", color_discrete_sequence=[C_BLUE])
                 fig.update_layout(**PLOT_LAYOUT, height=220, xaxis_title="", yaxis_title="Questions")
@@ -513,6 +527,8 @@ with tab_main:
     # ── SECTION 5: SYLLABUS CHANGE INTELLIGENCE ──
     st.markdown('<div class="section-divider">Syllabus Change Intelligence</div>', unsafe_allow_html=True)
 
+    # Use chapter-level v3 for syllabus section (cleaner, no duplicate chapters)
+    all_active_ch = active_v3
     retained_list = [p for p in all_active_ch if p["syllabus_status"] == "RETAINED"]
     modified_list = [p for p in all_active_ch if p["syllabus_status"] == "MODIFIED"]
     new_list = [p for p in all_active_ch if p["syllabus_status"] == "NEW"]
@@ -567,8 +583,8 @@ with tab_main:
     # ── SECTION 6: WHY THIS PREDICTION? ──
     st.markdown('<div class="section-divider">Why This Prediction? — Score Decomposition</div>', unsafe_allow_html=True)
 
-    explain_opts = [f"{p['chapter']} ({p['appearance_probability']:.0%}, ~{p['expected_questions']:.0f} Qs)" for p in pred_list]
-    sel_explain = st.selectbox("Select a chapter to see score drivers", explain_opts, key="explain_sel")
+    explain_opts = [f"{p['micro_topic']} · {p['chapter']} ({p['appearance_probability']:.0%}, ~{p['expected_questions']:.0f} Qs)" for p in pred_list]
+    sel_explain = st.selectbox("Select a micro-topic to see score drivers", explain_opts, key="explain_sel")
 
     if sel_explain:
         idx = explain_opts.index(sel_explain)
@@ -597,17 +613,18 @@ with tab_main:
                 ))
                 fig.update_layout(**PLOT_LAYOUT, height=320, xaxis_title="Signal Value",
                                   yaxis=dict(autorange="reversed"),
-                                  title=f"Signal Breakdown: {p['chapter']}")
+                                  title=f"Signal Breakdown: {p['micro_topic']}")
                 st.plotly_chart(fig, use_container_width=True)
 
             with detail_col:
                 st.markdown("**Reasoning:**")
                 for r in p["reasons"]:
                     st.markdown(f"- {r}")
+                st.markdown(f"**Micro-Topic:** {p['micro_topic']}")
+                st.markdown(f"**Chapter:** {p['chapter']}")
                 st.markdown(f"**Format:** {', '.join(p['likely_formats'])}")
                 st.markdown(f"**Difficulty:** {p['likely_difficulty']}")
                 st.markdown(f"**Syllabus:** {p['syllabus_status']}")
-                st.markdown(f"**Top micro-topic:** {p['top_micro_topic']}")
                 st.markdown(f"**Training data:** {p['training_years']}")
 
     # ── SECTION 7: CONFIDENCE & RISK SCATTER ──
@@ -616,15 +633,17 @@ with tab_main:
     risk_col, tier_col = st.columns([2, 1])
 
     with risk_col:
-        sc_data = [{"Chapter": p["chapter"], "Probability": p["appearance_probability"],
+        sc_data = [{"Micro-Topic": p["micro_topic"], "Chapter": p["chapter"],
+                    "Probability": p["appearance_probability"],
                     "Confidence Score": p["confidence_score"],
                     "Expected Qs": max(p["expected_questions"], 0.5),
                     "Confidence": p["confidence"], "Subject": p["subject"]}
-                   for p in active_v3[:60]]
+                   for p in active_micro[:80]]
         if sc_data:
             scdf = pd.DataFrame(sc_data)
             fig = px.scatter(scdf, x="Probability", y="Confidence Score",
-                             size="Expected Qs", hover_name="Chapter",
+                             size="Expected Qs", hover_name="Micro-Topic",
+                             hover_data={"Chapter": True},
                              color="Confidence", color_discrete_map=CONF_COLORS, symbol="Subject")
             fig.update_layout(**PLOT_LAYOUT, height=440,
                               xaxis=dict(title="Appearance Probability", tickformat=".0%"),
@@ -649,11 +668,11 @@ with tab_main:
             ("LOW", "Low", "Weak trend data"),
             ("SPECULATIVE", "Speculative", "Mostly syllabus-driven"),
         ]:
-            tier_items = [p for p in active_v3[:60] if p["confidence"] == tier]
+            tier_items = [p for p in active_micro[:80] if p["confidence"] == tier]
             if tier_items:
                 st.markdown(f"**{label}** ({len(tier_items)})")
                 for tp in tier_items[:4]:
-                    st.caption(f"  {tp['chapter']} — {tp['appearance_probability']:.0%} (~{tp['expected_questions']:.0f} Qs)")
+                    st.caption(f"  {tp['micro_topic']} ({tp['chapter']}) — {tp['appearance_probability']:.0%} (~{tp['expected_questions']:.0f} Qs)")
 
     # ── SECTION 8: PAPER BLUEPRINT SIMULATOR ──
     st.markdown('<div class="section-divider">Paper Blueprint Simulator</div>', unsafe_allow_html=True)
@@ -748,8 +767,8 @@ with tab_main:
         pred_qs = st.slider("Questions for practice paper", 10, 90, 30, key="main_qs")
     with qp2:
         if st.button("Generate Predicted-Topics PDF", key="main_pdf", type="primary"):
-            top_chapters = [p["chapter"] for p in active_v3[:20]]
-            pool = filtered[filtered["topic"].isin(top_chapters)]
+            top_micros = [p["micro_topic"] for p in active_micro[:30]]
+            pool = filtered[filtered["micro_topic"].isin(top_micros)]
             if not pool.empty:
                 practice = pool.sample(n=min(pred_qs, len(pool)), random_state=42)
                 ename = selected_exam if selected_exam != "All" else "NEET"

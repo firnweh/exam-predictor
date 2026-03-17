@@ -537,6 +537,185 @@ def predict_chapters_v3(db_path="data/exam.db", target_year=2026, exam=None, top
 
 
 # ================================================================
+# MICRO-TOPIC LEVEL PREDICTION (granular)
+# ================================================================
+
+def predict_microtopics_v3(db_path="data/exam.db", target_year=2026, exam=None, top_k=100):
+    """
+    Micro-topic-level 3-stage prediction.
+
+    Like predict_chapters_v3 but grouped at (subject, topic, micro_topic) level.
+    Returns list of dicts with: micro_topic, chapter (parent), subject,
+    appearance_probability, expected_questions, expected_qs_min/max,
+    likely_formats, likely_difficulty, confidence, confidence_score,
+    final_score, signal_breakdown, reasons, trend_direction, syllabus_status.
+    """
+    full_df = get_questions_df(db_path)
+
+    df = full_df[~full_df["year"].isin(HOLDOUT_YEARS)]
+    if exam:
+        df = df[df["exam"] == exam]
+        full_df = full_df[full_df["exam"] == exam]
+
+    if df.empty:
+        return []
+
+    min_year = int(df["year"].min())
+    max_year = int(df["year"].max())
+
+    cross_df = get_questions_df(db_path)
+    cross_df = cross_df[~cross_df["year"].isin(HOLDOUT_YEARS)]
+
+    # Group at micro-topic level
+    micro_groups = df.groupby(["subject", "topic", "micro_topic"])
+
+    predictions = []
+
+    for (subject, chapter, micro_topic), group in micro_groups:
+        normalized_chapter = _normalize_chapter(chapter)
+
+        # Syllabus gate is at chapter level
+        syl_status, syl_gate = _syllabus_status(chapter, exam)
+        if syl_gate == 0.0:
+            predictions.append({
+                "micro_topic": micro_topic, "chapter": chapter,
+                "normalized_chapter": normalized_chapter, "subject": subject,
+                "appearance_probability": 0.0, "expected_questions": 0,
+                "expected_qs_min": 0, "expected_qs_max": 0,
+                "likely_formats": [], "likely_difficulty": 0,
+                "format_dominance": 0, "confidence": "HIGH",
+                "confidence_score": 0.95, "final_score": 0.0,
+                "signal_breakdown": {}, "reasons": ["Removed from syllabus"],
+                "trend_direction": "REMOVED", "syllabus_status": "REMOVED",
+                "total_appearances": 0, "total_questions": 0,
+                "last_appeared": 0, "training_years": f"{min_year}-{max_year}",
+            })
+            continue
+
+        years_appeared = sorted(group["year"].unique())
+        total_appearances = len(years_appeared)
+        qs_per_year = group.groupby("year").size().to_dict()
+        question_types = group["question_type"].value_counts().to_dict()
+        difficulty_list = group["difficulty"].dropna().tolist()
+        recent_diffs = [d for y, d in zip(group["year"], group["difficulty"]) if y >= max_year - 4]
+
+        # --- STAGE 1: Appearance ---
+        app_prob, app_signals = _appearance_probability(
+            years_appeared, (min_year, max_year), target_year, max_year
+        )
+        app_prob *= syl_gate
+
+        # --- STAGE 2: Weightage ---
+        exp_qs, exp_min, exp_max, wt_conf = _expected_questions(
+            qs_per_year, years_appeared, target_year, max_year
+        )
+
+        # --- STAGE 3: Format ---
+        likely_types, likely_diff, format_dom = _predict_format(
+            question_types, difficulty_list, recent_diffs
+        )
+
+        # --- Cross-exam signal (at chapter level for micro-topics) ---
+        ch_cross = cross_df[cross_df["topic"] == chapter]
+        exams_present = ch_cross["exam"].unique()
+        cross_score = min(len(exams_present) / 3, 1.0)
+        app_signals["cross_exam"] = cross_score
+
+        # --- Trend direction ---
+        slope = app_signals.get("trend_slope", 0.5)
+        if slope > 0.6:
+            trend_dir = "RISING"
+        elif slope < 0.4:
+            trend_dir = "DECLINING"
+        else:
+            trend_dir = "STABLE"
+        if syl_status == "NEW":
+            trend_dir = "NEW"
+
+        # --- Confidence ---
+        conf_score, conf_label = _confidence_score(
+            app_prob, wt_conf, total_appearances, syl_status,
+            app_signals.get("recent_3yr", 0), slope
+        )
+
+        # --- Final score ---
+        normalized_exp_qs = min(exp_qs / 4.0, 1.0)  # micro-topics: 4+ qs = max
+        final_score = (
+            0.45 * app_prob +
+            0.35 * normalized_exp_qs +
+            0.10 * cross_score +
+            0.10 * syl_gate
+        )
+
+        # Build reasons
+        reasons = []
+        if app_prob > 0.6:
+            reasons.append(f"High appearance probability ({app_prob:.0%}) — appeared {total_appearances} times")
+        if exp_qs >= 2:
+            reasons.append(f"Recurring micro-topic: expected ~{exp_qs:.0f} questions (range {exp_min}-{exp_max})")
+        if trend_dir == "RISING":
+            reasons.append("Rising trend — increasing frequency recently")
+        elif trend_dir == "DECLINING":
+            reasons.append("Declining trend — less frequent recently")
+        if app_signals.get("gap_return", 0) > 0.5:
+            gap = target_year - max(years_appeared)
+            reasons.append(f"Gap return signal: not seen in {gap} years")
+        if app_signals.get("cycle_match", 0) > 0.5:
+            reasons.append("Cycle match — periodic reappearance pattern")
+        if cross_score > 0.5:
+            reasons.append(f"Cross-exam presence in: {', '.join(exams_present)}")
+        if syl_status == "NEW":
+            reasons.append("Parent chapter newly added — estimated via proxies")
+        if not reasons:
+            reasons.append("Low signal — limited data for this micro-topic")
+
+        signal_breakdown = {}
+        for k, v in app_signals.items():
+            signal_breakdown[k] = {"value": round(v, 3)}
+        signal_breakdown["expected_qs"] = {"value": round(exp_qs, 1)}
+        signal_breakdown["weightage_confidence"] = {"value": round(wt_conf, 2)}
+
+        predictions.append({
+            "micro_topic": micro_topic,
+            "chapter": chapter,
+            "normalized_chapter": normalized_chapter,
+            "subject": subject,
+            "appearance_probability": round(app_prob, 3),
+            "expected_questions": round(exp_qs, 1),
+            "expected_qs_min": exp_min,
+            "expected_qs_max": exp_max,
+            "likely_formats": likely_types,
+            "likely_difficulty": likely_diff,
+            "format_dominance": format_dom,
+            "confidence": conf_label,
+            "confidence_score": conf_score,
+            "final_score": round(final_score, 4),
+            "signal_breakdown": signal_breakdown,
+            "reasons": reasons,
+            "trend_direction": trend_dir,
+            "syllabus_status": syl_status,
+            "total_appearances": total_appearances,
+            "total_questions": len(group),
+            "last_appeared": int(max(years_appeared)),
+            "training_years": f"{min_year}-{max_year}",
+        })
+
+    # Sort by final_score
+    predictions.sort(key=lambda x: x["final_score"], reverse=True)
+
+    # Apply subject-balanced reranking
+    active = [p for p in predictions if p["syllabus_status"] != "REMOVED"]
+    removed = [p for p in predictions if p["syllabus_status"] == "REMOVED"]
+
+    if exam:
+        reranked = _subject_balanced_rerank(active, exam, top_k=top_k)
+    else:
+        reranked = active[:top_k]
+
+    return reranked + removed
+
+
+# ================================================================
 # BACKTESTING V3
 # ================================================================
 
