@@ -1,13 +1,10 @@
-"""Entry point for Streamlit Cloud deployment — redirects to dashboard/app.py"""
-import sys
-import os
-import importlib.util
+"""Entry point for Streamlit Cloud — executes dashboard/app.py directly."""
+import sys, os
 
-# Ensure project root is on path
+# Ensure project root is on sys.path so `from analysis.xxx import ...` works
 ROOT = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, ROOT)
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
 
-# Load and run the actual dashboard
-spec = importlib.util.spec_from_file_location("app", os.path.join(ROOT, "dashboard", "app.py"))
-mod = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(mod)
+# Execute the real dashboard in this process (Streamlit Cloud compatible)
+exec(open(os.path.join(ROOT, "dashboard", "app.py")).read())
