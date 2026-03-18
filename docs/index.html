@@ -1481,6 +1481,33 @@
       </div>
     </div>
 
+    <!-- Custom vs pretrained clarification -->
+    <div class="reveal" style="margin:2rem 0;">
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:700; color:var(--text); margin-bottom:1rem;">Custom Model or Wrapper?</h3>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+
+        <div style="background:rgba(99,102,241,0.06); border:1px solid rgba(99,102,241,0.3); border-radius:12px; padding:1.25rem;">
+          <div style="font-size:0.78rem; font-weight:700; color:var(--indigo); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.85rem;">🔒 Pretrained &amp; Frozen</div>
+          <div style="font-size:0.85rem; color:var(--text); line-height:1.8;">
+            <div><strong>sentence-transformers/all-MiniLM-L6-v2</strong></div>
+            <div style="color:var(--muted); font-size:0.8rem; margin-top:4px;">Used only as a text encoder to convert chapter names → 384-dim vectors. Weights are <em>frozen</em> during training — PRAJNA never fine-tunes this model.</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.3); border-radius:12px; padding:1.25rem;">
+          <div style="font-size:0.78rem; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.85rem;">✅ Trained From Scratch</div>
+          <div style="font-size:0.85rem; color:var(--text); line-height:1.8;">
+            <div><strong>MLP backbone + 3 output heads</strong></div>
+            <div style="color:var(--muted); font-size:0.8rem; margin-top:4px;">Trained entirely on 48 years of JEE/NEET exam data with strict temporal splits. No existing exam-prediction model was used or wrapped.</div>
+          </div>
+        </div>
+
+      </div>
+      <div style="margin-top:1rem; padding:0.9rem 1.25rem; background:var(--bg3); border:1px solid var(--border); border-radius:10px; font-size:0.8rem; color:var(--muted); line-height:1.6;">
+        <strong style="color:var(--text);">Analogy:</strong> Just as a vision model uses a pretrained ResNet as a feature extractor and trains a custom classification head, PRAJNA uses sentence-transformers for semantic features — but the actual predictor is 100% custom, trained on your domain-specific exam history.
+      </div>
+    </div>
+
     <!-- Training details -->
     <div class="reveal">
       <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:700; color:var(--text); margin-bottom:1rem;">Training Details</h3>
