@@ -518,9 +518,28 @@ def run_backtest_single(db, test_year, exam, k, level):
 
 @st.cache_data(ttl=600)
 def get_slm_predictions(db, year, exam, k, level):
-    if SLM_AVAILABLE:
+    if not SLM_AVAILABLE:
+        return []
+    try:
+        if exam is None:
+            # "All" selected — merge predictions from each per-exam SLM
+            all_preds = []
+            for ex in ["NEET", "JEE Main", "JEE Advanced"]:
+                try:
+                    preds = predict_with_slm(db, target_year=year, exam=ex, top_k=k, level=level)
+                    all_preds.extend(preds)
+                except FileNotFoundError:
+                    pass
+            # Deduplicate by chapter, keep highest score
+            seen = {}
+            for p in sorted(all_preds, key=lambda x: x["final_score"], reverse=True):
+                key = p.get("normalized_chapter", p["chapter"]).lower()
+                if key not in seen:
+                    seen[key] = p
+            return sorted(seen.values(), key=lambda x: x["final_score"], reverse=True)[:k]
         return predict_with_slm(db, target_year=year, exam=exam, top_k=k, level=level)
-    return []
+    except FileNotFoundError:
+        return []
 
 # --- Load predictions for selected K (separate reranking per K) ---
 preds_micro = get_predictions_micro_v3(DB_PATH, target_year, exam_filter, top_n)
