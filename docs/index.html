@@ -709,6 +709,227 @@
     .team-detail-icon { color: var(--indigo); }
 
     /* ════════════════════════════════════
+       SLM SECTION
+    ════════════════════════════════════ */
+    .slm-arch {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 0.75rem;
+      align-items: center;
+      margin: 2.5rem 0;
+    }
+    .slm-box {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1rem;
+      text-align: center;
+    }
+    .slm-box-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+    .slm-box-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .slm-arrow {
+      font-size: 1.5rem;
+      color: var(--indigo);
+      text-align: center;
+    }
+    .slm-input { border-color: rgba(99,102,241,0.4); }
+    .slm-backbone { border-color: rgba(168,85,247,0.5); background: rgba(168,85,247,0.06); }
+    .slm-output { border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.04); }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 0.75rem;
+      margin: 2rem 0;
+    }
+    .feat-chip {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+    }
+    .feat-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--indigo);
+      min-width: 24px;
+      margin-top: 2px;
+    }
+    .feat-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .feat-desc {
+      font-size: 0.73rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Comparison table */
+    .cmp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      font-size: 0.875rem;
+    }
+    .cmp-table th {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.75rem 1.25rem;
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    .cmp-table td {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid rgba(99,102,241,0.08);
+      color: var(--text);
+    }
+    .cmp-table tr:last-child td { border-bottom: none; }
+    .cmp-table tr:hover td { background: rgba(99,102,241,0.04); }
+    .cmp-gain { color: var(--green); font-weight: 700; }
+    .cmp-neutral { color: var(--muted); }
+    .cmp-highlight { font-weight: 700; color: var(--purple); }
+    .cmp-header-slm { color: var(--purple); }
+    .cmp-header-v3 { color: var(--indigo); }
+    .cmp-wrap {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .train-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    .train-stat {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      text-align: center;
+    }
+    .train-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 800;
+      font-size: 1.6rem;
+      background: linear-gradient(135deg, var(--indigo), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .train-lbl {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ════════════════════════════════════
+       CHATBOT SECTION
+    ════════════════════════════════════ */
+    .chatbot-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin: 2.5rem 0;
+    }
+    @media (max-width: 768px) {
+      .chatbot-layout { grid-template-columns: 1fr; }
+      .slm-arch { grid-template-columns: 1fr; }
+      .slm-arrow { transform: rotate(90deg); }
+    }
+    .chatbot-panel {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+    .chatbot-panel-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .intent-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .intent-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.7rem 0.9rem;
+      background: var(--bg3);
+      border: 1px solid rgba(99,102,241,0.12);
+      border-radius: 10px;
+    }
+    .intent-icon { font-size: 1rem; flex-shrink: 0; }
+    .intent-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .intent-ex {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 2px;
+      font-style: italic;
+    }
+    .chat-bubble {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      align-items: flex-start;
+    }
+    .chat-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .chat-avatar.user { background: linear-gradient(135deg, var(--indigo), var(--purple)); color: #fff; }
+    .chat-avatar.bot { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+    .chat-msg {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.82rem;
+      color: var(--text);
+      line-height: 1.5;
+      max-width: 85%;
+    }
+    .chat-msg.bot-msg { border-color: rgba(34,197,94,0.2); }
+
+    /* ════════════════════════════════════
        FOOTER
     ════════════════════════════════════ */
     footer {
@@ -771,6 +992,8 @@
     <a href="#what">About</a>
     <a href="#data">Data</a>
     <a href="#architecture">Model</a>
+    <a href="#slm">SLM</a>
+    <a href="#chatbot">Chatbot</a>
     <a href="#backtest">Results</a>
     <a href="#team">Team</a>
     <span class="nav-badge">PW Hackathon 2026</span>
@@ -1179,6 +1402,159 @@
 
 <div class="gradient-divider"></div>
 
+<!-- ═══════════════════════ PRAJNA SLM ═══════════════════════ -->
+<section id="slm">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">04 · PRAJNA SLM</div>
+      <h2 class="section-title">Small Language Model — Neural Predictor</h2>
+      <p class="section-sub">A 22M-parameter neural network that learns temporal, semantic, and cross-exam patterns from 48 years of question history — going beyond hand-crafted heuristics</p>
+    </div>
+
+    <!-- Architecture diagram -->
+    <div class="slm-arch reveal">
+      <div class="slm-box slm-input">
+        <div class="slm-box-title">Input Features</div>
+        <div class="slm-box-sub">15 numerical features<br/>+ 384-dim text embedding<br/>(sentence-transformers)</div>
+      </div>
+      <div class="slm-arrow">→</div>
+      <div class="slm-box slm-backbone">
+        <div class="slm-box-title">Backbone MLP</div>
+        <div class="slm-box-sub">Linear → LayerNorm → GELU → Dropout<br/>3 hidden layers<br/>shared representation</div>
+      </div>
+      <div class="slm-arrow">→</div>
+      <div class="slm-box slm-output">
+        <div class="slm-box-title">3 Output Heads</div>
+        <div class="slm-box-sub">P(appear) — sigmoid<br/>Expected Qs — ReLU<br/>Difficulty — softmax×3</div>
+      </div>
+    </div>
+
+    <!-- Training stats -->
+    <div class="train-stats reveal">
+      <div class="train-stat">
+        <div class="train-val">22M+</div>
+        <div class="train-lbl">Total Parameters</div>
+      </div>
+      <div class="train-stat">
+        <div class="train-val">399</div>
+        <div class="train-lbl">Input Dimensions</div>
+      </div>
+      <div class="train-stat">
+        <div class="train-val">0.8702</div>
+        <div class="train-lbl">Best Validation Loss (NEET)</div>
+      </div>
+      <div class="train-stat">
+        <div class="train-val">3</div>
+        <div class="train-lbl">Trained Models (NEET + JEE×2)</div>
+      </div>
+    </div>
+
+    <!-- 15 features -->
+    <div class="reveal">
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:700; color:var(--text); margin-bottom:0.5rem;">15 Numerical Features per Chapter</h3>
+      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:1.25rem;">All features are extracted from data strictly before the target year, preventing any look-ahead leakage</p>
+    </div>
+    <div class="features-grid reveal">
+      <div class="feat-chip"><div class="feat-num">F1</div><div><div class="feat-name">Recency-Weighted Freq</div><div class="feat-desc">Exponential decay over historical appearances</div></div></div>
+      <div class="feat-chip"><div class="feat-num">F2</div><div><div class="feat-name">Appearance Rate</div><div class="feat-desc">Fraction of years this chapter appeared</div></div></div>
+      <div class="feat-chip"><div class="feat-num">F3</div><div><div class="feat-name">Recent 3-Year Count</div><div class="feat-desc">Questions in the last 3 exams</div></div></div>
+      <div class="feat-chip"><div class="feat-num">F4</div><div><div class="feat-name">Recent 5-Year Count</div><div class="feat-desc">Questions in the last 5 exams</div></div></div>
+      <div class="feat-chip"><div class="feat-num">F5</div><div><div class="feat-name">Gap Since Last Year</div><div class="feat-desc">Years since chapter last appeared</div></div></div>
+      <div class="feat-chip"><div class="feat-num">F6</div><div><div class="feat-name">Mean Gap</div><div class="feat-desc">Average inter-appearance gap across history</div></div></div>
+      <div class="feat-chip"><div class="feat-num">F7</div><div><div class="feat-name">Trend Slope</div><div class="feat-desc">Linear regression on last 10 years of frequency</div></div></div>
+      <div class="feat-chip"><div class="feat-num">F8</div><div><div class="feat-name">Avg Questions</div><div class="feat-desc">Mean questions per appearance</div></div></div>
+      <div class="feat-chip"><div class="feat-num">F9</div><div><div class="feat-name">Std Questions</div><div class="feat-desc">Variability in question count</div></div></div>
+      <div class="feat-chip"><div class="feat-num">F10</div><div><div class="feat-name">Max Questions</div><div class="feat-desc">Peak questions in a single year</div></div></div>
+      <div class="feat-chip"><div class="feat-num">F11</div><div><div class="feat-name">Total Appearances</div><div class="feat-desc">Cumulative count across all years</div></div></div>
+      <div class="feat-chip"><div class="feat-num">F12</div><div><div class="feat-name">Cross-Exam Count</div><div class="feat-desc">How many exam types feature this chapter</div></div></div>
+      <div class="feat-chip"><div class="feat-num">F13</div><div><div class="feat-name">Cycle Regularity</div><div class="feat-desc">Periodicity score for chapter reappearance</div></div></div>
+      <div class="feat-chip"><div class="feat-num">F14</div><div><div class="feat-name">Recent Yield Avg</div><div class="feat-desc">Questions per year over recent window</div></div></div>
+      <div class="feat-chip"><div class="feat-num">F15</div><div><div class="feat-name">Subject Encoding</div><div class="feat-desc">One-hot subject identifier (Physics/Chem/Bio)</div></div></div>
+    </div>
+
+    <!-- 384-dim embeddings note -->
+    <div class="reveal" style="background:var(--bg3); border:1px solid rgba(168,85,247,0.25); border-radius:12px; padding:1.25rem 1.5rem; margin:2rem 0; display:flex; gap:1rem; align-items:flex-start;">
+      <div style="font-size:1.5rem; flex-shrink:0;">🧠</div>
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:0.95rem; color:var(--purple); margin-bottom:0.4rem;">384-Dimensional Semantic Embeddings</div>
+        <div style="font-size:0.82rem; color:var(--muted); line-height:1.6;">Chapter names are encoded using <strong style="color:var(--text);">sentence-transformers/all-MiniLM-L6-v2</strong>, giving the SLM semantic understanding of topic relationships. Chapters with similar names (e.g., "Laws of Motion" and "Newton's Laws") share representation space — enabling cross-chapter pattern transfer not possible with heuristics alone.</div>
+      </div>
+    </div>
+
+    <!-- Training details -->
+    <div class="reveal">
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:700; color:var(--text); margin-bottom:1rem;">Training Details</h3>
+    </div>
+    <div class="reveal" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+      <div style="background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:1.25rem;">
+        <div style="font-size:0.8rem; font-weight:700; color:var(--indigo); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.75rem;">Optimizer &amp; Schedule</div>
+        <div style="font-size:0.85rem; color:var(--text); line-height:1.8;">
+          <div>• <strong>AdamW</strong> with weight decay 0.01</div>
+          <div>• <strong>CosineAnnealingLR</strong> scheduler</div>
+          <div>• Early stopping on validation loss</div>
+          <div>• Best checkpoint saved per exam</div>
+        </div>
+      </div>
+      <div style="background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:1.25rem;">
+        <div style="font-size:0.8rem; font-weight:700; color:var(--purple); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.75rem;">Multi-Task Loss</div>
+        <div style="font-size:0.85rem; color:var(--text); line-height:1.8;">
+          <div>• <strong>BCE</strong> for P(appear) head</div>
+          <div>• <strong>MSE</strong> for expected questions head</div>
+          <div>• <strong>CrossEntropy</strong> for difficulty head</div>
+          <div>• Strict temporal train/test split</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLM vs v3 comparison -->
+    <div class="reveal" style="margin-top:3rem;">
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:700; color:var(--text); margin-bottom:0.5rem;">PRAJNA SLM vs. Heuristic v3 — NEET Backtest</h3>
+      <p style="font-size:0.82rem; color:var(--muted); margin-bottom:1.25rem;">Averaged over 5-year holdout (2019–2023) · Top-50 predictions · Strict no-look-ahead evaluation</p>
+    </div>
+    <div class="cmp-wrap reveal">
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th class="cmp-header-v3">Heuristic v3</th>
+            <th class="cmp-header-slm">PRAJNA SLM</th>
+            <th>Delta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Precision@50</td>
+            <td>96.8%</td>
+            <td class="cmp-highlight">96.8%</td>
+            <td class="cmp-neutral">—</td>
+          </tr>
+          <tr>
+            <td>Coverage@50</td>
+            <td>74.9%</td>
+            <td class="cmp-highlight">79.1%</td>
+            <td class="cmp-gain">+4.2%</td>
+          </tr>
+          <tr>
+            <td>Heavy-Topic Recall</td>
+            <td>80.5%</td>
+            <td class="cmp-highlight">83.2%</td>
+            <td class="cmp-gain">+2.7%</td>
+          </tr>
+          <tr>
+            <td style="font-weight:700;">Combined Score ★</td>
+            <td style="font-weight:700;">82.2%</td>
+            <td class="cmp-highlight" style="font-size:1rem;">85.9%</td>
+            <td class="cmp-gain" style="font-size:1rem;">+3.7%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</section>
+
+<div class="gradient-divider"></div>
+
 <!-- ═══════════════════════ CODE SNIPPETS ═══════════════════════ -->
 <section id="code">
   <div class="container">
@@ -1545,6 +1921,112 @@
         </tbody>
       </table>
     </div>
+  </div>
+</section>
+
+<div class="gradient-divider"></div>
+
+<!-- ═══════════════════════ ASK PRAJNA CHATBOT ═══════════════════════ -->
+<section id="chatbot">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">08 · Ask PRAJNA</div>
+      <h2 class="section-title">Exam Intelligence Chatbot</h2>
+      <p class="section-sub">RAG-style conversational interface over 23,119 questions — ask anything about exam trends, topic difficulty, or historical patterns</p>
+    </div>
+
+    <div class="chatbot-layout reveal">
+
+      <!-- Intent types panel -->
+      <div class="chatbot-panel">
+        <div class="chatbot-panel-title">🎯 5 Intent Types Detected Automatically</div>
+        <ul class="intent-list">
+          <li class="intent-item">
+            <span class="intent-icon">📊</span>
+            <div>
+              <div class="intent-name">Count / Frequency</div>
+              <div class="intent-ex">"How many times has Thermodynamics appeared in NEET?"</div>
+            </div>
+          </li>
+          <li class="intent-item">
+            <span class="intent-icon">📈</span>
+            <div>
+              <div class="intent-name">Trend Analysis</div>
+              <div class="intent-ex">"Is Organic Chemistry getting more important in JEE?"</div>
+            </div>
+          </li>
+          <li class="intent-item">
+            <span class="intent-icon">🎯</span>
+            <div>
+              <div class="intent-name">Difficulty Breakdown</div>
+              <div class="intent-ex">"What is the difficulty level of Mechanics questions?"</div>
+            </div>
+          </li>
+          <li class="intent-item">
+            <span class="intent-icon">⏰</span>
+            <div>
+              <div class="intent-name">Gap / Return Prediction</div>
+              <div class="intent-ex">"Which chapters haven't appeared in 3+ years in JEE Advanced?"</div>
+            </div>
+          </li>
+          <li class="intent-item">
+            <span class="intent-icon">🔍</span>
+            <div>
+              <div class="intent-name">Semantic Search</div>
+              <div class="intent-ex">"Show me questions about electric field lines from 2020–2023"</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Chat demo panel -->
+      <div class="chatbot-panel">
+        <div class="chatbot-panel-title">💬 Sample Conversation</div>
+
+        <div class="chat-bubble">
+          <div class="chat-avatar user">U</div>
+          <div class="chat-msg">How many times has Human Physiology appeared in NEET?</div>
+        </div>
+        <div class="chat-bubble">
+          <div class="chat-avatar bot">P</div>
+          <div class="chat-msg bot-msg">Human Physiology has appeared in <strong>42 of 48 NEET papers</strong> (87.5% rate). It averaged <strong>11.3 questions per year</strong> and is the single highest-weighted chapter. Last appeared: 2025.</div>
+        </div>
+
+        <div class="chat-bubble" style="margin-top:1rem;">
+          <div class="chat-avatar user">U</div>
+          <div class="chat-msg">Which Physics topic is most likely due for a comeback in JEE 2026?</div>
+        </div>
+        <div class="chat-bubble">
+          <div class="chat-avatar bot">P</div>
+          <div class="chat-msg bot-msg">Based on gap analysis: <strong>Semiconductor Devices</strong> (last seen 2022, mean gap 2.1y), <strong>Communication Systems</strong> (last 2021, mean gap 1.8y), and <strong>Magnetism &amp; Matter</strong> (last 2020) are the top 3 "overdue" chapters.</div>
+        </div>
+
+        <div style="margin-top:1.5rem; padding:0.85rem; background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.2); border-radius:10px; font-size:0.78rem; color:var(--muted); line-height:1.5;">
+          <strong style="color:var(--indigo);">How it works:</strong> Each query is passed through an intent classifier. If semantic search is needed, the question is embedded via sentence-transformers and matched against all 23,119 question embeddings using cosine similarity. Results are re-ranked by recency and exam relevance.
+        </div>
+      </div>
+    </div>
+
+    <!-- Knowledge base stats -->
+    <div class="avg-grid reveal" style="margin-top:2rem;">
+      <div class="avg-card">
+        <div class="avg-val avg-prec">23,119</div>
+        <div class="avg-lbl">Questions Indexed</div>
+      </div>
+      <div class="avg-card">
+        <div class="avg-val avg-cov">292</div>
+        <div class="avg-lbl">Exam Papers Covered</div>
+      </div>
+      <div class="avg-card">
+        <div class="avg-val avg-hr">384</div>
+        <div class="avg-lbl">Embedding Dimensions</div>
+      </div>
+      <div class="avg-card">
+        <div class="avg-val avg-comb">5</div>
+        <div class="avg-lbl">Intent Types Detected</div>
+      </div>
+    </div>
+
   </div>
 </section>
 

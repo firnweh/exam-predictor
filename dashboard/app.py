@@ -1773,6 +1773,12 @@ st.markdown("""
       <div class="team-phone">📞 9694948108</div>
     </div>
   </div>
+  <div style="text-align:center; margin-bottom:16px;">
+    <a href="https://firnweh.github.io/exam-predictor/" target="_blank" rel="noopener"
+       style="display:inline-flex; align-items:center; gap:8px; background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.3); border-radius:20px; padding:6px 18px; color:#a5b4fc; text-decoration:none; font-size:12px; font-weight:600; letter-spacing:0.03em; transition:background 0.2s;">
+      🌐 View PRAJNA Webpage — Full Technical Documentation
+    </a>
+  </div>
   <div style="text-align:center; font-size:11px; color:rgba(255,255,255,0.2);">
     PRAJNA v1.0 · 23,119 questions · 292 papers · 1978–2026 · Model: 3-Stage SLM with subject-balanced reranking
   </div>
