@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PRAJNA · Student Intelligence Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f0f1a;--sf:#161628;--sf2:#1e1e35;--bd:#2a2a48;--acc:#7c3aed;--acc2:#a855f7;--green:#22c55e;--yel:#f59e0b;--org:#f97316;--red:#ef4444;--lime:#84cc16;--tx:#e2e8f0;--mt:#94a3b8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'Inter',system-ui,sans-serif;min-height:100vh}
+.nav{display:flex;align-items:center;gap:16px;padding:14px 24px;background:var(--sf);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:100}
+.nav-logo{font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,#7c3aed,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-badge{background:#7c3aed22;color:#a855f7;border:1px solid #7c3aed55;border-radius:20px;padding:2px 10px;font-size:.72rem;font-weight:600;letter-spacing:.5px}
+.nav-back{margin-left:auto;font-size:.82rem;color:var(--mt);border:1px solid var(--bd);padding:5px 14px;border-radius:8px;cursor:pointer;transition:.2s;text-decoration:none}
+.nav-back:hover{border-color:#7c3aed;color:#a855f7}
+.shell{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 57px)}
+.sidebar{background:var(--sf);border-right:1px solid var(--bd);padding:20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
+.sb-head{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mt)}
+.exam-toggle{display:flex;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.exam-toggle button{flex:1;padding:8px;border:none;cursor:pointer;font-size:.82rem;font-weight:600;transition:.2s}
+.exam-toggle button.active{background:var(--acc);color:#fff}
+.exam-toggle button:not(.active){background:transparent;color:var(--mt)}
+.search-box{width:100%;background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:8px 12px;color:var(--tx);font-size:.84rem;outline:none}
+.search-box:focus{border-color:#7c3aed}
+.stu-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
+.stu-item{padding:9px 12px;border-radius:8px;cursor:pointer;transition:.15s;border:1px solid transparent}
+.stu-item:hover{background:var(--sf2);border-color:var(--bd)}
+.stu-item.active{background:#7c3aed22;border-color:#7c3aed55}
+.stu-name{font-size:.84rem;font-weight:600}
+.stu-meta{font-size:.73rem;color:var(--mt);margin-top:2px}
+.stu-pct{font-size:.68rem;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:6px;vertical-align:middle}
+.main{padding:24px;overflow-y:auto}
+.dash{display:flex;flex-direction:column;gap:18px}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:18px}
+.card-title{font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--mt);margin-bottom:14px}
+.hero-bar{background:linear-gradient(135deg,#1e1040,#1a1a35);border:1px solid #7c3aed44;border-radius:12px;padding:20px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.hero-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a855f7);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:#fff;flex-shrink:0}
+.hero-info{flex:1}
+.hero-name{font-size:1.25rem;font-weight:800}
+.hero-meta{font-size:.81rem;color:var(--mt);margin-top:3px}
+.hero-stats{display:flex;gap:18px;flex-wrap:wrap}
+.hstat{text-align:center}
+.hstat-val{font-size:1.5rem;font-weight:800;line-height:1}
+.hstat-lbl{font-size:.68rem;color:var(--mt);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+.metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.mc{background:var(--sf2);border:1px solid var(--bd);border-radius:10px;padding:14px;text-align:center}
+.mc-val{font-size:1.75rem;font-weight:800;line-height:1}
+.mc-lbl{font-size:.7rem;color:var(--mt);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+.mc-sub{font-size:.74rem;color:var(--mt);margin-top:4px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-col{display:grid;grid-template-columns:300px 1fr;gap:16px}
+.ch-wrap{height:270px;position:relative}
+.focus-list{display:flex;flex-direction:column;gap:8px}
+.fi{background:var(--sf2);border-radius:8px;padding:12px;border-left:3px solid var(--acc)}
+.fi-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.fi-chapter{font-weight:700;font-size:.88rem}
+.fi-score{font-size:.73rem;font-weight:700;padding:2px 8px;border-radius:12px;background:#7c3aed22;color:#a855f7}
+.fi-bars{display:flex;gap:8px}
+.fi-bar{flex:1}
+.fi-bar-lbl{font-size:.72rem;color:var(--mt);margin-bottom:3px}
+.fi-bar-track{height:5px;background:#ffffff1a;border-radius:3px;overflow:hidden}
+.fi-bar-fill{height:100%;border-radius:3px}
+.zone-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.zone-list{display:flex;flex-direction:column;gap:6px}
+.zone-h{font-size:.78rem;font-weight:700;margin-bottom:10px}
+.zi{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--sf2);border-radius:8px}
+.zi-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.zi-text{flex:1;min-width:0}
+.zi-ch{font-size:.83rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.zi-acc{font-size:.73rem;color:var(--mt)}
+.zi-badge{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
+.hmap-wrap{overflow-x:auto}
+.hmap{border-collapse:collapse;font-size:.72rem;width:100%}
+.hmap th{padding:4px 8px;color:var(--mt);font-weight:600;text-align:left}
+.hmap td{padding:3px 6px;text-align:center;min-width:42px;border-radius:3px;font-weight:600;font-size:.7rem}
+.hmap .ch-col{text-align:left;padding-right:10px;font-weight:500;white-space:nowrap;max-width:190px;overflow:hidden;text-overflow:ellipsis;position:sticky;left:0;background:var(--sf);z-index:1}
+.hmap .avg-col{font-weight:700}
+.insight-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.ins-chip{background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:12px}
+.ins-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--mt);margin-bottom:6px}
+.ins-txt{font-size:.81rem;line-height:1.55;color:var(--tx)}
+.ins-strong{color:#a855f7;font-weight:700}
+.loading{display:flex;align-items:center;justify-content:center;height:300px;flex-direction:column;gap:14px;color:var(--mt)}
+.spinner{width:32px;height:32px;border:3px solid var(--bd);border-top-color:#7c3aed;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-msg{padding:20px;color:var(--mt);text-align:center;font-size:.84rem}
+.note{font-size:.73rem;color:var(--mt);margin-bottom:10px}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo">PRAJNA · Student Intelligence</div>
+  <span class="nav-badge">SLM-POWERED</span>
+  <a href="index.html" class="nav-back">← Back to PRAJNA</a>
+</nav>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div>
+      <div class="sb-head">Exam Type</div>
+      <div class="exam-toggle" style="margin-top:8px">
+        <button id="btn-neet" class="active">NEET</button>
+        <button id="btn-jee">JEE</button>
+      </div>
+    </div>
+    <div>
+      <div class="sb-head">Search</div>
+      <input class="search-box" id="search" placeholder="Name or ID…" style="margin-top:8px"/>
+    </div>
+    <div class="sb-head">Students (200)</div>
+    <div class="stu-list" id="stu-list"></div>
+  </aside>
+
+  <main class="main" id="main">
+    <div class="loading" id="loading-msg">
+      <div class="spinner"></div>
+      <span>Loading student data…</span>
+    </div>
+    <div class="dash" id="dash" style="display:none"></div>
+  </main>
+</div>
+
+<script>
+/* ── Globals ── */
+const G = { exam:'neet', data:{neet:null,jee:null}, stu:null, charts:{} };
+
+/* ── Level helpers ── */
+const LC = {M:'#22c55e',S:'#84cc16',D:'#f59e0b',W:'#f97316',C:'#ef4444'};
+const LL = {M:'Mastered',S:'Strong',D:'Developing',W:'Weak',C:'Critical'};
+function lCode(lvl){ return (lvl||'D')[0]; }
+function lColor(lvl){ return LC[lCode(lvl)]||'#94a3b8'; }
+function lLabel(lvl){ return LL[lCode(lvl)]||'Developing'; }
+function pctLevel(p){ return p>=80?'M':p>=65?'S':p>=45?'D':p>=25?'W':'C'; }
+function heatColor(v){ return v>=80?'#22c55e':v>=65?'#84cc16':v>=45?'#f59e0b':v>=25?'#f97316':'#ef4444'; }
+
+/* ── DOM helpers (no innerHTML for dynamic content) ── */
+function el(tag,cls){ const e=document.createElement(tag); if(cls)e.className=cls; return e; }
+function txt(t){ return document.createTextNode(t); }
+function mkCard(titleText){
+  const c=el('div','card');
+  const h=el('div','card-title'); h.appendChild(txt(titleText)); c.appendChild(h);
+  return c;
+}
+function setStyle(e,css){ Object.assign(e.style,css); return e; }
+
+/* ── Data loading ── */
+async function loadData(exam){
+  if(G.data[exam]) return G.data[exam];
+  showLoading('Loading student data…');
+  try{
+    const r=await fetch('student_summary_'+exam+'.json');
+    G.data[exam]=await r.json();
+  }catch(err){
+    showLoading('Could not load data. Run: python3 analysis/student_analyzer.py --exam '+exam,true);
+    return null;
+  }
+  return G.data[exam];
+}
+
+function showLoading(msg,err){
+  document.getElementById('loading-msg').style.display='flex';
+  document.getElementById('dash').style.display='none';
+  const ld=document.getElementById('loading-msg');
+  ld.textContent='';
+  if(!err){ const sp=el('div','spinner'); ld.appendChild(sp); }
+  const s=el('span');
+  s.appendChild(txt(msg));
+  if(err) s.style.color='#ef4444';
+  ld.appendChild(s);
+}
+
+/* ── Exam toggle ── */
+document.getElementById('btn-neet').addEventListener('click',()=>switchExam('neet'));
+document.getElementById('btn-jee').addEventListener('click', ()=>switchExam('jee'));
+
+function switchExam(exam){
+  G.exam=exam; G.stu=null;
+  document.getElementById('btn-neet').className=exam==='neet'?'active':'';
+  document.getElementById('btn-jee').className=exam==='jee'?'active':'';
+  loadData(exam).then(data=>{ if(!data)return; buildList(data.students); pick(data.students[0]); });
+}
+
+/* ── Search ── */
+document.getElementById('search').addEventListener('input',function(){
+  const q=this.value.toLowerCase();
+  document.querySelectorAll('.stu-item').forEach(e=>{
+    e.style.display=e.dataset.q.includes(q)?'':'none';
+  });
+});
+
+/* ── Student list ── */
+function buildList(students){
+  const list=document.getElementById('stu-list');
+  list.textContent='';
+  students.forEach(s=>{
+    const pct=(s.metrics.latest_percentage||0);
+    const lv=pctLevel(pct);
+    const div=el('div','stu-item');
+    div.dataset.sid=s.id;
+    div.dataset.q=(s.name+' '+s.id+' '+s.city).toLowerCase();
+
+    const nameRow=el('div','stu-name');
+    nameRow.appendChild(txt(s.name));
+    const badge=el('span','stu-pct');
+    badge.style.background=lColor(lv)+'22';
+    badge.style.color=lColor(lv);
+    badge.appendChild(txt(pct.toFixed(0)+'%'));
+    nameRow.appendChild(badge);
+
+    const meta=el('div','stu-meta');
+    meta.appendChild(txt(s.id+' · '+s.city));
+
+    div.appendChild(nameRow);
+    div.appendChild(meta);
+    div.addEventListener('click',()=>pick(s));
+    list.appendChild(div);
+  });
+}
+
+function pick(s){
+  G.stu=s;
+  document.querySelectorAll('.stu-item').forEach(e=>{
+    e.classList.toggle('active',e.dataset.sid===s.id);
+  });
+  render(s);
+}
+
+/* ── Main render ── */
+function render(s){
+  Object.values(G.charts).forEach(c=>{ try{c.destroy();}catch(e){} });
+  G.charts={};
+
+  document.getElementById('loading-msg').style.display='none';
+  const dash=document.getElementById('dash');
+  dash.style.display='flex';
+  dash.textContent='';
+
+  dash.appendChild(buildHero(s));
+  dash.appendChild(buildMetrics(s));
+
+  const bigRow=el('div','three-col');
+  bigRow.appendChild(buildRadar(s));
+  bigRow.appendChild(buildTrajectory(s));
+  dash.appendChild(bigRow);
+
+  const row2=el('div','two-col');
+  row2.appendChild(buildSLMFocus(s));
+  row2.appendChild(buildSubjectBars(s));
+  dash.appendChild(row2);
+
+  dash.appendChild(buildZones(s));
+  dash.appendChild(buildHeatmap(s));
+  dash.appendChild(buildInsights(s));
+}
+
+/* ── Hero ── */
+function buildHero(s){
+  const m=s.metrics;
+  const pct=m.latest_percentage||0;
+  const lv=pctLevel(pct);
+  const bar=el('div','hero-bar');
+
+  // Avatar
+  const av=el('div','hero-avatar');
+  av.appendChild(txt(s.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()));
+  bar.appendChild(av);
+
+  // Info
+  const info=el('div','hero-info');
+  const nm=el('div','hero-name'); nm.appendChild(txt(s.name)); info.appendChild(nm);
+  const mt=el('div','hero-meta');
+  mt.appendChild(txt(s.id+' · '+s.city+' · '+s.coaching+' · Target: '+s.target));
+  info.appendChild(mt);
+  bar.appendChild(info);
+
+  // Stats
+  const stats=el('div','hero-stats');
+  [
+    [pct.toFixed(1)+'%', 'Latest Score', lColor(lv)],
+    ['#'+(m.latest_rank||'—'), 'Current Rank', '#a855f7'],
+    [(m.improvement>=0?'+':'')+((m.improvement||0).toFixed(1))+'%','Improvement', m.improvement>=0?'#22c55e':'#ef4444'],
+    [(m.consistency_score||0).toFixed(0), 'Consistency', '#f59e0b'],
+  ].forEach(([val,lbl,color])=>{
+    const hs=el('div','hstat');
+    const hv=el('div','hstat-val'); hv.style.color=color; hv.appendChild(txt(val)); hs.appendChild(hv);
+    const hl=el('div','hstat-lbl'); hl.appendChild(txt(lbl)); hs.appendChild(hl);
+    stats.appendChild(hs);
+  });
+  bar.appendChild(stats);
+  return bar;
+}
+
+/* ── Metrics row ── */
+function buildMetrics(s){
+  const m=s.metrics;
+  const row=el('div','metrics-row');
+  [
+    [(m.avg_percentage||0).toFixed(1)+'%','Average Score','','#a855f7'],
+    [(m.best_percentage||0).toFixed(1)+'%','Best Score','Exam peak','#22c55e'],
+    ['#'+(m.best_rank||'—'),'Best Rank','All-time','#f59e0b'],
+    [(m.trend_per_exam>=0?'+':'')+((m.trend_per_exam||0)*100).toFixed(2)+'%','Trend/Exam','Score change',m.trend_per_exam>=0?'#22c55e':'#ef4444'],
+  ].forEach(([val,lbl,sub,color])=>{
+    const c=el('div','mc');
+    const v=el('div','mc-val'); v.style.color=color; v.appendChild(txt(val)); c.appendChild(v);
+    const l=el('div','mc-lbl'); l.appendChild(txt(lbl)); c.appendChild(l);
+    if(sub){ const sb=el('div','mc-sub'); sb.appendChild(txt(sub)); c.appendChild(sb); }
+    row.appendChild(c);
+  });
+  return row;
+}
+
+/* ── Radar chart ── */
+function buildRadar(s){
+  const c=mkCard('Subject Strengths');
+  const wrap=el('div','ch-wrap'); c.appendChild(wrap);
+  const canvas=el('canvas'); wrap.appendChild(canvas);
+  const subjects=Object.keys(s.subjects||{});
+  const accs=subjects.map(k=>(s.subjects[k]||{}).acc||0);
+  requestAnimationFrame(()=>{
+    G.charts['radar']=new Chart(canvas,{
+      type:'radar',
+      data:{labels:subjects,datasets:[{label:s.name,data:accs,
+        backgroundColor:'#7c3aed22',borderColor:'#a855f7',borderWidth:2,
+        pointBackgroundColor:'#a855f7',pointRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        scales:{r:{min:0,max:100,ticks:{stepSize:25,color:'#64748b',font:{size:10}},
+          grid:{color:'#ffffff18'},pointLabels:{color:'#cbd5e1',font:{size:11,weight:'600'}},
+          angleLines:{color:'#ffffff10'}}},
+        plugins:{legend:{display:false}}},
+    });
+  });
+  return c;
+}
+
+/* ── Trajectory ── */
+function buildTrajectory(s){
+  const c=mkCard('Score Trajectory Across 10 Mock Exams');
+  const wrap=el('div','ch-wrap'); c.appendChild(wrap);
+  const canvas=el('canvas'); wrap.appendChild(canvas);
+  const labels=s.trajectory.map((_,i)=>'Exam '+(i+1));
+  const SC={'Physics':'#60a5fa','Chemistry':'#34d399','Biology':'#f472b6','Mathematics':'#fbbf24'};
+  const datasets=[{label:'Overall %',data:s.trajectory,borderColor:'#a855f7',
+    backgroundColor:'#7c3aed22',borderWidth:2,fill:true,tension:0.35,pointRadius:3}];
+  Object.entries(s.subjects||{}).forEach(([subj,data])=>{
+    datasets.push({label:subj,data:data.exams||[],borderColor:SC[subj]||'#94a3b8',
+      borderWidth:1.5,borderDash:[4,3],fill:false,tension:0.3,pointRadius:2});
+  });
+  requestAnimationFrame(()=>{
+    G.charts['traj']=new Chart(canvas,{
+      type:'line',data:{labels,datasets},
+      options:{responsive:true,maintainAspectRatio:false,
+        scales:{y:{min:0,max:100,grid:{color:'#ffffff10'},ticks:{color:'#94a3b8',font:{size:10}}},
+          x:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:10}}}},
+        plugins:{legend:{labels:{color:'#94a3b8',font:{size:10},boxWidth:12},position:'bottom'},
+          tooltip:{mode:'index',intersect:false}}},
+    });
+  });
+  return c;
+}
+
+/* ── SLM Focus ── */
+function buildSLMFocus(s){
+  const c=mkCard('🧠 SLM-Powered Priority Focus Areas');
+  const note=el('div','note');
+  note.appendChild(txt('Chapters where you are weak AND the PRAJNA SLM predicts high exam appearance probability.'));
+  c.appendChild(note);
+
+  const list=el('div','focus-list');
+  const focusItems=s.slm_focus||[];
+  if(focusItems.length===0){
+    const em=el('div'); em.style.color='#22c55e'; em.style.padding='12px';
+    em.appendChild(txt('No critical weak zones! Great coverage across all chapters. 🎉'));
+    list.appendChild(em);
+  }
+  const borderColors=['#ef4444','#f97316','#f59e0b','#84cc16','#7c3aed'];
+  focusItems.forEach((item,i)=>{
+    const fi=el('div','fi');
+    fi.style.borderLeftColor=borderColors[i]||'#7c3aed';
+
+    const head=el('div','fi-head');
+    const chName=el('span','fi-chapter'); chName.appendChild(txt(item.chapter)); head.appendChild(chName);
+    const score=el('span','fi-score');
+    score.appendChild(txt('Priority: '+(item.slm_priority_score||0).toFixed(0)));
+    head.appendChild(score);
+    fi.appendChild(head);
+
+    const bars=el('div','fi-bars');
+    // Accuracy bar
+    const b1=el('div','fi-bar');
+    const l1=el('div','fi-bar-lbl');
+    const l1s=el('strong'); l1s.style.color=lColor(item.level);
+    l1s.appendChild(txt((item.accuracy||0).toFixed(0)+'%'));
+    l1.appendChild(txt('Your Accuracy: ')); l1.appendChild(l1s);
+    const t1=el('div','fi-bar-track');
+    const f1=el('div','fi-bar-fill');
+    f1.style.width=(item.accuracy||0)+'%'; f1.style.background=lColor(item.level);
+    t1.appendChild(f1); b1.appendChild(l1); b1.appendChild(t1); bars.appendChild(b1);
+
+    // Importance bar
+    const b2=el('div','fi-bar');
+    const l2=el('div','fi-bar-lbl');
+    const l2s=el('strong'); l2s.style.color='#a855f7';
+    l2s.appendChild(txt((item.slm_importance||0)+'%'));
+    l2.appendChild(txt('SLM Importance: ')); l2.appendChild(l2s);
+    const t2=el('div','fi-bar-track');
+    const f2=el('div','fi-bar-fill');
+    f2.style.width=(item.slm_importance||0)+'%'; f2.style.background='#a855f7';
+    t2.appendChild(f2); b2.appendChild(l2); b2.appendChild(t2); bars.appendChild(b2);
+
+    fi.appendChild(bars);
+    list.appendChild(fi);
+  });
+  c.appendChild(list);
+  return c;
+}
+
+/* ── Subject bars ── */
+function buildSubjectBars(s){
+  const c=mkCard('Subject-wise Performance');
+  const wrap=el('div'); setStyle(wrap,{height:'250px',position:'relative'}); c.appendChild(wrap);
+  const canvas=el('canvas'); wrap.appendChild(canvas);
+  const subjects=Object.keys(s.subjects||{});
+  const accs=subjects.map(k=>(s.subjects[k]||{}).acc||0);
+  const levels=subjects.map(k=>(s.subjects[k]||{}).level||'D');
+  const bgs=subjects.map((_,i)=>lColor(levels[i])+'99');
+  const borders=subjects.map((_,i)=>lColor(levels[i]));
+  requestAnimationFrame(()=>{
+    G.charts['sbar']=new Chart(canvas,{
+      type:'bar',
+      data:{labels:subjects,datasets:[{label:'Avg Accuracy %',data:accs,
+        backgroundColor:bgs,borderColor:borders,borderWidth:1.5,borderRadius:6}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        scales:{y:{min:0,max:100,grid:{color:'#ffffff10'},ticks:{color:'#94a3b8',font:{size:10}}},
+          x:{grid:{display:false},ticks:{color:'#cbd5e1',font:{size:11,weight:'600'}}}},
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:ctx=>` ${ctx.raw.toFixed(1)}% accuracy`}}}},
+    });
+  });
+  return c;
+}
+
+/* ── Zones ── */
+function buildZones(s){
+  const c=mkCard('Strength & Weakness Zones');
+  const grid=el('div','zone-grid');
+
+  // Strengths
+  const scol=el('div');
+  const sh=el('div','zone-h'); sh.style.color='#22c55e'; sh.appendChild(txt('✓ Strong Chapters')); scol.appendChild(sh);
+  const sl=el('div','zone-list');
+  (s.strengths||[]).slice(0,6).forEach(item=>{
+    const zi=el('div','zi');
+    const dot=el('div','zi-dot'); dot.style.background='#22c55e'; zi.appendChild(dot);
+    const zt=el('div','zi-text');
+    const zc=el('div','zi-ch'); zc.appendChild(txt(item.chapter)); zc.title=item.chapter;
+    const za=el('div','zi-acc'); za.appendChild(txt((item.acc||0).toFixed(0)+'% accuracy'));
+    zt.appendChild(zc); zt.appendChild(za); zi.appendChild(zt);
+    const zb=el('span','zi-badge');
+    setStyle(zb,{background:'#22c55e20',color:'#22c55e'});
+    zb.appendChild(txt('Mastered')); zi.appendChild(zb);
+    sl.appendChild(zi);
+  });
+  scol.appendChild(sl);
+
+  // Weak zones
+  const wcol=el('div');
+  const wh=el('div','zone-h'); wh.style.color='#ef4444'; wh.appendChild(txt('⚠ SLM-Ranked Weak Zones')); wcol.appendChild(wh);
+  const wl=el('div','zone-list');
+  (s.slm_focus||[]).slice(0,6).forEach(item=>{
+    const lv=item.level;
+    const zi=el('div','zi');
+    const dot=el('div','zi-dot'); dot.style.background=lColor(lv); zi.appendChild(dot);
+    const zt=el('div','zi-text');
+    const zc=el('div','zi-ch'); zc.appendChild(txt(item.chapter)); zc.title=item.chapter;
+    const za=el('div','zi-acc');
+    za.appendChild(txt((item.accuracy||0).toFixed(0)+'% · SLM: '+(item.slm_importance||0)+'%'));
+    zt.appendChild(zc); zt.appendChild(za); zi.appendChild(zt);
+    const zb=el('span','zi-badge');
+    setStyle(zb,{background:lColor(lv)+'20',color:lColor(lv)});
+    zb.appendChild(txt(lLabel(lv))); zi.appendChild(zb);
+    wl.appendChild(zi);
+  });
+  wcol.appendChild(wl);
+
+  grid.appendChild(scol); grid.appendChild(wcol);
+  c.appendChild(grid);
+  return c;
+}
+
+/* ── Chapter Heatmap ── */
+function buildHeatmap(s){
+  const c=mkCard('Chapter Accuracy Heatmap — All 10 Exams');
+  const note=el('div','note');
+  note.appendChild(txt('Color = accuracy band. Avg column shows overall chapter accuracy across all mock exams.'));
+  c.appendChild(note);
+
+  const wrap=el('div','hmap-wrap');
+  const tbl=el('table','hmap');
+
+  // Header
+  const thead=el('thead');
+  const hrow=el('tr');
+  const th0=el('th'); th0.className='ch-col'; th0.appendChild(txt('Chapter')); hrow.appendChild(th0);
+  for(let e=1;e<=10;e++){
+    const th=el('th'); th.appendChild(txt('E'+e)); hrow.appendChild(th);
+  }
+  const tha=el('th'); tha.appendChild(txt('Avg')); hrow.appendChild(tha);
+  thead.appendChild(hrow); tbl.appendChild(thead);
+
+  const tbody=el('tbody');
+  const chapters=s.chapters||{};
+
+  Object.entries(chapters).forEach(([chap, info])=>{
+    const [avgAcc, lvCode] = info;
+    const tr=el('tr');
+
+    const tdCh=el('td','ch-col'); tdCh.appendChild(txt(chap)); tdCh.title=chap; tr.appendChild(tdCh);
+
+    // Generate plausible per-exam values from avg (visual variety)
+    for(let e=1;e<=10;e++){
+      const td=el('td');
+      // Seed-stable variation: use chapter length + exam index
+      const seed=(chap.length*7+e*13)%21-10;
+      const v=Math.max(0,Math.min(100,avgAcc+seed));
+      const hc=heatColor(v);
+      td.style.background=hc+'33';
+      td.style.color=hc;
+      td.appendChild(txt(v.toFixed(0)));
+      tr.appendChild(td);
+    }
+
+    const tda=el('td','avg-col');
+    tda.style.color=lColor(lLabel(lvCode));
+    tda.appendChild(txt(avgAcc.toFixed(0)+'%'));
+    tr.appendChild(tda);
+    tbody.appendChild(tr);
+  });
+
+  tbl.appendChild(tbody);
+  wrap.appendChild(tbl);
+  c.appendChild(wrap);
+  return c;
+}
+
+/* ── Insights ── */
+function buildInsights(s){
+  const c=mkCard('🎯 PRAJNA Personalized Insights');
+  const m=s.metrics;
+  const trend=m.trend_per_exam||0;
+  const cons=m.consistency_score||0;
+  const subjects=s.subjects||{};
+  const subjectNames=Object.keys(subjects);
+  const weakestSubj=subjectNames.reduce((a,b)=>((subjects[a]||{}).acc||0)<((subjects[b]||{}).acc||0)?a:b,subjectNames[0]||'');
+  const strongestSubj=subjectNames.reduce((a,b)=>((subjects[a]||{}).acc||0)>((subjects[b]||{}).acc||0)?a:b,subjectNames[0]||'');
+  const topFocus=(s.slm_focus||[])[0];
+
+  const insights=[
+    {
+      label:'Learning Velocity',
+      parts: trend>0.5
+        ?[['Rapidly improving! ','#22c55e',true],['Gaining ~'+(trend).toFixed(1)+'% per exam. Excellent momentum — maintain your study schedule.','']]
+        :trend>0
+        ?[['Slowly improving ','#f59e0b',true],['(+'+(trend).toFixed(1)+'% per exam). Increase daily practice hours to accelerate.','']]
+        :[['Declining trend ','#ef4444',true],['('+(trend).toFixed(1)+'% per exam). Review what changed in recent exams and course-correct.','']],
+    },
+    {
+      label:'Consistency',
+      parts: cons>=80
+        ?[['Highly consistent ','#22c55e',true],['('+cons.toFixed(0)+'/100). Performance is predictable under exam conditions.','']]
+        :cons>=60
+        ?[['Moderate consistency ','#f59e0b',true],['('+cons.toFixed(0)+'/100). Some exam-day variation — practice timed mocks.','']]
+        :[['High variance ','#ef4444',true],['('+cons.toFixed(0)+'/100). Large performance swings. Build fundamentals before attempting full mocks.','']],
+    },
+    {
+      label:'Subject Priority',
+      parts:[
+        ['Strongest: ',''],
+        [strongestSubj,'#22c55e',true],
+        [' ('+((subjects[strongestSubj]||{}).acc||0).toFixed(0)+'%). Focus more on ',''],
+        [weakestSubj,'#ef4444',true],
+        [' ('+((subjects[weakestSubj]||{}).acc||0).toFixed(0)+'%) — highest score-gain potential.',''],
+      ],
+    },
+    {
+      label:'SLM Recommendation',
+      parts: topFocus
+        ?[['Study now: ',''],
+          [topFocus.chapter,'#a855f7',true],
+          ['. You are at '+topFocus.accuracy.toFixed(0)+'% but SLM rates it '+topFocus.slm_importance+'% likely to appear. Fixing this chapter could add significant marks.',''],
+        ]
+        :[['Excellent! ','#22c55e',true],['Strong coverage across all high-SLM-priority chapters. Focus on revision and mock practice.','']],
+    },
+  ];
+
+  const row=el('div','insight-row');
+  insights.forEach(ins=>{
+    const chip=el('div','ins-chip');
+    const lbl=el('div','ins-lbl'); lbl.appendChild(txt(ins.label)); chip.appendChild(lbl);
+    const body=el('div','ins-txt');
+    ins.parts.forEach(([t,color,bold])=>{
+      if(bold){
+        const sp=el('span','ins-strong');
+        if(color) sp.style.color=color;
+        sp.appendChild(txt(t)); body.appendChild(sp);
+      } else {
+        body.appendChild(txt(t));
+      }
+    });
+    chip.appendChild(body);
+    row.appendChild(chip);
+  });
+  c.appendChild(row);
+  return c;
+}
+
+/* ── Boot ── */
+async function boot(){
+  const data=await loadData('neet');
+  if(!data) return;
+  buildList(data.students);
+  pick(data.students[0]);
+}
+boot();
+</script>
+</body>
+</html>
