@@ -479,7 +479,7 @@ with tab_main:
         st.stop()
 
     # ── SECTION 1: KPI STRIP ──
-    st.markdown('<div class="section-divider">Executive Summary</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider">Executive Summary <span class="section-badge">LIVE</span></div>', unsafe_allow_html=True)
 
     all_active_for_kpi = pred_list  # already filtered and K-limited
     high_prob = sum(1 for p in all_active_for_kpi if p["appearance_probability"] >= 0.7)
@@ -508,7 +508,7 @@ with tab_main:
 
     # ── SECTION 2: RANKED PREDICTION TABLE ──
     is_micro = pred_level == "Micro-Topic"
-    st.markdown(f'<div class="section-divider">Ranked {pred_level} Predictions — Top {top_n}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-divider">Ranked {pred_level} Predictions — Top {top_n} <span class="section-badge">REAL ENGINE</span></div>', unsafe_allow_html=True)
     st.caption(f"Subject-balanced reranking for K={top_n}. {'Micro-topic + parent chapter.' if is_micro else 'Chapter-level aggregation.'}")
 
     TREND_ICONS = {"RISING": "↑ Rising", "STABLE": "→ Stable", "DECLINING": "↓ Declining", "NEW": "★ New", "REMOVED": "✗ Removed"}
@@ -568,7 +568,7 @@ with tab_main:
                            f"all_{target_year}.csv", "text/csv")
 
     # ── SECTION 3: TOP PROBABILITY + EXPECTED QUESTIONS ──
-    st.markdown(f'<div class="section-divider">{pred_level} Probability & Expected Weightage</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-divider">{pred_level} Probability & Expected Weightage <span class="section-badge">REAL ENGINE</span></div>', unsafe_allow_html=True)
 
     name_key = "micro_topic" if is_micro else "chapter"
     bar_data = pd.DataFrame([{
@@ -679,7 +679,7 @@ with tab_main:
             st.plotly_chart(fig, use_container_width=True)
 
     # ── SECTION 5: SYLLABUS CHANGE INTELLIGENCE ──
-    st.markdown('<div class="section-divider">Syllabus Change Intelligence</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider">Syllabus Change Intelligence <span class="section-badge">2026</span></div>', unsafe_allow_html=True)
 
     # Use chapter-level v3 for syllabus section (cleaner, no duplicate chapters)
     all_active_ch = active_v3
@@ -735,7 +735,7 @@ with tab_main:
         st.plotly_chart(fig, use_container_width=True)
 
     # ── SECTION 6: WHY THIS PREDICTION? ──
-    st.markdown('<div class="section-divider">Why This Prediction? — Score Decomposition</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider">Why This Prediction? — Score Decomposition <span class="section-badge">REAL ENGINE</span></div>', unsafe_allow_html=True)
 
     if is_micro:
         explain_opts = [f"{p['micro_topic']} · {p['chapter']} ({p['appearance_probability']:.0%}, ~{p['expected_questions']:.0f} Qs)" for p in pred_list]
@@ -787,7 +787,7 @@ with tab_main:
                 st.markdown(f"**Training data:** {p['training_years']}")
 
     # ── SECTION 7: CONFIDENCE & RISK SCATTER ──
-    st.markdown('<div class="section-divider">Confidence vs Probability — Risk Map</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider">Confidence vs Probability — Risk Map <span class="section-badge">LIVE</span></div>', unsafe_allow_html=True)
 
     risk_col, tier_col = st.columns([2, 1])
 
@@ -841,7 +841,7 @@ with tab_main:
                         st.caption(f"  {tp['chapter']} — {tp['appearance_probability']:.0%} (~{tp['expected_questions']:.0f} Qs)")
 
     # ── SECTION 8: PAPER BLUEPRINT SIMULATOR ──
-    st.markdown('<div class="section-divider">Paper Blueprint Simulator</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider">Paper Blueprint Simulator <span class="section-badge">REAL ENGINE</span></div>', unsafe_allow_html=True)
     st.caption(f"Estimated paper structure for {selected_exam if selected_exam != 'All' else 'NEET/JEE'} {target_year}")
 
     bp_exam = selected_exam if selected_exam != "All" else "NEET"
@@ -895,7 +895,7 @@ with tab_main:
             st.plotly_chart(fig, use_container_width=True)
 
     # ── SECTION 9: BACKTESTING ──
-    st.markdown('<div class="section-divider">Model Performance — Backtesting</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider">Model Performance — Backtesting <span class="section-badge">23K DB</span></div>', unsafe_allow_html=True)
     st.caption("Train on years before test year, predict, compare against actual paper.")
 
     if st.button("Run Backtest v3 (2019–2023)", key="bt_run"):
@@ -951,7 +951,7 @@ with tab_main:
 # TAB 2: INTERACTIVE BACKTEST
 # ================================================================
 with tab_backtest:
-    st.markdown('<div class="section-divider">Interactive Backtest — Select a Year</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider">Interactive Backtest — Select a Year <span class="section-badge">23K DB</span></div>', unsafe_allow_html=True)
     st.caption("Train on all data before the selected year. Predict that year. Match against actual paper questions.")
 
     bt_c1, bt_c2, bt_c3, bt_c4 = st.columns([1.5, 1, 1, 1])
@@ -1044,7 +1044,7 @@ with tab_backtest:
                     st.dataframe(fp_df, hide_index=True, use_container_width=True)
 
             # ── Rank correlation chart ──
-            st.markdown('<div class="section-divider">Prediction Quality Summary</div>', unsafe_allow_html=True)
+            st.markdown('<div class="section-divider">Prediction Quality Summary <span class="section-badge">23K DB</span></div>', unsafe_allow_html=True)
             sum_col1, sum_col2 = st.columns(2)
 
             with sum_col1:
@@ -1134,7 +1134,7 @@ with tab_backtest:
 # TAB 3: DEEP TOPIC ANALYSIS
 # ================================================================
 with tab_deep:
-    st.markdown('<div class="section-divider">Deep Topic Analysis</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider">Deep Topic Analysis <span class="section-badge">LIVE</span></div>', unsafe_allow_html=True)
     st.caption("Select a topic to see its complete history, questions, and patterns.")
 
     all_topics = sorted(filtered["topic"].unique().tolist())
@@ -1217,7 +1217,7 @@ with tab_deep:
         st.info("Select a chapter above to explore its full history, difficulty trend, and question breakdown.")
 
         # Hot & Cold topics
-        st.markdown('<div class="section-divider">Hot & Cold Topics</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-divider">Hot & Cold Topics <span class="section-badge">LIVE</span></div>', unsafe_allow_html=True)
         hc1, hc2 = st.columns(2)
         hot, cold = find_hot_cold_topics(DB_PATH, recent_years=3)
         with hc1:
@@ -1248,7 +1248,7 @@ with tab_deep:
 # TAB 3: LESSON PLAN
 # ================================================================
 with tab_lesson:
-    st.markdown('<div class="section-divider">Syllabus-Based Lesson Plan</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider">Syllabus-Based Lesson Plan <span class="section-badge">AI</span></div>', unsafe_allow_html=True)
     st.caption(f"Official syllabus mapped to historical data. Priority = prediction score. Trained excluding {holdout_str}.")
 
     exam_ch = st.selectbox("Exam Syllabus", ["NEET", "JEE Main", "JEE Advanced"], key="lp_exam")
@@ -1305,7 +1305,7 @@ with tab_lesson:
                     st.plotly_chart(fig, use_container_width=True)
 
     # Overall priority
-    st.markdown('<div class="section-divider">Top 20 Focus Subtopics</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider">Top 20 Focus Subtopics <span class="section-badge">AI</span></div>', unsafe_allow_html=True)
     if not cov_df.empty:
         summary = cov_df.copy()
         summary["pred_score"] = summary["subtopic"].apply(
@@ -1353,7 +1353,7 @@ with tab_lesson:
 # TAB 4: HISTORICAL TIMELINE
 # ================================================================
 with tab_timeline:
-    st.markdown('<div class="section-divider">Historical Timeline — Syllabus, Policy & News</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider">Historical Timeline — Syllabus, Policy & News <span class="section-badge">2026</span></div>', unsafe_allow_html=True)
     st.caption("How exam patterns, syllabus changes, and real-world events correlate with question trends.")
 
     tl_df = pd.DataFrame(TIMELINE, columns=["year", "category", "event", "impact"])
@@ -1381,7 +1381,7 @@ with tab_timeline:
             st.markdown(f"**Impact:** {row['impact']}")
 
     # 2024 changes
-    st.markdown('<div class="section-divider">2024 Syllabus Overhaul</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider">2024 Syllabus Overhaul <span class="section-badge">2026</span></div>', unsafe_allow_html=True)
     tc1, tc2 = st.columns(2)
     with tc1:
         st.markdown("**Removed from NEET 2024:**")
@@ -1396,7 +1396,7 @@ with tab_timeline:
             st.write(f"- **{item}** (NEW)")
 
     # Correlation patterns
-    st.markdown('<div class="section-divider">News → Question Correlation Patterns</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider">News → Question Correlation Patterns <span class="section-badge">LIVE</span></div>', unsafe_allow_html=True)
     st.markdown("""
 | Pattern | Evidence | Strength |
 |---------|----------|----------|
@@ -1413,7 +1413,7 @@ with tab_timeline:
 # TAB 5: QUESTION EXPLORER
 # ================================================================
 with tab_explorer:
-    st.markdown('<div class="section-divider">Question Explorer</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider">Question Explorer <span class="section-badge">23K DB</span></div>', unsafe_allow_html=True)
 
     ec1, ec2, ec3, ec4 = st.columns(4)
     with ec1:
@@ -1471,7 +1471,7 @@ with tab_explorer:
 # TAB 6: PAPER GENERATOR
 # ================================================================
 with tab_paper:
-    st.markdown('<div class="section-divider">Practice Paper Generator</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider">Practice Paper Generator <span class="section-badge">AI</span></div>', unsafe_allow_html=True)
 
     pc1, pc2, pc3 = st.columns(3)
     with pc1:
@@ -1525,7 +1525,7 @@ with tab_paper:
 # TAB 8: ASK PRAJNA (Chatbot)
 # ================================================================
 with tab_chat:
-    st.markdown('<div class="section-divider">🤖 Ask PRAJNA — Exam Intelligence Chatbot</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider">🤖 Ask PRAJNA — Exam Intelligence Chatbot <span class="section-badge">PRAJNA</span></div>', unsafe_allow_html=True)
     st.caption("Ask questions about 23,119 exam questions across 48 years. Powered by semantic search + intent detection.")
 
     # Model badge
