@@ -500,9 +500,9 @@ _load_status.empty()
 
 
 # --- Tabs ---
-tab_main, tab_backtest, tab_deep, tab_lesson, tab_revision, tab_timeline, tab_explorer, tab_paper, tab_chat = st.tabs([
+tab_main, tab_backtest, tab_deep, tab_lesson, tab_revision, tab_timeline, tab_explorer, tab_paper, tab_chat, tab_api = st.tabs([
     "📊 Predictions", "🎯 Backtest", "🔬 Topic Deep Dive", "📚 Lesson Plan", "📅 Revision Plan",
-    "📈 Historical Timeline", "❓ Question Explorer", "📄 Paper Generator", "🤖 Ask PRAJNA",
+    "📈 Historical Timeline", "❓ Question Explorer", "📄 Paper Generator", "🤖 Ask PRAJNA", "🔌 API Docs",
 ])
 
 
@@ -1887,6 +1887,137 @@ with tab_chat:
                     "role": "assistant", "content": "Chatbot module not available.",
                     "details": {},
                 })
+
+
+with tab_api:
+    st.markdown('<div class="section-divider">🔌 PRAJNA Intelligence API <span class="section-badge">REST</span></div>', unsafe_allow_html=True)
+    st.caption("FastAPI service running on http://localhost:8001 — all endpoints return JSON. Interactive docs at /docs.")
+
+    # ── Quick links ────────────────────────────────────────────────────────────
+    ql1, ql2, ql3 = st.columns(3)
+    with ql1:
+        st.markdown("""
+        <a href="http://localhost:8001/docs" target="_blank"
+           style="display:block;background:linear-gradient(135deg,#6366f1,#8b5cf6);
+                  color:white;text-align:center;padding:12px;border-radius:10px;
+                  text-decoration:none;font-weight:700;font-size:13px">
+          📖 Swagger UI ↗
+        </a>""", unsafe_allow_html=True)
+    with ql2:
+        st.markdown("""
+        <a href="http://localhost:8001/redoc" target="_blank"
+           style="display:block;background:#131320;border:1px solid rgba(255,255,255,0.12);
+                  color:#e2e8f0;text-align:center;padding:12px;border-radius:10px;
+                  text-decoration:none;font-weight:700;font-size:13px">
+          📄 ReDoc ↗
+        </a>""", unsafe_allow_html=True)
+    with ql3:
+        st.markdown("""
+        <a href="http://localhost:8001/openapi.json" target="_blank"
+           style="display:block;background:#131320;border:1px solid rgba(255,255,255,0.12);
+                  color:#e2e8f0;text-align:center;padding:12px;border-radius:10px;
+                  text-decoration:none;font-weight:700;font-size:13px">
+          🗂 OpenAPI JSON ↗
+        </a>""", unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # ── Endpoint groups ────────────────────────────────────────────────────────
+    API_GROUPS = [
+        {
+            "prefix": "/api/v1/data",
+            "label": "Data Bridge",
+            "color": "#6366f1",
+            "desc": "Direct access to real PRAJNA engine — bypasses mock adapter",
+            "endpoints": [
+                ("GET", "/predict", "Run predict_chapters_v3 or predict_microtopics_v3", "?exam_type=NEET&year=2026&top_n=40&level=chapter"),
+                ("GET", "/hot-cold-topics", "Hot & cold topic analysis from full history", "?exam_type=NEET&top_n=10"),
+                ("GET", "/topic-deep-dive", "Full topic history, difficulty breakdown", "?topic=Thermodynamics&exam_type=NEET"),
+                ("GET", "/backtest", "Train-on-past predict-one-year backtest", "?exam_type=NEET&test_year=2023&k=40"),
+                ("GET", "/lesson-plan", "Syllabus-mapped lesson plan with priority", "?exam_type=NEET&year=2026"),
+                ("GET", "/subject-timeline", "Subject weightage % across all years", "?exam_type=NEET"),
+                ("GET", "/topics-list", "All distinct chapters/topics in the DB", "?exam_type=NEET"),
+            ],
+        },
+        {
+            "prefix": "/api/v1/predictions",
+            "label": "Predictions",
+            "color": "#10b981",
+            "desc": "Prediction adapter endpoints (chapter and micro-topic level)",
+            "endpoints": [
+                ("GET", "/batch-summary", "High-level batch summary for exam/year", "?exam_type=NEET&year=2026"),
+                ("GET", "/chapter-detail", "Full chapter-level prediction detail", "?exam_type=NEET&year=2026&chapter=Thermodynamics"),
+                ("GET", "/subject-summary", "Subject-level prediction summary", "?exam_type=NEET&year=2026"),
+                ("GET", "/microtopic-list", "Micro-topic predictions with priority scores", "?exam_type=NEET&year=2026"),
+                ("GET", "/all-microtopics-ranked", "Ranked micro-topics across all subjects", "?exam_type=NEET&year=2026&top_k=50"),
+            ],
+        },
+        {
+            "prefix": "/api/v1/copilot",
+            "label": "PRAJNA Copilot",
+            "color": "#f59e0b",
+            "desc": "Natural language question answering over exam intelligence",
+            "endpoints": [
+                ("POST", "/ask", "Ask a natural language question about upcoming topics", '{"question":"Which chapters are most likely in NEET 2026?","exam_type":"NEET","year":2026}'),
+            ],
+        },
+        {
+            "prefix": "/api/v1/insights",
+            "label": "Insights",
+            "color": "#a855f7",
+            "desc": "AI-generated intelligence summaries per topic/chapter/subject",
+            "endpoints": [
+                ("POST", "/micro-topic", "Explain a micro-topic's exam importance", '{"topic":"Photoelectric Effect","subject":"Physics","exam_type":"NEET"}'),
+                ("POST", "/chapter", "Chapter intelligence summary", '{"chapter":"Thermodynamics","exam_type":"NEET","year":2026}'),
+                ("POST", "/subject-strategy", "Full subject revision strategy", '{"subject":"Chemistry","exam_type":"NEET","year":2026}'),
+                ("GET", "/top-topics", "Top N predicted topics across all subjects", "?exam_type=NEET&year=2026&top_n=10"),
+            ],
+        },
+        {
+            "prefix": "/api/v1/reports",
+            "label": "Reports",
+            "color": "#06b6d4",
+            "desc": "Revision plans and trend analysis reports",
+            "endpoints": [
+                ("POST", "/revision-plan", "Generate a complete revision plan", '{"exam_type":"NEET","year":2026,"top_k":40}'),
+                ("GET", "/trend-analysis", "Topic trend analysis vs previous year", "?exam_type=NEET&year=2026"),
+            ],
+        },
+    ]
+
+    METHOD_COLORS = {"GET": "#10b981", "POST": "#f59e0b", "DELETE": "#ef4444"}
+
+    for group in API_GROUPS:
+        gc = group["color"]
+        with st.expander(f"**{group['label']}** — `{group['prefix']}`", expanded=False):
+            st.caption(group["desc"])
+            for method, path, summary, example in group["endpoints"]:
+                mc = METHOD_COLORS.get(method, "#6366f1")
+                full_url = f"http://localhost:8001{group['prefix']}{path}"
+                if method == "GET":
+                    example_url = full_url + example
+                    curl_cmd = f"curl '{example_url}'"
+                else:
+                    curl_cmd = f"curl -X POST '{full_url}' -H 'Content-Type: application/json' -d '{example}'"
+
+                st.markdown(f"""
+                <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);
+                             border-radius:10px;padding:12px 16px;margin:6px 0;border-left:3px solid {mc}">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                    <span style="background:{mc}22;color:{mc};border:1px solid {mc}44;
+                                  border-radius:6px;padding:2px 8px;font-size:11px;font-weight:800;
+                                  font-family:monospace;flex-shrink:0">{method}</span>
+                    <span style="font-family:monospace;font-size:13px;color:#a5b4fc;flex:1">{group['prefix']}<b style="color:#f1f5f9">{path}</b></span>
+                  </div>
+                  <div style="font-size:12px;color:#94a3b8;margin-bottom:8px">{summary}</div>
+                  <div style="background:#0f0f1a;border-radius:6px;padding:8px 12px;
+                               font-family:monospace;font-size:11px;color:#6ee7b7;
+                               overflow-x:auto;white-space:nowrap">{curl_cmd}</div>
+                </div>""", unsafe_allow_html=True)
+
+    # ── Base URL note ──────────────────────────────────────────────────────────
+    st.markdown("---")
+    st.info("💡 **Start the API:** `cd intelligence && uvicorn services.api.main:app --port 8001 --reload`  \nAll endpoints return JSON. CORS is enabled for localhost origins.", icon="🔌")
 
 
 # ================================================================
