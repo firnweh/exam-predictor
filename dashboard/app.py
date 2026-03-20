@@ -315,11 +315,19 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Fixed PW logo top-right
+# ── Compact Topbar ───────────────────────────────────────────────────────────
 st.markdown("""
-<div class="pw-topbar">
-  <div class="pw-topbar-logo">PW</div>
-  <div class="pw-topbar-name">Physics Wallah</div>
+<div class="prajna-topbar">
+  <div class="prajna-topbar-left">
+    <div class="prajna-logo-circle">PW</div>
+    <span class="prajna-brand">PRAJNA Intelligence</span>
+  </div>
+  <div class="prajna-topbar-links">
+    <a class="prajna-nav-link prajna-nav-student"
+       href="http://localhost:8765/student-dashboard.html" target="_blank">Student IQ ↗</a>
+    <a class="prajna-nav-link prajna-nav-api"
+       href="http://localhost:8765/intelligence-dashboard.html" target="_blank">Intelligence ↗</a>
+  </div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -334,31 +342,18 @@ holdout_str = ", ".join(str(y) for y in sorted(HOLDOUT_YEARS))
 # ================================================================
 # FILTER BAR
 # ================================================================
+# ── DB stat bar ──────────────────────────────────────────────────────────────
 st.markdown("""
-<div class="pw-hero">
-  <div class="pw-brand-row">
-    <div class="pw-logo-circle">PW</div>
-    <div>
-      <span class="pw-brand-tag">Physics Wallah</span>
-      &nbsp;&nbsp;
-      <span class="pw-hackathon-badge">🏆 AI Hackathon 2026</span>
-    </div>
-  </div>
-  <div class="prajna-title">PRAJNA</div>
-  <div class="prajna-sub">Deep Dive — Predictive Research & Analysis for JEE/NEET Intelligence</div>
-  <div class="prajna-meaning">प्रज्ञा · P·R·A·J·N·A — Predictive Research & Analysis for JEE/NEET Intelligence</div>
-  <div class="stat-grid">
-    <div class="stat-chip"><div class="stat-chip-val">23,119</div><div class="stat-chip-lbl">Questions Analysed</div></div>
-    <div class="stat-chip"><div class="stat-chip-val">292</div><div class="stat-chip-lbl">Papers in DB</div></div>
-    <div class="stat-chip"><div class="stat-chip-val">48</div><div class="stat-chip-lbl">Years (1978–2026)</div></div>
-    <div class="stat-chip"><div class="stat-chip-val">36</div><div class="stat-chip-lbl">NEET Papers</div></div>
-    <div class="stat-chip"><div class="stat-chip-val">178</div><div class="stat-chip-lbl">JEE Main Papers</div></div>
-    <div class="stat-chip"><div class="stat-chip-val">78</div><div class="stat-chip-lbl">JEE Advanced Papers</div></div>
-    <div class="stat-chip"><div class="stat-chip-val">755</div><div class="stat-chip-lbl">Micro-Topics</div></div>
-    <div class="stat-chip"><div class="stat-chip-val">143</div><div class="stat-chip-lbl">Chapters</div></div>
-    <div class="stat-chip"><div class="stat-chip-val">82.1%</div><div class="stat-chip-lbl">Backtest Score</div></div>
-    <div class="stat-chip"><div class="stat-chip-val">74.9%</div><div class="stat-chip-lbl">Coverage@50</div></div>
-  </div>
+<div class="stat-bar">
+  <div class="stat-chip"><div class="stat-chip-val">23,119</div><div class="stat-chip-lbl">Questions</div></div>
+  <div class="stat-chip"><div class="stat-chip-val">292</div><div class="stat-chip-lbl">Papers</div></div>
+  <div class="stat-chip"><div class="stat-chip-val">48 yrs</div><div class="stat-chip-lbl">1978–2026</div></div>
+  <div class="stat-chip"><div class="stat-chip-val">36</div><div class="stat-chip-lbl">NEET Papers</div></div>
+  <div class="stat-chip"><div class="stat-chip-val">178</div><div class="stat-chip-lbl">JEE Main</div></div>
+  <div class="stat-chip"><div class="stat-chip-val">78</div><div class="stat-chip-lbl">JEE Adv.</div></div>
+  <div class="stat-chip"><div class="stat-chip-val">755</div><div class="stat-chip-lbl">Micro-Topics</div></div>
+  <div class="stat-chip"><div class="stat-chip-val">143</div><div class="stat-chip-lbl">Chapters</div></div>
+  <div class="stat-chip"><div class="stat-chip-val">82.1%</div><div class="stat-chip-lbl">Backtest</div></div>
 </div>
 """, unsafe_allow_html=True)
 
