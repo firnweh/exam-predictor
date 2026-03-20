@@ -376,7 +376,7 @@ with f2:
 with f3:
     target_year = st.number_input("Year", value=2026, min_value=2010, max_value=2035, key="gx_yr")
 with f4:
-    top_n = st.selectbox("Top K", [20, 40, 60, 80, 100], index=1, key="gx_topn")
+    top_n = st.selectbox("Top K", [20, 40, 60, 80, 100, 150, 200], index=1, key="gx_topn")
 with f5:
     pred_level = st.selectbox("Level", ["Chapter", "Micro-Topic"], key="gx_level")
 st.markdown('</div>', unsafe_allow_html=True)
@@ -511,40 +511,101 @@ with tab_main:
     st.markdown(f'<div class="section-divider">Ranked {pred_level} Predictions — Top {top_n} <span class="section-badge">REAL ENGINE</span></div>', unsafe_allow_html=True)
     st.caption(f"Subject-balanced reranking for K={top_n}. {'Micro-topic + parent chapter.' if is_micro else 'Chapter-level aggregation.'}")
 
-    TREND_ICONS = {"RISING": "↑ Rising", "STABLE": "→ Stable", "DECLINING": "↓ Declining", "NEW": "★ New", "REMOVED": "✗ Removed"}
+    # ── Detailed Prediction Cards ─────────────────────────────────────────────
+    SUBJ_HEX = {"Biology": "#22c55e", "Chemistry": "#06b6d4", "Physics": "#f59e0b", "Mathematics": "#a855f7"}
+    CONF_HEX  = {"HIGH": "#10b981", "MEDIUM": "#f59e0b", "LOW": "#ef4444", "SPECULATIVE": "#94a3b8"}
+    TREND_ARROW = {"RISING": "↑", "STABLE": "→", "DECLINING": "↓", "NEW": "★", "REMOVED": "✗"}
 
-    table_rows = []
+    cards_html = []
     for i, p in enumerate(pred_list, 1):
-        row = {
-            "#": i,
-            "Subject": p["subject"],
-            "P(Appear)": p["appearance_probability"],
-            "Exp. Qs": p["expected_questions"],
-            "Range": f"{p['expected_qs_min']}–{p['expected_qs_max']}",
-            "Trend": TREND_ICONS.get(p["trend_direction"], "?"),
-            "Last Year": int(p["last_appeared"]),
-            "Format": ", ".join(p["likely_formats"][:2]),
-            "Diff.": round(p["likely_difficulty"], 1),
-            "Confidence": p["confidence"],
-        }
-        if is_micro:
-            row["Micro-Topic"] = p["micro_topic"]
-            row["Chapter"] = p["chapter"]
-        else:
-            row["Chapter"] = p["chapter"]
-            row["Top Micro-Topic"] = p.get("top_micro_topic", "")
-        table_rows.append(row)
+        sc   = SUBJ_HEX.get(p["subject"], "#6366f1")
+        cc   = CONF_HEX.get(p["confidence"], "#6366f1")
+        prob = p["appearance_probability"]
+        prob_pct = f"{prob:.0%}"
+        trend = TREND_ARROW.get(p["trend_direction"], "→")
+        conf  = p["confidence"]
+        name  = p.get("micro_topic", p["chapter"]) if is_micro else p["chapter"]
+        exp_q = p["expected_questions"]
+        q_min = p["expected_qs_min"]
+        q_max = p["expected_qs_max"]
+        fmts  = ", ".join(p["likely_formats"][:2])
+        diff  = round(p["likely_difficulty"], 1)
+        last  = p["last_appeared"]
+        subj  = p["subject"]
 
-    tbl = pd.DataFrame(table_rows)
-    st.dataframe(
-        tbl.style
-        .background_gradient(subset=["P(Appear)"], cmap="RdYlGn", vmin=0, vmax=1)
-        .background_gradient(subset=["Exp. Qs"], cmap="PuBu", vmin=0, vmax=8)
-        .format({"P(Appear)": "{:.0%}", "Exp. Qs": "{:.1f}", "Diff.": "{:.1f}"}),
-        hide_index=True,
-        use_container_width=True,
-        height=min(700, len(table_rows) * 37 + 38),
-    )
+        # Signal bars (top 4 from signal_breakdown dict, skip 0 values)
+        sig = p.get("signal_breakdown", {})
+        sig_items = sorted(sig.items(), key=lambda x: x[1], reverse=True)
+        sig_bars = ""
+        for sname, sval in sig_items[:4]:
+            if sval <= 0:
+                continue
+            pct = min(int(sval * 100), 100)
+            sig_bars += f"""
+            <div style="margin:3px 0">
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:#8888aa;margin-bottom:2px">
+                <span>{sname.replace('_',' ').title()}</span><span>{sval:.2f}</span>
+              </div>
+              <div style="background:rgba(255,255,255,0.06);border-radius:3px;height:4px">
+                <div style="width:{pct}%;background:linear-gradient(90deg,#6366f1,#a855f7);height:4px;border-radius:3px"></div>
+              </div>
+            </div>"""
+
+        # Reasons list (first 3)
+        reasons = p.get("reasons", [])
+        reasons_html = "".join(f'<li style="font-size:11px;color:#94a3b8;margin:2px 0">{r}</li>' for r in reasons[:3])
+
+        card = f"""
+        <div style="background:#131320;border:1px solid rgba(255,255,255,0.07);border-radius:14px;
+                    padding:16px 20px;margin:8px 0;border-left:3px solid {sc};
+                    transition:border-color .2s"
+             onmouseover="this.style.borderColor='{cc}'" onmouseout="this.style.borderColor='{sc}'">
+          <!-- Header row -->
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <span style="background:rgba(99,102,241,.15);color:#a5b4fc;border:1px solid rgba(99,102,241,.3);
+                          border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700">#{i}</span>
+            <span style="font-size:15px;font-weight:700;color:#f1f5f9;flex:1">{name}</span>
+            <span style="background:{sc}22;color:{sc};border:1px solid {sc}55;
+                          border-radius:20px;padding:2px 10px;font-size:11px;font-weight:600">{subj}</span>
+            <span style="background:{cc}22;color:{cc};border:1px solid {cc}55;
+                          border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700">{conf}</span>
+          </div>
+          <!-- Stats row -->
+          <div style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:10px">
+            <div>
+              <div style="font-size:28px;font-weight:800;color:{cc};line-height:1">{prob_pct}</div>
+              <div style="font-size:10px;color:#8888aa;text-transform:uppercase;letter-spacing:.5px">P(Appear) {trend}</div>
+            </div>
+            <div>
+              <div style="font-size:20px;font-weight:700;color:#e2e8f0">~{exp_q:.0f} Qs</div>
+              <div style="font-size:10px;color:#8888aa">Range {q_min}–{q_max}</div>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:600;color:#e2e8f0">{fmts}</div>
+              <div style="font-size:10px;color:#8888aa">Format · Diff {diff}</div>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:600;color:#e2e8f0">{last}</div>
+              <div style="font-size:10px;color:#8888aa">Last Seen</div>
+            </div>
+          </div>
+          <!-- Signals + Reasons -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div>
+              <div style="font-size:10px;color:#8888aa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Model Signals</div>
+              {sig_bars if sig_bars else '<div style="font-size:11px;color:#8888aa">No signal data</div>'}
+            </div>
+            <div>
+              <div style="font-size:10px;color:#8888aa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Why Predicted</div>
+              <ul style="margin:0;padding-left:14px">
+                {reasons_html if reasons_html else '<li style="font-size:11px;color:#8888aa">No reasons available</li>'}
+              </ul>
+            </div>
+          </div>
+        </div>"""
+        cards_html.append(card)
+
+    st.markdown("\n".join(cards_html), unsafe_allow_html=True)
 
     # Downloads
     dc1, dc2 = st.columns(2)
