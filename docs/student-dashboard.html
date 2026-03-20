@@ -237,15 +237,7 @@ function switchExam(exam){
   loadData(exam).then(data=>{ if(!data)return; buildList(data.students); pick(data.students[0]); });
 }
 
-/* ── Search ── */
-document.getElementById('search').addEventListener('input',function(){
-  const q=this.value.toLowerCase();
-  // Auto-open the list when user starts searching
-  if(q.length > 0 && !_stuListOpen) toggleStudentList(true);
-  document.querySelectorAll('.stu-item').forEach(e=>{
-    e.style.display=e.dataset.q.includes(q)?'':'none';
-  });
-});
+/* ── Search (handled inside _renderStudents — see buildList block) ── */
 
 /* ── Student list (collapsed by default, toggle to reveal) ── */
 let _stuListOpen = false;
@@ -266,13 +258,32 @@ function toggleStudentList(forceOpen){
   }
 }
 
+/* ── Student list builder with virtual paging ── */
+const PAGE_SIZE = 30;  // students visible without searching
+let _allStudents = [];
+
 function buildList(students){
+  _allStudents = students;
   const list=document.getElementById('stu-list');
   const head=document.getElementById('stu-list-head');
   list.textContent='';
-  // Update header count to reflect actual loaded count
   head.querySelector('span:first-child').textContent='Students ('+students.length+')';
-  students.forEach(s=>{
+  _renderStudents('', students);
+}
+
+function _renderStudents(query, students){
+  const list=document.getElementById('stu-list');
+  list.textContent='';
+
+  const lq=query.trim().toLowerCase();
+  const matched = lq
+    ? students.filter(s=>(s.name+' '+s.id+' '+s.city).toLowerCase().includes(lq))
+    : students;
+
+  // Show all when searching; cap at PAGE_SIZE when idle
+  const visible = lq ? matched : matched.slice(0, PAGE_SIZE);
+
+  visible.forEach(s=>{
     const pct=(s.metrics.latest_percentage||0);
     const lv=pctLevel(pct);
     const div=el('div','stu-item');
@@ -295,7 +306,23 @@ function buildList(students){
     div.addEventListener('click',()=>pick(s));
     list.appendChild(div);
   });
+
+  // "Show more" row when capped
+  if(!lq && matched.length > PAGE_SIZE){
+    const more=el('div');
+    more.style.cssText='padding:8px 14px;font-size:.72rem;color:#6366f1;cursor:pointer;text-align:center;border-top:1px solid rgba(255,255,255,.05)';
+    more.appendChild(txt('Show all '+matched.length+' students ▾'));
+    more.addEventListener('click',()=>_renderStudents('__all__', students));
+    list.appendChild(more);
+  }
 }
+
+// Allow the search box to use the new renderer
+document.getElementById('search').addEventListener('input',function(){
+  const q=this.value;
+  if(q.length > 0 && !_stuListOpen) toggleStudentList(true);
+  _renderStudents(q, _allStudents);
+});
 
 function pick(s){
   G.stu=s;
@@ -1021,7 +1048,7 @@ function buildCopilot(s){
     fetch('http://localhost:8001/api/v1/copilot/ask',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({exam_type:G.exam==='neet'?'neet':'jee_main',target_year:2025,question:contextQ,persona:'student'}),
+      body:JSON.stringify({exam_type:G.exam==='neet'?'neet':'jee_main',target_year:new Date().getFullYear()+1,question:contextQ,persona:'student'}),
     })
     .then(r=>r.json())
     .then(d=>{

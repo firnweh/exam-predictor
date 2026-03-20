@@ -1298,68 +1298,94 @@ with tab_deep:
     if sel_topic:
         dive = get_topic_deep_dive(DB_PATH, sel_topic, exam=exam_filter, subject=subject_filter_deep)
         if dive:
-            m1, m2, m3, m4 = st.columns(4)
-            m1.metric("Total Questions", dive["total_questions"])
-            m2.metric("First Appeared", dive["first_year"])
-            m3.metric("Last Appeared", dive["last_year"])
-            m4.metric("Span", f"{dive['last_year'] - dive['first_year']} years")
+            # ── Active filter badge ────────────────────────────────────────────
+            filter_parts = []
+            if exam_filter:      filter_parts.append(f"📋 {exam_filter}")
+            if subject_filter_deep: filter_parts.append(f"📚 {subject_filter_deep}")
+            if sel_micro and sel_micro != "All": filter_parts.append(f"🔬 {sel_micro}")
+            if filter_parts:
+                st.caption("Active filters: " + "  ·  ".join(filter_parts))
 
-            # Timeline bar + moving avg
-            ydf = dive["year_counts"]
+            # ── Derive the working question set ───────────────────────────────
+            # When a micro-topic is selected, ALL charts and metrics use that
+            # filtered subset — not just the questions table.
+            qdf_all = dive["questions"]
+            if sel_micro and sel_micro != "All":
+                qdf_view = qdf_all[qdf_all["micro_topic"] == sel_micro]
+            else:
+                qdf_view = qdf_all
+
+            # ── Metrics ───────────────────────────────────────────────────────
+            m1, m2, m3, m4 = st.columns(4)
+            m1.metric("Questions Shown", len(qdf_view),
+                      delta=f"{len(qdf_all)} total" if sel_micro and sel_micro != "All" else None)
+            m2.metric("First Appeared", int(qdf_view["year"].min()) if not qdf_view.empty else dive["first_year"])
+            m3.metric("Last Appeared",  int(qdf_view["year"].max()) if not qdf_view.empty else dive["last_year"])
+            m4.metric("Span", f"{int(qdf_view['year'].max()) - int(qdf_view['year'].min())} yrs"
+                      if not qdf_view.empty and qdf_view['year'].max() != qdf_view['year'].min()
+                      else f"{dive['last_year'] - dive['first_year']} yrs")
+
+            # ── Timeline: recompute from qdf_view so micro filter applies ─────
+            ydf = qdf_view.groupby("year").size().reset_index(name="count") if not qdf_view.empty else dive["year_counts"]
             fig = go.Figure()
             fig.add_trace(go.Bar(x=ydf["year"], y=ydf["count"], marker_color="#818cf8", name="Questions"))
             if len(ydf) > 2:
                 ma = pd.Series(ydf["count"].values).rolling(3, min_periods=1).mean()
                 fig.add_trace(go.Scatter(x=ydf["year"], y=ma, mode="lines", name="3-yr Avg",
                                          line=dict(color="#f43f5e", width=2, dash="dot")))
-            fig.update_layout(**PLOT_LAYOUT, height=320, title=f"'{sel_topic}' — Questions per Year")
+            chart_title = f"'{sel_micro}' in {sel_topic}" if (sel_micro and sel_micro != "All") else f"'{sel_topic}'"
+            fig.update_layout(**PLOT_LAYOUT, height=320, title=f"{chart_title} — Questions per Year")
             st.plotly_chart(fig, use_container_width=True)
 
             dl, dr = st.columns(2)
             with dl:
-                ddf = dive["difficulty_trend"]
+                # Difficulty trend — recompute from filtered questions
+                if not qdf_view.empty:
+                    ddf = qdf_view.groupby("year")["difficulty"].mean().reset_index()
+                    ddf.columns = ["year", "difficulty"]
+                else:
+                    ddf = dive["difficulty_trend"]
                 if not ddf.empty and len(ddf) > 1:
                     fig = px.line(ddf, x="year", y="difficulty", markers=True,
                                   color_discrete_sequence=["#f43f5e"])
                     fig.update_layout(**PLOT_LAYOUT, height=260, title="Difficulty Trend", yaxis_range=[1, 5])
                     st.plotly_chart(fig, use_container_width=True)
             with dr:
-                tdf = pd.DataFrame(list(dive["type_distribution"].items()), columns=["Type", "Count"])
+                # Type distribution — recompute from filtered questions
+                type_dist = qdf_view["question_type"].value_counts().to_dict() if not qdf_view.empty else dive["type_distribution"]
+                tdf = pd.DataFrame(list(type_dist.items()), columns=["Type", "Count"])
                 if not tdf.empty:
                     fig = px.pie(tdf, values="Count", names="Type", color_discrete_sequence=SUBJ_COLORS)
                     fig.update_layout(**PLOT_LAYOUT, height=260, title="Question Types")
                     st.plotly_chart(fig, use_container_width=True)
 
-            # Subtopic breakdown
-            sdf = dive["subtopic_counts"]
-            if not sdf.empty:
-                fig = px.bar(sdf, x="count", y="micro_topic", orientation="h",
-                             color="avg_difficulty", color_continuous_scale="RdYlGn_r",
-                             title="Subtopic Frequency")
-                fig.update_layout(**PLOT_LAYOUT, height=max(280, len(sdf) * 26),
-                                  yaxis=dict(autorange="reversed"))
-                st.plotly_chart(fig, use_container_width=True)
+            # Subtopic breakdown (only shown when no micro-topic filter active)
+            if not (sel_micro and sel_micro != "All"):
+                sdf = dive["subtopic_counts"]
+                if not sdf.empty:
+                    fig = px.bar(sdf, x="count", y="micro_topic", orientation="h",
+                                 color="avg_difficulty", color_continuous_scale="RdYlGn_r",
+                                 title="Subtopic Frequency (click a bar to filter above)")
+                    fig.update_layout(**PLOT_LAYOUT, height=max(280, len(sdf) * 26),
+                                      yaxis=dict(autorange="reversed"))
+                    st.plotly_chart(fig, use_container_width=True)
 
-            # Cross-exam
-            if len(dive["exam_counts"]) > 1:
+            # Cross-exam (always full-topic scope, useful for comparison context)
+            if len(dive["exam_counts"]) > 1 and not exam_filter:
                 edf = pd.DataFrame(list(dive["exam_counts"].items()), columns=["Exam", "Questions"])
                 fig = px.pie(edf, values="Questions", names="Exam", title="Cross-Exam Presence")
                 fig.update_layout(**PLOT_LAYOUT, height=260)
                 st.plotly_chart(fig, use_container_width=True)
 
-            # Questions
-            st.markdown("#### All Questions")
-            qdf = dive["questions"]
-            if sel_micro and sel_micro != "All":
-                qdf = qdf[qdf["micro_topic"] == sel_micro]
-            st.write(f"Showing {len(qdf)} questions")
-            for _, row in qdf.iterrows():
+            # Questions list — always uses qdf_view (already micro-filtered above)
+            st.markdown(f"#### Questions ({len(qdf_view)} shown)")
+            for _, row in qdf_view.iterrows():
                 with st.expander(f"[{row['exam']} {row['year']}] {row['micro_topic']} — Diff: {row['difficulty']}"):
                     st.markdown(f"**Q:** {row['question_text'][:500]}")
                     st.markdown(f"**A:** {row['answer']}")
                     st.markdown(f"**Type:** {row['question_type']}  |  **Shift:** {row['shift']}")
         else:
-            st.info("No data found for this topic.")
+            st.info("No data found for this topic with the current filters.")
     else:
         st.info("Select a chapter above to explore its full history, difficulty trend, and question breakdown.")
 
