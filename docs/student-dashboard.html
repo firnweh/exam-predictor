@@ -572,36 +572,102 @@ function buildZones(s){
 /* ── Chapter Performance Panel ── */
 function buildHeatmap(s){
   const SUBJ_COLOR = {
-    Biology:'#22c55e', Chemistry:'#06b6d4',
-    Physics:'#f59e0b', Mathematics:'#a855f7',
+    Botany:'#22c55e', Zoology:'#10b981',
+    Chemistry:'#06b6d4', Physics:'#f59e0b', Mathematics:'#a855f7',
   };
   const LV_LABEL = {M:'Mastered',S:'Strong',D:'Developing',W:'Weak',C:'Critical'};
   const LV_COLOR = {M:'#22c55e',S:'#84cc16',D:'#f59e0b',W:'#f97316',C:'#ef4444'};
 
+  // Definitive chapter→subject lookup (NEET splits Biology into Botany + Zoology)
+  const NEET_MAP = {
+    'Physical World And Measurement':'Physics','Kinematics':'Physics',
+    'Laws Of Motion':'Physics','Work Energy And Power':'Physics',
+    'Rotational Motion':'Physics','Gravitation':'Physics',
+    'Properties Of Solids And Liquids':'Physics','Thermodynamics':'Physics',
+    'Kinetic Theory Of Gases':'Physics','Thermodynamics Laws':'Physics',
+    'Oscillations And Waves':'Physics','Electrostatics':'Physics',
+    'Current Electricity':'Physics','Magnetic Effects Of Current':'Physics',
+    'Electromagnetic Induction':'Physics','Alternating Current':'Physics',
+    'Electromagnetic Waves':'Physics','Optics':'Physics',
+    'Dual Nature Of Matter':'Physics','Atoms And Nuclei':'Physics',
+    'Electronic Devices':'Physics',
+    'Some Basic Concepts Of Chemistry':'Chemistry','Structure Of Atom':'Chemistry',
+    'Classification Of Elements':'Chemistry','Chemical Bonding':'Chemistry',
+    'States Of Matter':'Chemistry','Chemical Thermodynamics':'Chemistry',
+    'Equilibrium':'Chemistry','Redox Reactions':'Chemistry',
+    'Hydrogen':'Chemistry','S Block Elements':'Chemistry',
+    'P Block Elements':'Chemistry','Organic Chemistry Basic Principles':'Chemistry',
+    'Hydrocarbons':'Chemistry','Environmental Chemistry':'Chemistry',
+    'Solid State':'Chemistry','Solutions':'Chemistry',
+    'Electrochemistry':'Chemistry','Chemical Kinetics':'Chemistry',
+    'Surface Chemistry':'Chemistry','D And F Block Elements':'Chemistry',
+    'Coordination Compounds':'Chemistry','Haloalkanes And Haloarenes':'Chemistry',
+    'Alcohols Phenols Ethers':'Chemistry',
+    'Aldehydes Ketones Carboxylic Acids':'Chemistry',
+    'Amines':'Chemistry','Biomolecules':'Chemistry',
+    'Polymers':'Chemistry','Chemistry In Everyday Life':'Chemistry',
+    'Diversity In Living World':'Botany',
+    'Structural Organisation In Plants And Animals':'Botany',
+    'Cell Structure And Function':'Botany','Plant Physiology':'Botany',
+    'Human Physiology':'Zoology','Reproduction':'Zoology',
+    'Genetics And Evolution':'Zoology','Biology And Human Welfare':'Zoology',
+    'Biotechnology':'Zoology','Ecology And Environment':'Zoology',
+  };
+  const JEE_MAP = {
+    'Kinematics':'Physics',"Newton's Laws":'Physics',
+    'Work Power Energy':'Physics','Centre Of Mass':'Physics',
+    'Rotational Mechanics':'Physics','Gravitation':'Physics',
+    'Simple Harmonic Motion':'Physics','Fluid Mechanics':'Physics',
+    'Wave Motion':'Physics','Sound Waves':'Physics',
+    'Heat And Temperature':'Physics','KTG And Thermodynamics':'Physics',
+    'Electrostatics':'Physics','Capacitance':'Physics',
+    'Current Electricity':'Physics','Magnetic Effect':'Physics',
+    'Electromagnetic Induction':'Physics','Alternating Current':'Physics',
+    'Geometrical Optics':'Physics','Wave Optics':'Physics',
+    'Photoelectric Effect':'Physics','Atomic Models':'Physics',
+    'Nuclear Physics':'Physics','Semiconductors':'Physics',
+    'Mole Concept':'Chemistry','Atomic Structure':'Chemistry',
+    'Chemical Bonding':'Chemistry','Gaseous State':'Chemistry',
+    'Chemical Thermodynamics':'Chemistry','Chemical Equilibrium':'Chemistry',
+    'Ionic Equilibrium':'Chemistry','Chemical Kinetics':'Chemistry',
+    'Electrochemistry':'Chemistry','Solutions':'Chemistry',
+    'Surface Chemistry':'Chemistry','Solid State':'Chemistry',
+    'Periodic Table':'Chemistry','s-Block Elements':'Chemistry',
+    'p-Block Elements':'Chemistry','d-Block Elements':'Chemistry',
+    'Coordination Chemistry':'Chemistry','Metallurgy':'Chemistry',
+    'Qualitative Analysis':'Chemistry','Hydrogen':'Chemistry',
+    'General Organic Chemistry':'Chemistry','Hydrocarbons':'Chemistry',
+    'Halides':'Chemistry','Oxygen Compounds':'Chemistry',
+    'Nitrogen Compounds':'Chemistry','Biomolecules':'Chemistry',
+    'Polymers':'Chemistry','Practical Organic':'Chemistry',
+    'Quadratic Equations':'Mathematics','Complex Numbers':'Mathematics',
+    'Sequences And Series':'Mathematics','Permutation Combination':'Mathematics',
+    'Binomial Theorem':'Mathematics','Matrices Determinants':'Mathematics',
+    'Mathematical Induction':'Mathematics','Trigonometric Functions':'Mathematics',
+    'Trigonometric Equations':'Mathematics','Inverse Trigonometry':'Mathematics',
+    'Properties Of Triangles':'Mathematics','Straight Lines':'Mathematics',
+    'Circles':'Mathematics','Parabola':'Mathematics',
+    'Ellipse':'Mathematics','Hyperbola':'Mathematics',
+    'Limits':'Mathematics','Continuity And Differentiability':'Mathematics',
+    'Differentiation':'Mathematics','Application Of Derivatives':'Mathematics',
+    'Indefinite Integrals':'Mathematics','Definite Integrals':'Mathematics',
+    'Area Under Curves':'Mathematics','Differential Equations':'Mathematics',
+    'Vectors':'Mathematics','3D Geometry':'Mathematics',
+    'Probability':'Mathematics','Distributions':'Mathematics','Statistics':'Mathematics',
+  };
+  const CHAP_MAP = G.exam === 'neet' ? NEET_MAP : JEE_MAP;
+
   const c = mkCard('📊 Chapter Performance');
   const note = el('div','note');
-  note.appendChild(txt('Accuracy per chapter across all mock exams, grouped by subject. Trend arrow shows improvement direction.'));
+  note.appendChild(txt('Accuracy per chapter, grouped by subject. Sorted weakest-first. Trend: ↑ improving · ↓ declining · → stable.'));
   c.appendChild(note);
 
   const chapters = s.chapters || {};
 
-  // Group by subject (derive subject from s.subjects keys or fallback map)
+  // Group chapters using exact lookup table — no guessing
   const subjMap = {};
   Object.entries(chapters).forEach(([chap, info]) => {
-    // Try to look up subject from student subjects data; fallback to longest match
-    let subj = 'Other';
-    if(s.subjects){
-      for(const sn of Object.keys(s.subjects)){
-        if((s.subjects[sn].chapters||[]).includes(chap)){ subj=sn; break; }
-      }
-    }
-    // If still Other, try to guess from chapter name keywords
-    if(subj==='Other'){
-      if(/cell|gene|plant|animal|bio|eco|physio|reprod|evol|dna|rna|enzyme/i.test(chap)) subj='Biology';
-      else if(/chem|organ|inorgan|equilib|electro|acid|bond|mole|thermo/i.test(chap)) subj='Chemistry';
-      else if(/motion|optic|electro|wave|heat|thermo|mechanic|nuclear|gravit|fluid/i.test(chap)) subj='Physics';
-      else if(/algebra|calcul|co-ord|vector|probab|statist|trigon|matric|integr/i.test(chap)) subj='Mathematics';
-    }
+    const subj = CHAP_MAP[chap] || 'Other';
     if(!subjMap[subj]) subjMap[subj]=[];
     subjMap[subj].push({chap, info});
   });
