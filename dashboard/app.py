@@ -1281,7 +1281,7 @@ with tab_lesson:
                 for stn in subtopics:
                     sr = ch_cov[ch_cov["subtopic"] == stn]
                     qf = int(sr["questions_found"].sum()) if not sr.empty else 0
-                    last = int(sr["last_appeared"].max()) if not sr.empty and sr["last_appeared"].max() > 0 else "-"
+                    last = int(sr["last_appeared"].max()) if not sr.empty and sr["last_appeared"].max() > 0 else 0
                     ylist = []
                     if not sr.empty:
                         for yl in sr["years_appeared"]:
