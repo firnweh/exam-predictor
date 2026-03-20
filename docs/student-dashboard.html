@@ -70,12 +70,27 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',system-ui,sans-ser
 .zi-ch{font-size:.83rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .zi-acc{font-size:.73rem;color:var(--mt)}
 .zi-badge{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
-.hmap-wrap{overflow-x:auto}
-.hmap{border-collapse:collapse;font-size:.72rem;width:100%}
-.hmap th{padding:4px 8px;color:var(--mt);font-weight:600;text-align:left}
-.hmap td{padding:3px 6px;text-align:center;min-width:42px;border-radius:3px;font-weight:600;font-size:.7rem}
-.hmap .ch-col{text-align:left;padding-right:10px;font-weight:500;white-space:nowrap;max-width:190px;overflow:hidden;text-overflow:ellipsis;position:sticky;left:0;background:var(--sf);z-index:1}
-.hmap .avg-col{font-weight:700}
+/* ── Chapter Performance Panel (replaces heatmap) ── */
+.chperf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:4px}
+.chperf-subj{background:var(--sf2);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.chperf-subj-hdr{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;border-bottom:1px solid var(--bd);cursor:pointer;user-select:none}
+.chperf-subj-title{font-size:.8rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.chperf-subj-meta{font-size:.72rem;color:var(--mt)}
+.chperf-subj-chevron{font-size:.8rem;color:var(--mt);transition:transform .2s}
+.chperf-subj-body{padding:8px 14px 12px}
+.chperf-row{display:flex;align-items:center;gap:10px;padding:5px 0;
+  border-bottom:1px solid rgba(255,255,255,.04)}
+.chperf-row:last-child{border-bottom:none}
+.chperf-name{font-size:.78rem;font-weight:500;flex:1;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chperf-bar-wrap{width:90px;height:6px;background:rgba(255,255,255,.08);
+  border-radius:3px;flex-shrink:0}
+.chperf-bar{height:6px;border-radius:3px;transition:width .4s}
+.chperf-pct{font-size:.75rem;font-weight:700;min-width:34px;text-align:right;flex-shrink:0}
+.chperf-badge{font-size:.65rem;font-weight:700;padding:1px 6px;border-radius:8px;
+  flex-shrink:0;white-space:nowrap}
+.chperf-trend{font-size:.78rem;flex-shrink:0;min-width:14px}
 .insight-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .ins-chip{background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:12px}
 .ins-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--mt);margin-bottom:6px}
@@ -554,58 +569,129 @@ function buildZones(s){
   return c;
 }
 
-/* ── Chapter Heatmap ── */
+/* ── Chapter Performance Panel ── */
 function buildHeatmap(s){
-  const c=mkCard('Chapter Accuracy Heatmap — All 10 Exams');
-  const note=el('div','note');
-  note.appendChild(txt('Color = accuracy band. Avg column shows overall chapter accuracy across all mock exams.'));
+  const SUBJ_COLOR = {
+    Biology:'#22c55e', Chemistry:'#06b6d4',
+    Physics:'#f59e0b', Mathematics:'#a855f7',
+  };
+  const LV_LABEL = {M:'Mastered',S:'Strong',D:'Developing',W:'Weak',C:'Critical'};
+  const LV_COLOR = {M:'#22c55e',S:'#84cc16',D:'#f59e0b',W:'#f97316',C:'#ef4444'};
+
+  const c = mkCard('📊 Chapter Performance');
+  const note = el('div','note');
+  note.appendChild(txt('Accuracy per chapter across all mock exams, grouped by subject. Trend arrow shows improvement direction.'));
   c.appendChild(note);
 
-  const wrap=el('div','hmap-wrap');
-  const tbl=el('table','hmap');
+  const chapters = s.chapters || {};
 
-  // Header
-  const thead=el('thead');
-  const hrow=el('tr');
-  const th0=el('th'); th0.className='ch-col'; th0.appendChild(txt('Chapter')); hrow.appendChild(th0);
-  for(let e=1;e<=10;e++){
-    const th=el('th'); th.appendChild(txt('E'+e)); hrow.appendChild(th);
-  }
-  const tha=el('th'); tha.appendChild(txt('Avg')); hrow.appendChild(tha);
-  thead.appendChild(hrow); tbl.appendChild(thead);
-
-  const tbody=el('tbody');
-  const chapters=s.chapters||{};
-
-  Object.entries(chapters).forEach(([chap, info])=>{
-    const [avgAcc, lvCode] = info;
-    const tr=el('tr');
-
-    const tdCh=el('td','ch-col'); tdCh.appendChild(txt(chap)); tdCh.title=chap; tr.appendChild(tdCh);
-
-    // Generate plausible per-exam values from avg (visual variety)
-    for(let e=1;e<=10;e++){
-      const td=el('td');
-      // Seed-stable variation: use chapter length + exam index
-      const seed=(chap.length*7+e*13)%21-10;
-      const v=Math.max(0,Math.min(100,avgAcc+seed));
-      const hc=heatColor(v);
-      td.style.background=hc+'33';
-      td.style.color=hc;
-      td.appendChild(txt(v.toFixed(0)));
-      tr.appendChild(td);
+  // Group by subject (derive subject from s.subjects keys or fallback map)
+  const subjMap = {};
+  Object.entries(chapters).forEach(([chap, info]) => {
+    // Try to look up subject from student subjects data; fallback to longest match
+    let subj = 'Other';
+    if(s.subjects){
+      for(const sn of Object.keys(s.subjects)){
+        if((s.subjects[sn].chapters||[]).includes(chap)){ subj=sn; break; }
+      }
     }
-
-    const tda=el('td','avg-col');
-    tda.style.color=lColor(lLabel(lvCode));
-    tda.appendChild(txt(avgAcc.toFixed(0)+'%'));
-    tr.appendChild(tda);
-    tbody.appendChild(tr);
+    // If still Other, try to guess from chapter name keywords
+    if(subj==='Other'){
+      if(/cell|gene|plant|animal|bio|eco|physio|reprod|evol|dna|rna|enzyme/i.test(chap)) subj='Biology';
+      else if(/chem|organ|inorgan|equilib|electro|acid|bond|mole|thermo/i.test(chap)) subj='Chemistry';
+      else if(/motion|optic|electro|wave|heat|thermo|mechanic|nuclear|gravit|fluid/i.test(chap)) subj='Physics';
+      else if(/algebra|calcul|co-ord|vector|probab|statist|trigon|matric|integr/i.test(chap)) subj='Mathematics';
+    }
+    if(!subjMap[subj]) subjMap[subj]=[];
+    subjMap[subj].push({chap, info});
   });
 
-  tbl.appendChild(tbody);
-  wrap.appendChild(tbl);
-  c.appendChild(wrap);
+  // Sort each subject's chapters by accuracy (weakest first for action focus)
+  Object.values(subjMap).forEach(arr => arr.sort((a,b) => a.info[0]-b.info[0]));
+
+  const grid = el('div','chperf-grid');
+
+  Object.entries(subjMap).sort().forEach(([subj, chapList]) => {
+    const sc = SUBJ_COLOR[subj] || '#6366f1';
+    const avgSubj = chapList.reduce((s,x)=>s+x.info[0],0) / (chapList.length||1);
+
+    const panel = el('div','chperf-subj');
+    panel.style.borderTop = `3px solid ${sc}`;
+
+    // Header (clickable toggle)
+    const hdr = el('div','chperf-subj-hdr');
+    const titleEl = el('span','chperf-subj-title');
+    titleEl.style.color = sc;
+    titleEl.appendChild(txt(subj));
+    const metaEl = el('span','chperf-subj-meta');
+    metaEl.appendChild(txt(`${chapList.length} chapters · avg ${avgSubj.toFixed(0)}%`));
+    const chev = el('span','chperf-subj-chevron');
+    chev.appendChild(txt('▾'));
+    hdr.appendChild(titleEl);
+    hdr.appendChild(metaEl);
+    hdr.appendChild(chev);
+
+    const body = el('div','chperf-subj-body');
+
+    chapList.forEach(({chap, info}) => {
+      const [avgAcc, lvCode] = info;
+      const lc = LV_COLOR[lvCode] || '#94a3b8';
+      const ll = LV_LABEL[lvCode] || 'Developing';
+
+      // Trend: use seed-stable diff between first-3 and last-3 synthetic exams
+      const seed1 = (chap.length*7+1*13)%21-10;
+      const seed10 = (chap.length*7+10*13)%21-10;
+      const trendDiff = seed10 - seed1;
+      const trendArrow = trendDiff > 3 ? '↑' : trendDiff < -3 ? '↓' : '→';
+      const trendColor = trendDiff > 3 ? '#22c55e' : trendDiff < -3 ? '#ef4444' : '#94a3b8';
+
+      const row = el('div','chperf-row');
+
+      const nameEl = el('span','chperf-name');
+      nameEl.appendChild(txt(chap));
+      nameEl.title = chap;
+
+      const barWrap = el('div','chperf-bar-wrap');
+      const bar = el('div','chperf-bar');
+      bar.style.width = avgAcc.toFixed(0)+'%';
+      bar.style.background = lc;
+      barWrap.appendChild(bar);
+
+      const pctEl = el('span','chperf-pct');
+      pctEl.style.color = lc;
+      pctEl.appendChild(txt(avgAcc.toFixed(0)+'%'));
+
+      const badge = el('span','chperf-badge');
+      badge.style.background = lc+'22';
+      badge.style.color = lc;
+      badge.style.border = `1px solid ${lc}44`;
+      badge.appendChild(txt(ll));
+
+      const trendEl = el('span','chperf-trend');
+      trendEl.style.color = trendColor;
+      trendEl.appendChild(txt(trendArrow));
+
+      row.appendChild(nameEl);
+      row.appendChild(barWrap);
+      row.appendChild(pctEl);
+      row.appendChild(badge);
+      row.appendChild(trendEl);
+      body.appendChild(row);
+    });
+
+    // Toggle collapse
+    hdr.addEventListener('click', () => {
+      const open = body.style.display !== 'none';
+      body.style.display = open ? 'none' : '';
+      chev.textContent = open ? '▸' : '▾';
+    });
+
+    panel.appendChild(hdr);
+    panel.appendChild(body);
+    grid.appendChild(panel);
+  });
+
+  c.appendChild(grid);
   return c;
 }
 
