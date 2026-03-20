@@ -146,8 +146,11 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',system-ui,sans-ser
       <div class="sb-head">Search</div>
       <input class="search-box" id="search" placeholder="Name or ID…" style="margin-top:8px"/>
     </div>
-    <div class="sb-head">Students (200)</div>
-    <div class="stu-list" id="stu-list"></div>
+    <div class="sb-head" id="stu-list-head" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between" onclick="toggleStudentList()">
+      <span>Students</span>
+      <span id="stu-list-toggle" style="font-size:.9rem;color:#7c3aed;transition:transform .2s">▸</span>
+    </div>
+    <div class="stu-list" id="stu-list" style="display:none;max-height:0;overflow:hidden;transition:max-height .3s ease"></div>
   </aside>
 
   <main class="main" id="main">
@@ -222,15 +225,38 @@ function switchExam(exam){
 /* ── Search ── */
 document.getElementById('search').addEventListener('input',function(){
   const q=this.value.toLowerCase();
+  // Auto-open the list when user starts searching
+  if(q.length > 0 && !_stuListOpen) toggleStudentList(true);
   document.querySelectorAll('.stu-item').forEach(e=>{
     e.style.display=e.dataset.q.includes(q)?'':'none';
   });
 });
 
-/* ── Student list ── */
+/* ── Student list (collapsed by default, toggle to reveal) ── */
+let _stuListOpen = false;
+
+function toggleStudentList(forceOpen){
+  const list   = document.getElementById('stu-list');
+  const toggle = document.getElementById('stu-list-toggle');
+  _stuListOpen = forceOpen !== undefined ? forceOpen : !_stuListOpen;
+  if(_stuListOpen){
+    list.style.display    = 'flex';
+    list.style.maxHeight  = '9999px';
+    toggle.style.transform= 'rotate(90deg)';
+  } else {
+    list.style.maxHeight  = '0';
+    list.style.overflow   = 'hidden';
+    setTimeout(()=>{ if(!_stuListOpen) list.style.display='none'; }, 300);
+    toggle.style.transform= 'rotate(0deg)';
+  }
+}
+
 function buildList(students){
   const list=document.getElementById('stu-list');
+  const head=document.getElementById('stu-list-head');
   list.textContent='';
+  // Update header count to reflect actual loaded count
+  head.querySelector('span:first-child').textContent='Students ('+students.length+')';
   students.forEach(s=>{
     const pct=(s.metrics.latest_percentage||0);
     const lv=pctLevel(pct);
