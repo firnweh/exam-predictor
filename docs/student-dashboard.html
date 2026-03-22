@@ -1140,7 +1140,7 @@ function buildCopilot(s){
 /* ── Guide constants ── */
 const STUDY_HOURS = {C:6, W:4, D:2.5, S:1, M:0.5};
 const NEXT_LEVEL  = {C:'Weak', W:'Developing', D:'Strong', S:'Mastered', M:'–'};
-const NEXT_THRESH = {C:25,    W:40,            D:55,       S:70,         M:100};
+const NEXT_THRESH = {C:25,    W:45,            D:65,       S:80,         M:100}; // must match pctLevel() boundaries
 const STRATEGY = {
   C:{
     rising:   '🚨 Highest priority. Start with NCERT basics, then solve last 5-yr PYQs daily. This topic is gaining importance.',
@@ -1155,7 +1155,7 @@ const STRATEGY = {
   D:{
     rising:   '🟡 Good potential. Consistent practice will push you to Strong. Focus on high-frequency micro-topics.',
     stable:   '🟡 Developing. 2–3 timed mock sets per week will consolidate this chapter.',
-    declining:'🟡 Stable enough. Maintain with weekly revision; redirect extra time to weaker chapters.',
+    declining:'🟡 Declining trend. Maintain with weekly revision to stop the slide; redirect extra study time to higher-ROI chapters.',
   },
   S:{any:'🟢 Strong. Weekly maintenance revision and 1 mock test set is sufficient.'},
   M:{any:'✅ Mastered. Quick 30-min revision before exam. No major investment needed.'},
