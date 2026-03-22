@@ -635,54 +635,53 @@ with tab_main:
         prob_bar_pct = min(int(prob * 100), 100)
         training_str = f"Training: {training}" if training else ""
 
-        card = f"""
-        <details style="background:#131320;border:1px solid rgba(255,255,255,0.07);border-radius:12px;
-                         margin:5px 0;overflow:hidden">
-          <!-- ── Collapsed summary row ── -->
-          <summary style="display:flex;align-items:center;gap:0;padding:12px 16px;
-                           cursor:pointer;list-style:none;user-select:none;
-                           transition:background .15s"
-                   onmouseover="this.style.background='rgba(255,255,255,0.025)'"
-                   onmouseout="this.style.background='transparent'">
-            <!-- Rank -->
-            <span style="font-size:11px;color:#8888aa;min-width:28px;flex-shrink:0">#{i}</span>
-            <!-- Name + subject + pills -->
-            <div style="flex:1;min-width:0;padding-right:16px">
-              <div style="font-size:14px;font-weight:700;color:#f1f5f9;margin-bottom:2px">{name}</div>
-              <div style="font-size:11px;color:#8888aa;margin-bottom:6px">{subj}</div>
-              <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px">{reason_pills}</div>
-              <div style="font-size:11px;color:#6b7280">{fmts} · diff: {diff} · last: {last}</div>
-            </div>
-            <!-- Right stats -->
-            <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
-              <span style="font-size:13px;color:#8888aa">{trend}</span>
-              <span style="background:{cc}22;color:{cc};border:1px solid {cc}44;
-                            border-radius:6px;padding:3px 10px;font-size:11px;font-weight:800">{conf}</span>
-              <span style="font-size:12px;color:#e2e8f0;font-weight:600;white-space:nowrap">~{exp_q:.1f}Q ({q_min}–{q_max})</span>
-              <div style="width:80px;background:rgba(255,255,255,0.06);border-radius:3px;height:6px;flex-shrink:0">
-                <div style="width:{prob_bar_pct}%;background:linear-gradient(90deg,#22c55e,#10b981);height:6px;border-radius:3px"></div>
-              </div>
-              <span style="font-size:14px;font-weight:800;color:{cc};min-width:36px;text-align:right">{prob_pct}</span>
-            </div>
-          </summary>
+        footer_html = (
+            f'<div style="font-size:11px;color:#8888aa;margin-top:12px">'
+            f'Syllabus: <b style="color:#94a3b8">{syllabus}</b>'
+            f'{" · " + training_str if training_str else ""}'
+            f'</div>'
+        )
+        sig_section = (
+            f'<div style="font-size:11px;color:#8888aa;margin-bottom:8px">Signal Breakdown:</div>{sig_bars}'
+            if sig_bars else ''
+        )
+        fallback_li = '<li style="font-size:12px;color:#8888aa">No reasons available</li>'
+        body_reasons = all_reasons_html if all_reasons_html else fallback_li
 
-          <!-- ── Expanded body ── -->
-          <div style="background:rgba(99,102,241,0.04);border-top:1px solid rgba(99,102,241,0.15);
-                       padding:14px 18px 14px 44px">
-            <!-- PRAJNA Model Signals header -->
-            <div style="font-size:12px;font-weight:700;color:#6366f1;margin-bottom:10px">PRAJNA Model Signals:</div>
-            <!-- All reasons as bullets -->
-            <ul style="margin:0 0 14px 0;padding-left:18px">
-              {all_reasons_html if all_reasons_html else '<li style="font-size:12px;color:#8888aa">No reasons available</li>'}
-            </ul>
-            <!-- Signal breakdown bars -->
-            {f'<div style="font-size:11px;color:#8888aa;margin-bottom:8px">Signal Breakdown:</div>{sig_bars}' if sig_bars else ''}
-            <!-- Footer -->
-            <div style="font-size:11px;color:#8888aa;margin-top:12px">
-              Syllabus: <b style="color:#94a3b8">{syllabus}</b>{(" · " + training_str) if training_str else ""}
-            </div>
-          </div>
-        </details>"""
+        card = (
+            f'<details style="background:#131320;border:1px solid rgba(255,255,255,0.07);'
+            f'border-radius:12px;margin:5px 0;overflow:hidden">'
+            f'<summary style="display:flex;align-items:center;gap:0;padding:12px 16px;'
+            f'cursor:pointer;list-style:none;user-select:none;transition:background .15s" '
+            f'onmouseover="this.style.background=\'rgba(255,255,255,0.025)\'" '
+            f'onmouseout="this.style.background=\'transparent\'">'
+            f'<span style="font-size:11px;color:#8888aa;min-width:28px;flex-shrink:0">#{i}</span>'
+            f'<div style="flex:1;min-width:0;padding-right:16px">'
+            f'<div style="font-size:14px;font-weight:700;color:#f1f5f9;margin-bottom:2px">{name}</div>'
+            f'<div style="font-size:11px;color:#8888aa;margin-bottom:6px">{subj}</div>'
+            f'<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px">{reason_pills}</div>'
+            f'<div style="font-size:11px;color:#6b7280">{fmts} · diff: {diff} · last: {last}</div>'
+            f'</div>'
+            f'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
+            f'<span style="font-size:13px;color:#8888aa">{trend}</span>'
+            f'<span style="background:{cc}22;color:{cc};border:1px solid {cc}44;'
+            f'border-radius:6px;padding:3px 10px;font-size:11px;font-weight:800">{conf}</span>'
+            f'<span style="font-size:12px;color:#e2e8f0;font-weight:600;white-space:nowrap">~{exp_q:.1f}Q ({q_min}\u2013{q_max})</span>'
+            f'<div style="width:80px;background:rgba(255,255,255,0.06);border-radius:3px;height:6px;flex-shrink:0">'
+            f'<div style="width:{prob_bar_pct}%;background:linear-gradient(90deg,#22c55e,#10b981);height:6px;border-radius:3px"></div>'
+            f'</div>'
+            f'<span style="font-size:14px;font-weight:800;color:{cc};min-width:36px;text-align:right">{prob_pct}</span>'
+            f'</div>'
+            f'</summary>'
+            f'<div style="background:rgba(99,102,241,0.04);border-top:1px solid rgba(99,102,241,0.15);'
+            f'padding:14px 18px 14px 44px">'
+            f'<div style="font-size:12px;font-weight:700;color:#6366f1;margin-bottom:10px">PRAJNA Model Signals:</div>'
+            f'<ul style="margin:0 0 14px 0;padding-left:18px">{body_reasons}</ul>'
+            f'{sig_section}'
+            f'{footer_html}'
+            f'</div>'
+            f'</details>'
+        )
         cards_html.append(card)
 
     st.markdown("\n".join(cards_html), unsafe_allow_html=True)
