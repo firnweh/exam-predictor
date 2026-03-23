@@ -1,24 +1,24 @@
 {
   "exam": "NEET",
-  "train_score": 0.6385,
-  "val_score": 0.674,
+  "train_score": 0.5525,
+  "val_score": 0.0,
   "signal_weights": {
-    "recency_freq": 0.13976428117179376,
-    "appearance_rate": 0.22721485013610218,
-    "recent_3yr": 0.046704563958241054,
-    "recent_5yr": 0.05418108238593057,
-    "gap_return": 0.09317618744786246,
-    "trend_slope": 0.04658809372393123,
-    "cycle_match": 0.04658809372393123,
-    "parent_inheritance": 0.13976428117179374,
-    "recency_burst": 0.11181142493743497,
-    "dispersion": 0.09420714134297885
+    "recency_freq": 0.2,
+    "appearance_rate": 0.15,
+    "recent_3yr": 0.1,
+    "recent_5yr": 0.03,
+    "gap_return": 0.1,
+    "trend_slope": 0.05,
+    "cycle_match": 0.05,
+    "parent_inheritance": 0.15,
+    "recency_burst": 0.12,
+    "dispersion": 0.05
   },
   "final_weights": {
-    "app_prob": 0.4665403119988336,
-    "exp_qs": 0.291587694999271,
-    "yield": 0.0583175389998542,
-    "cross": 0.0612334159498469,
-    "parent": 0.12232103805219421
+    "app_prob": 0.4,
+    "exp_qs": 0.25,
+    "yield": 0.1,
+    "cross": 0.1,
+    "parent": 0.15
   }
 }
