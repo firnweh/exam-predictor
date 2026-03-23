@@ -15,6 +15,16 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',system-ui,sans-ser
 .nav-back{margin-left:auto;font-size:.82rem;color:var(--mt);border:1px solid var(--bd);padding:5px 14px;border-radius:8px;cursor:pointer;transition:.2s;text-decoration:none}
 .nav-back:hover{border-color:#7c3aed;color:#a855f7}
 .shell{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 57px)}
+/* student role — no sidebar at all */
+body[data-role=student] .shell{grid-template-columns:1fr}
+body[data-role=student] .sidebar{display:none!important}
+body[data-role=student] #nav-org{display:none!important}
+body[data-role=student] .exam-toggle{display:none!important}
+/* focused mode — came from org-dashboard with ?id= param */
+body[data-focused=true] .shell{grid-template-columns:1fr}
+body[data-focused=true] .sidebar{display:none!important}
+body[data-focused=true] .exam-toggle{display:none!important}
+body[data-focused=true] #nav-org{display:none!important}
 .sidebar{background:var(--sf);border-right:1px solid var(--bd);padding:20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
 .sb-head{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mt)}
 .exam-toggle{display:flex;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
@@ -186,6 +196,49 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',system-ui,sans-ser
 .guide-qlink{display:inline-block;margin-top:8px;font-size:.78rem;color:#06b6d4;
   cursor:pointer;border-bottom:1px solid transparent;transition:.15s;text-decoration:none}
 .guide-qlink:hover{border-color:#06b6d4}
+/* ── Predictions Panel ── */
+.pred-card{background:linear-gradient(135deg,#080820,#080d1a);border:1px solid #6366f140;border-radius:12px;padding:18px}
+.pred-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:8px}
+.pred-tabs{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+.pred-tab{padding:4px 12px;border:1px solid transparent;border-radius:6px;background:none;color:var(--mt);font-size:.75rem;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s}
+.pred-tab.active{background:#6366f122;border-color:#6366f155;color:#818cf8}
+.pred-tab:hover:not(.active){color:var(--tx);border-color:#ffffff20}
+.pred-col-hdr{display:grid;grid-template-columns:1fr 90px 52px 80px;gap:8px;padding:0 10px 6px;border-bottom:1px solid #ffffff08;margin-bottom:4px}
+.pred-col-lbl{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--mt)}
+.pred-list{display:flex;flex-direction:column;gap:4px}
+.pred-row{display:grid;grid-template-columns:1fr 90px 52px 80px;align-items:center;gap:8px;padding:8px 10px;background:#ffffff04;border:1px solid #ffffff06;border-radius:8px;transition:.15s}
+.pred-row:hover{background:#6366f108;border-color:#6366f128}
+.pred-row.match{border-color:#a855f740;background:#a855f708}
+.pred-chapter{min-width:0}
+.pred-ch-name{font-size:.81rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pred-ch-sub{font-size:.68rem;color:var(--mt);margin-top:1px}
+.pred-prob-col{display:flex;flex-direction:column;gap:3px}
+.pred-prob-bar{height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.pred-prob-fill{height:100%;border-radius:2px;width:0;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.pred-prob-pct{font-size:.71rem;font-weight:700}
+.pred-qs{font-size:.71rem;color:var(--mt);text-align:center}
+.pred-trend{font-size:.7rem;font-weight:700;text-align:center}
+.pred-match-badge{font-size:.6rem;font-weight:700;padding:1px 5px;border-radius:8px;background:#a855f730;color:#c084fc;margin-left:4px;vertical-align:middle}
+/* ── Topic Deep Dive ── */
+.tdive-wrap{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:18px}
+.tdive-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:4px}
+.tdive-item{background:var(--sf2);border:1px solid var(--bd);border-radius:10px;padding:14px;border-top:3px solid #6366f1}
+.tdive-item-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px}
+.tdive-item-title{font-size:.86rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.tdive-stats-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.tdive-stat{text-align:center;flex:1;min-width:46px;background:rgba(255,255,255,.03);border-radius:6px;padding:6px 4px}
+.tdive-stat-val{font-size:.96rem;font-weight:800}
+.tdive-stat-lbl{font-size:.62rem;color:var(--mt);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+.tdive-subs-lbl{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--mt);margin-bottom:6px;margin-top:4px}
+.tdive-sub-row{display:flex;align-items:center;gap:6px;padding:3px 0}
+.tdive-sub-name{font-size:.76rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tdive-sub-bar-wrap{width:56px;height:4px;background:rgba(255,255,255,.08);border-radius:2px;flex-shrink:0;overflow:hidden}
+.tdive-sub-bar{height:4px;border-radius:2px;width:0;transition:width .6s}
+.tdive-sub-cnt{font-size:.68rem;color:var(--mt);min-width:20px;text-align:right;flex-shrink:0}
+.tdive-types{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.tdive-type-chip{font-size:.67rem;padding:2px 7px;border-radius:10px;background:#ffffff08;border:1px solid #ffffff10;color:var(--mt)}
+.tdive-loading{color:var(--mt);font-size:.76rem;padding:6px 2px;font-style:italic}
+.tdive-acc-badge{font-size:.7rem;padding:2px 8px;border-radius:10px;font-weight:700;flex-shrink:0;white-space:nowrap}
 </style>
 <script src="/auth.js"></script>
 </head>
@@ -193,10 +246,8 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',system-ui,sans-ser
 <nav class="nav">
   <div class="nav-logo">PRAJNA · Student Intelligence</div>
   <span class="nav-badge">PRAJNA-POWERED</span>
-  <a href="intelligence-dashboard.html" style="margin-left:auto;font-size:.78rem;background:#06b6d415;color:#06b6d4;border:1px solid #06b6d440;padding:5px 13px;border-radius:8px;text-decoration:none;font-weight:600">Intelligence API ↗</a>
-  <a href="org-dashboard.html" id="nav-org" class="nav-back" style="margin-left:0">← Org Dashboard</a>
-  <button onclick="AUTH.logout()" class="nav-back" style="margin-left:0;border:none;cursor:pointer;background:none;color:inherit;font-family:inherit">Sign Out</button>
-  <a href="index.html" class="nav-back" style="margin-left:0">← Back to PRAJNA</a>
+  <a href="org-dashboard.html" id="nav-org" class="nav-back" style="margin-left:auto">← Org Dashboard</a>
+  <button onclick="AUTH.logout()" class="nav-back" style="margin-left:auto;border:none;cursor:pointer;background:none;color:inherit;font-family:inherit">Sign Out</button>
 </nav>
 
 <div class="shell">
@@ -230,10 +281,8 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',system-ui,sans-ser
 
 <script>
 const _user = AUTH.requireAuth(['student','center','central']);
-if (_user && _user.role === 'student') {
-  const navOrg = document.getElementById('nav-org');
-  if (navOrg) navOrg.style.display = 'none';
-}
+// Set data-role on <body> immediately — CSS uses this to hide sidebar/toggle for students
+if (_user) document.body.setAttribute('data-role', _user.role);
 /* ── Globals ── */
 const G = { exam:'neet', data:{neet:null,jee:null}, stu:null, charts:{} };
 
@@ -274,9 +323,39 @@ const NEET_MAP = {
   'Aldehydes Ketones Carboxylic Acids':'Chemistry',
   'Amines':'Chemistry','Biomolecules':'Chemistry',
   'Polymers':'Chemistry','Chemistry In Everyday Life':'Chemistry',
-  'Diversity In Living World':'Botany',
+  // Botany — Class 11
+  'The Living World':'Botany','Biological Classification':'Botany',
+  'Plant Kingdom':'Botany','Morphology Of Flowering Plants':'Botany',
+  'Anatomy Of Flowering Plants':'Botany',
   'Structural Organisation In Plants And Animals':'Botany',
-  'Cell Structure And Function':'Botany','Plant Physiology':'Botany',
+  'Cell The Unit Of Life':'Botany','Cell Structure And Function':'Botany',
+  'Biomolecules':'Botany','Cell Cycle And Cell Division':'Botany',
+  'Transport In Plants':'Botany','Mineral Nutrition':'Botany',
+  'Photosynthesis In Higher Plants':'Botany','Respiration In Plants':'Botany',
+  'Plant Growth And Development':'Botany',
+  // Botany — Class 12
+  'Reproduction In Organisms':'Botany',
+  'Sexual Reproduction In Flowering Plants':'Botany',
+  'Diversity In Living World':'Botany','Plant Physiology':'Botany',
+  // Zoology — Class 11
+  'Animal Kingdom':'Zoology','Structural Organisation In Animals':'Zoology',
+  'Digestion And Absorption':'Zoology','Breathing And Exchange Of Gases':'Zoology',
+  'Body Fluids And Circulation':'Zoology',
+  'Excretory Products And Their Elimination':'Zoology',
+  'Locomotion And Movement':'Zoology','Neural Control And Coordination':'Zoology',
+  'Chemical Coordination And Integration':'Zoology',
+  // Zoology — Class 12
+  'Human Reproduction':'Zoology','Reproductive Health':'Zoology',
+  'Principles Of Inheritance And Variation':'Zoology',
+  'Molecular Basis Of Inheritance':'Zoology','Evolution':'Zoology',
+  'Human Health And Disease':'Zoology',
+  'Strategies For Enhancement In Food Production':'Zoology',
+  'Microbes In Human Welfare':'Zoology',
+  'Biotechnology Principles And Processes':'Zoology',
+  'Biotechnology And Its Applications':'Zoology',
+  'Organisms And Populations':'Zoology','Ecosystem':'Zoology',
+  'Biodiversity And Conservation':'Zoology','Environmental Issues':'Zoology',
+  // Legacy names
   'Human Physiology':'Zoology','Reproduction':'Zoology',
   'Genetics And Evolution':'Zoology','Biology And Human Welfare':'Zoology',
   'Biotechnology':'Zoology','Ecology And Environment':'Zoology',
@@ -495,6 +574,8 @@ function render(s){
   dash.appendChild(buildHeatmap(s));
   dash.appendChild(buildInsights(s));
   dash.appendChild(buildIntelligencePanel(s));
+  dash.appendChild(buildPredictionsPanel(s));
+  dash.appendChild(buildTopicDeepDive(s));
   dash.appendChild(buildCopilot(s));
 }
 
@@ -911,9 +992,47 @@ function buildInsights(s){
         ]
         :[['Excellent! ','#22c55e',true],['Strong coverage across all high-Prajna-priority chapters. Focus on revision and mock practice.','']],
     },
+    {
+      label:'Exam Readiness',
+      parts:(()=>{
+        const slope = trend;
+        const rawScore = Math.min(100,
+          (m.latest_percentage||0)*0.45 +
+          cons*0.25 +
+          (slope>0?Math.min(slope*30,20):0) +
+          10 // base
+        );
+        const readPct = Math.round(rawScore);
+        if(readPct>=75)
+          return [['Exam-ready! ','#22c55e',true],['PRAJNA readiness score: '+readPct+'/100. Trajectory, consistency and score all align. Keep this momentum into the real exam.','']];
+        if(readPct>=50)
+          return [['Getting there — ','#f59e0b',true],['readiness score '+readPct+'/100. Main gaps: '+(cons<60?'inconsistency':'')+(cons<60&&slope<=0?' & ':'')+(slope<=0?'declining trend':'')+(cons>=60&&slope>0?'widen your chapter coverage':'')+'. 6 focused weeks can bridge this.','']];
+        return [['Not exam-ready yet ','#ef4444',true],['(score: '+readPct+'/100). Prioritise daily study blocks, fix critical weak chapters, and run 2 full mocks per week.','']]
+      })(),
+    },
+    {
+      label:'Score-Gain Potential',
+      parts:(()=>{
+        const topItems=(s.slm_focus||[]).slice(0,3);
+        if(!topItems.length)
+          return [['Optimised! ','#22c55e',true],['No critical weak zones. Gains now come from speed and accuracy under exam conditions.','']];
+        const estGain=topItems.reduce((acc,f)=>{
+          // Each chapter in NEET ≈ 4–5 Qs; accuracy gap × questions ≈ raw mark gain
+          const qPerChap=4; const gap=Math.max(0,65-(f.accuracy||0));
+          return acc + Math.round((gap/100)*qPerChap*4); // *4 marks/correct
+        },0);
+        return [['Fix your top 3 focus chapters ','',''],
+          ['('+topItems.map(f=>f.chapter).join(', ')+')','#a855f7',true],
+          [' — estimated ','',''],
+          ['+'+estGain+' marks','#22c55e',true],
+          [' gain if brought to 65% accuracy. That\'s a significant rank jump.','',''],
+        ];
+      })(),
+    },
   ];
 
   const row=el('div','insight-row');
+  row.style.gridTemplateColumns='repeat(3,1fr)';
   insights.forEach(ins=>{
     const chip=el('div','ins-chip');
     const lbl=el('div','ins-lbl'); lbl.appendChild(txt(ins.label)); chip.appendChild(lbl);
@@ -1052,6 +1171,262 @@ function buildIntelligencePanel(s){
     });
 
   return wrap;
+}
+
+/* ── Predictions Panel ── */
+function buildPredictionsPanel(s){
+  const card=el('div','pred-card');
+
+  // Header
+  const hdr=el('div','pred-hdr');
+  const titleEl=el('span');
+  titleEl.style.cssText='font-size:.95rem;font-weight:700;background:linear-gradient(135deg,#6366f1,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent';
+  titleEl.appendChild(txt('📡 PRAJNA Predictions — 2026 Exam Outlook'));
+  hdr.appendChild(titleEl);
+  const statusEl=el('span'); statusEl.id='pred-status-'+s.id;
+  statusEl.style.cssText='font-size:.71rem;color:var(--mt)';
+  statusEl.appendChild(txt('Fetching…'));
+  hdr.appendChild(statusEl);
+  card.appendChild(hdr);
+
+  const noteEl=el('div','note');
+  noteEl.appendChild(txt('PRAJNA v3 chapter predictions for '+(G.exam==='neet'?'NEET':'JEE')+' 2026. ★ = overlaps your weak areas.'));
+  card.appendChild(noteEl);
+
+  // Tabs
+  const tabs=el('div','pred-tabs');
+  let _activeTab='all', _allPreds=[], _weakPreds=[], _risingPreds=[];
+  const weakSet=new Set((s.slm_focus||[]).map(f=>(f.chapter||'').toLowerCase()));
+  const exam=G.exam==='neet'?'neet':'jee_main';
+  const listId='pred-list-'+s.id;
+
+  function _renderPredList(){
+    const lst=document.getElementById(listId); if(!lst) return;
+    lst.textContent='';
+    const src=_activeTab==='weak'?_weakPreds:_activeTab==='rising'?_risingPreds:_allPreds;
+    if(!src.length){
+      const em=el('div'); em.style.cssText='color:var(--mt);font-size:.82rem;padding:14px;text-align:center';
+      em.appendChild(txt(_activeTab==='weak'?'No overlap with your weak chapters — great signal coverage! ✓':'No data yet.')); lst.appendChild(em); return;
+    }
+    // Column headers
+    const colHdr=el('div','pred-col-hdr');
+    ['Chapter','Probability','Exp. Qs','Trend'].forEach(h=>{
+      const lbl=el('span','pred-col-lbl'); lbl.appendChild(txt(h)); colHdr.appendChild(lbl);
+    });
+    lst.appendChild(colHdr);
+    src.slice(0,20).forEach(p=>{
+      const isMatch=weakSet.has((p.chapter||p.topic||'').toLowerCase());
+      const prob=p.appearance_probability||0;
+      const trend=((p.trend_direction||'')).toUpperCase();
+      const trendUp=trend==='RISING'; const trendDown=trend==='FALLING'||trend==='DECREASING';
+      const probColor=prob>=0.70?'#22c55e':prob>=0.45?'#f59e0b':'#6366f1';
+      const row=el('div','pred-row'+(isMatch?' match':''));
+      // Chapter
+      const chap=el('div','pred-chapter');
+      const cn=el('div','pred-ch-name'); cn.appendChild(txt(p.chapter||p.topic||'—')); cn.title=p.chapter||'';
+      if(isMatch){const mb=el('span','pred-match-badge');mb.appendChild(txt('★ weak'));cn.appendChild(mb);}
+      const cs=el('div','pred-ch-sub'); cs.appendChild(txt(p.subject||''));
+      chap.appendChild(cn); chap.appendChild(cs); row.appendChild(chap);
+      // Probability bar + %
+      const pc=el('div','pred-prob-col');
+      const bw=el('div','pred-prob-bar'); const bf=el('div','pred-prob-fill');
+      bf.style.background=probColor; bw.appendChild(bf);
+      const pp=el('span','pred-prob-pct'); pp.style.color=probColor;
+      pp.appendChild(txt(Math.round(prob*100)+'%'));
+      pc.appendChild(bw); pc.appendChild(pp); row.appendChild(pc);
+      // Expected questions
+      const qEl=el('div','pred-qs'); qEl.appendChild(txt((p.expected_questions||0).toFixed(1)+'Q')); row.appendChild(qEl);
+      // Trend
+      const tEl=el('div','pred-trend');
+      tEl.style.color=trendUp?'#22c55e':trendDown?'#ef4444':'#94a3b8';
+      tEl.appendChild(txt(trendUp?'↑ Rising':trendDown?'↓ Falling':'→ Stable'));
+      row.appendChild(tEl);
+      lst.appendChild(row);
+      requestAnimationFrame(()=>{ bf.style.width=Math.round(prob*100)+'%'; });
+    });
+  }
+
+  function _setTab(tid){
+    _activeTab=tid;
+    tabs.querySelectorAll('.pred-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tid));
+    _renderPredList();
+  }
+
+  [['all','All Chapters'],['weak','Your Weak ★'],['rising','Rising ↑']].forEach(([id,lbl])=>{
+    const t=el('button','pred-tab'); t.dataset.tab=id; t.appendChild(txt(lbl));
+    if(id==='all') t.classList.add('active');
+    t.addEventListener('click',()=>_setTab(id)); tabs.appendChild(t);
+  });
+  card.appendChild(tabs);
+
+  const list=el('div','pred-list'); list.id=listId;
+  for(let i=0;i<5;i++){const sk=el('div','pred-row');sk.style.cssText='background:linear-gradient(90deg,#ffffff04 25%,#ffffff08 50%,#ffffff04 75%);background-size:200% 100%;animation:pulse 1.5s infinite;height:44px;border-radius:8px';list.appendChild(sk);}
+  card.appendChild(list);
+
+  fetch('http://localhost:8001/api/v1/data/predict?exam_type='+exam+'&year=2026&top_n=40&level=chapter')
+    .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); }).then(d=>{
+      const stEl=document.getElementById('pred-status-'+s.id);
+      if(stEl){stEl.textContent='';stEl.appendChild(txt('Live · '+((d.predictions||[]).length)+' chapters ranked'));}
+      _allPreds=(d.predictions||[]).sort((a,b)=>(b.appearance_probability||0)-(a.appearance_probability||0));
+      _weakPreds=_allPreds.filter(p=>weakSet.has((p.chapter||p.topic||'').toLowerCase()));
+      _risingPreds=_allPreds.filter(p=>((p.trend_direction||'')).toUpperCase()==='RISING');
+      // Update tab labels with counts
+      tabs.querySelectorAll('.pred-tab').forEach(t=>{
+        const id=t.dataset.tab;
+        const cnt=id==='weak'?_weakPreds.length:id==='rising'?_risingPreds.length:_allPreds.length;
+        const lbl=id==='all'?'All Chapters':id==='weak'?'Your Weak ★':'Rising ↑';
+        t.textContent=''; t.appendChild(txt(lbl+' ('+cnt+')'));
+      });
+      _renderPredList();
+    }).catch(()=>{
+      const stEl=document.getElementById('pred-status-'+s.id);
+      if(stEl){stEl.textContent='';stEl.appendChild(txt('API offline'));}
+      const lst=document.getElementById(listId);
+      if(lst){lst.textContent='';const em=el('div');em.style.cssText='color:var(--mt);font-size:.82rem;padding:14px';em.appendChild(txt('Could not reach Intelligence API on localhost:8001. Run: python3 intelligence/run_api.py'));lst.appendChild(em);}
+    });
+
+  return card;
+}
+
+/* ── Topic Deep Dive ── */
+function buildTopicDeepDive(s){
+  const card=el('div','tdive-wrap');
+
+  // Header
+  const hdr=el('div');
+  hdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:8px';
+  const titleEl=el('span');
+  titleEl.style.cssText='font-size:.95rem;font-weight:700;color:#06b6d4';
+  titleEl.appendChild(txt('🔬 Topic Deep Dive — Your Priority Chapters'));
+  hdr.appendChild(titleEl);
+  const badgeEl=el('span');
+  badgeEl.style.cssText='font-size:.7rem;color:var(--mt);padding:2px 10px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff10';
+  badgeEl.appendChild(txt('48yr historical data'));
+  hdr.appendChild(badgeEl);
+  card.appendChild(hdr);
+
+  const noteEl=el('div','note');
+  noteEl.appendChild(txt('Breakdown of your top-priority weak chapters. See which micro-topics appear most in exams.'));
+  card.appendChild(noteEl);
+
+  const grid=el('div','tdive-grid');
+  card.appendChild(grid);
+
+  const focusChaps=(s.slm_focus||[]).slice(0,4);
+  const exam=G.exam==='neet'?'neet':'jee_main';
+  const CHAP_MAP=G.exam==='neet'?NEET_MAP:JEE_MAP;
+  const SC={Botany:'#22c55e',Zoology:'#10b981',Chemistry:'#06b6d4',Physics:'#f59e0b',Mathematics:'#a855f7',Other:'#6366f1'};
+
+  if(!focusChaps.length){
+    const em=el('div'); em.style.cssText='color:#22c55e;padding:16px;font-size:.84rem;text-align:center';
+    em.appendChild(txt('No weak chapters identified — excellent coverage! 🎉')); grid.appendChild(em);
+    return card;
+  }
+
+  focusChaps.forEach(fItem=>{
+    const chap=fItem.chapter;
+    const subj=CHAP_MAP[chap]||'Other';
+    const subjColor=SC[subj]||'#6366f1';
+    const acc=fItem.accuracy||0;
+    const chapKey='tdive-'+s.id+'-'+chap.replace(/[\s\/]+/g,'_').slice(0,30);
+
+    const item=el('div','tdive-item');
+    item.style.borderTopColor=subjColor;
+
+    // Item header
+    const itmHdr=el('div','tdive-item-hdr');
+    const titleWrap=el('div'); titleWrap.style.minWidth='0'; titleWrap.style.flex='1';
+    const itmTitle=el('div','tdive-item-title'); itmTitle.appendChild(txt(chap)); itmTitle.title=chap;
+    const subjBadge=el('div'); subjBadge.style.cssText='font-size:.68rem;color:'+subjColor+';margin-top:2px;font-weight:600';
+    subjBadge.appendChild(txt(subj));
+    titleWrap.appendChild(itmTitle); titleWrap.appendChild(subjBadge);
+    const accBadge=el('span','tdive-acc-badge');
+    accBadge.style.background=lColor(fItem.level)+'22'; accBadge.style.color=lColor(fItem.level);
+    accBadge.appendChild(txt('You: '+acc.toFixed(0)+'%'));
+    itmHdr.appendChild(titleWrap); itmHdr.appendChild(accBadge);
+    item.appendChild(itmHdr);
+
+    // Stats row (filled async)
+    const statsRow=el('div','tdive-stats-row'); statsRow.id=chapKey+'-stats';
+    const loadEl=el('div','tdive-loading'); loadEl.appendChild(txt('Loading data…'));
+    statsRow.appendChild(loadEl); item.appendChild(statsRow);
+
+    // Subtopics
+    const subsLbl=el('div','tdive-subs-lbl'); subsLbl.appendChild(txt('Key Sub-Topics (by exam frequency)'));
+    item.appendChild(subsLbl);
+    const subsList=el('div'); subsList.id=chapKey+'-subs';
+    const load2=el('div','tdive-loading'); load2.appendChild(txt('Loading…'));
+    subsList.appendChild(load2); item.appendChild(subsList);
+
+    // Type chips
+    const typesWrap=el('div','tdive-types'); typesWrap.id=chapKey+'-types';
+    item.appendChild(typesWrap);
+
+    grid.appendChild(item);
+
+    // Async fetch — try exact chapter name first, then a fuzzy fallback via topics-list
+    fetch('http://localhost:8001/api/v1/data/topic-deep-dive?topic='+encodeURIComponent(chap)+'&exam_type='+exam)
+      .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); }).then(d=>{
+        // ── Stats ──
+        const sr=document.getElementById(chapKey+'-stats');
+        if(sr){
+          sr.textContent='';
+          const total=d.total_questions||0;
+          const firstY=d.first_year||null;
+          const lastY=d.last_year||null;
+          const span=d.span_years||0;
+          [[String(total),'Total Qs','#6366f1'],[firstY?String(firstY):'—','First Year','#94a3b8'],[lastY?String(lastY):'—','Last Year',subjColor],[span?span+'yr':'—','History','#f59e0b']].forEach(([val,lbl,color])=>{
+            const stat=el('div','tdive-stat');
+            const vEl=el('div','tdive-stat-val'); vEl.style.color=color; vEl.appendChild(txt(val));
+            const lEl=el('div','tdive-stat-lbl'); lEl.appendChild(txt(lbl));
+            stat.appendChild(vEl); stat.appendChild(lEl); sr.appendChild(stat);
+          });
+        }
+        // ── Subtopics ──
+        const sl=document.getElementById(chapKey+'-subs');
+        if(sl){
+          sl.textContent='';
+          const subs=(d.subtopic_counts||[]).slice(0,5);
+          const maxCnt=subs.reduce((m,x)=>Math.max(m,x.count||x.micro_topic_count||0),1);
+          if(!subs.length){
+            const em=el('div','tdive-loading'); em.appendChild(txt('No sub-topic data in DB for this chapter.')); sl.appendChild(em);
+          } else {
+            subs.forEach(sub=>{
+              const nm=sub.micro_topic||sub.subtopic||sub.topic||String(sub);
+              const cnt=sub.count||sub.micro_topic_count||0;
+              const pct=Math.round((cnt/maxCnt)*100);
+              const row=el('div','tdive-sub-row');
+              const nEl=el('div','tdive-sub-name'); nEl.appendChild(txt(nm)); nEl.title=nm;
+              const bw=el('div','tdive-sub-bar-wrap');
+              const bf=el('div','tdive-sub-bar'); bf.style.background=subjColor; bw.appendChild(bf);
+              const cEl=el('div','tdive-sub-cnt'); cEl.appendChild(txt(cnt));
+              row.appendChild(nEl); row.appendChild(bw); row.appendChild(cEl); sl.appendChild(row);
+              requestAnimationFrame(()=>{ bf.style.width=pct+'%'; });
+            });
+          }
+        }
+        // ── Type distribution ──
+        const tw=document.getElementById(chapKey+'-types');
+        if(tw){
+          tw.textContent='';
+          const td=d.type_distribution||{};
+          const entries=Object.entries(td);
+          if(entries.length){
+            entries.forEach(([type,cnt])=>{
+              const chip=el('span','tdive-type-chip'); chip.appendChild(txt(type+': '+cnt)); tw.appendChild(chip);
+            });
+          }
+        }
+      }).catch(err=>{
+        const sr=document.getElementById(chapKey+'-stats');
+        const msg=(err&&err.message||'').includes('404')
+          ?'Chapter name not in exam DB (slight name mismatch)'
+          :'API offline — run intelligence/run_api.py';
+        if(sr){sr.textContent='';const em=el('div','tdive-loading');em.appendChild(txt(msg));sr.appendChild(em);}
+      });
+  });
+
+  return card;
 }
 
 /* ── Copilot ── */
@@ -1413,6 +1788,11 @@ async function boot(){
   const params=new URLSearchParams(location.search);
   const examParam=params.get('exam');
   const idParam=params.get('id');
+
+  // If a specific student ID is in the URL (came from org-dashboard),
+  // switch to focused single-student mode — hide sidebar, full width
+  if(idParam) document.body.setAttribute('data-focused','true');
+
   if(examParam==='jee'){
     G.exam='jee';
     document.getElementById('btn-neet').className='';
@@ -1425,6 +1805,210 @@ async function boot(){
   pick(initial);
 }
 boot();
+</script>
+
+<!-- ── PRAJNA Copilot Floating Tab ── -->
+<style>
+#prajna-fab{
+  position:fixed;top:50%;right:0;z-index:9999;
+  transform:translateY(-50%);
+  background:linear-gradient(180deg,#7c3aed,#a855f7);
+  border:none;border-radius:12px 0 0 12px;
+  cursor:pointer;box-shadow:-4px 0 24px rgba(168,85,247,.55);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;padding:16px 10px;
+  writing-mode:vertical-rl;text-orientation:mixed;
+  color:#fff;font-size:.75rem;font-weight:700;letter-spacing:.6px;
+  transition:padding .2s,box-shadow .2s;width:36px}
+#prajna-fab:hover{padding:16px 14px;box-shadow:-6px 0 32px rgba(168,85,247,.85)}
+#prajna-fab .fab-icon{writing-mode:horizontal-tb;font-size:18px;margin-bottom:6px}
+
+#prajna-chat{
+  position:fixed;top:50%;right:44px;z-index:9998;
+  transform:translateY(-50%);
+  width:380px;max-height:82vh;
+  background:#0d1117;border:1px solid #7c3aed40;
+  border-radius:14px;box-shadow:-8px 0 48px rgba(0,0,0,.7);
+  display:none;flex-direction:column;overflow:hidden;
+  animation:cpSlide .22s ease}
+#prajna-chat.open{display:flex}
+@keyframes cpSlide{from{opacity:0;transform:translateY(-50%) translateX(16px)}to{opacity:1;transform:translateY(-50%) translateX(0)}}
+
+.cp-float-header{
+  padding:13px 16px;
+  background:linear-gradient(135deg,#06b6d415,#7c3aed10);
+  border-bottom:1px solid #7c3aed30;
+  display:flex;align-items:center;justify-content:space-between}
+.cp-float-title{font-size:.92rem;font-weight:700;color:#06b6d4}
+.cp-float-sub{font-size:.7rem;color:#7880a4;margin-top:2px}
+.cp-float-close{background:none;border:none;color:#7880a4;cursor:pointer;font-size:1.1rem;
+  padding:3px 7px;border-radius:6px;transition:.15s}
+.cp-float-close:hover{color:#e2e8f0;background:rgba(255,255,255,.08)}
+
+.cp-float-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px;flex:1;overflow-y:auto;min-height:80px}
+.cp-float-body::-webkit-scrollbar{width:3px}
+.cp-float-body::-webkit-scrollbar-thumb{background:#7c3aed50;border-radius:2px}
+
+/* message bubbles */
+.cpb{padding:9px 13px;border-radius:12px;font-size:.82rem;line-height:1.6;
+  max-width:88%;word-break:break-word;white-space:pre-wrap}
+.cpb.bot{background:#06b6d412;border:1px solid #06b6d430;color:#cde8f0;
+  align-self:flex-start;border-bottom-left-radius:3px}
+.cpb.user{background:#7c3aed22;border:1px solid #7c3aed40;color:#e2e8f0;
+  align-self:flex-end;border-bottom-right-radius:3px}
+.cpb.thinking{color:#5a6080;font-style:italic;background:none;border:none;align-self:flex-start}
+
+/* suggestion pills */
+.cp-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.cp-pill{font-size:.71rem;padding:4px 9px;border-radius:14px;
+  background:#ffffff08;border:1px solid #ffffff10;color:#8899aa;
+  cursor:pointer;transition:.15s;text-align:left;font-family:inherit}
+.cp-pill:hover{border-color:#06b6d440;color:#e2e8f0;background:#06b6d410}
+
+/* input row */
+.cp-float-inp-row{display:flex;gap:7px;padding:10px 12px;border-top:1px solid #7c3aed20}
+.cp-float-inp{flex:1;background:#161a28;border:1px solid #7c3aed30;
+  color:#e2e8f0;padding:.42rem .72rem;border-radius:8px;
+  font-size:.82rem;outline:none;font-family:inherit;transition:.2s}
+.cp-float-inp:focus{border-color:#06b6d4}
+.cp-float-inp::placeholder{color:#3a4060}
+.cp-float-send{background:#06b6d4;border:none;color:#000;
+  font-weight:700;font-size:.78rem;padding:.42rem .88rem;
+  border-radius:8px;cursor:pointer;white-space:nowrap;transition:.2s;font-family:inherit}
+.cp-float-send:hover{background:#0891b2}
+.cp-float-send:disabled{opacity:.4;cursor:not-allowed}
+</style>
+
+<button id="prajna-fab" onclick="toggleCopilot()" title="Ask PRAJNA Copilot">
+  <span class="fab-icon">🤖</span>Copilot
+</button>
+<div id="prajna-chat"></div>
+
+<script>
+let _copilotOpen = false;
+
+function toggleCopilot(){
+  _copilotOpen = !_copilotOpen;
+  const panel = document.getElementById('prajna-chat');
+  if(_copilotOpen){
+    _buildCopilotPanel(panel);
+    panel.classList.add('open');
+    const inp = panel.querySelector('.cp-float-inp');
+    if(inp) setTimeout(()=>inp.focus(), 80);
+  } else {
+    panel.classList.remove('open');
+    setTimeout(()=>{ panel.innerHTML=''; }, 230);
+  }
+}
+
+function _buildCopilotPanel(panel){
+  panel.innerHTML = '';
+
+  // Header
+  const hdr = document.createElement('div');
+  hdr.className = 'cp-float-header';
+  hdr.innerHTML = '<div><div class="cp-float-title">🤖 PRAJNA Copilot</div>'
+    +'<div class="cp-float-sub">Student study advisor · Prajna NL</div></div>'
+    +'<button class="cp-float-close" onclick="toggleCopilot()">✕</button>';
+  panel.appendChild(hdr);
+
+  // Body (messages)
+  const body = document.createElement('div');
+  body.className = 'cp-float-body';
+  body.id = 'cp-float-body';
+
+  // Welcome bubble
+  _addMsg('Hi! Ask me anything about your preparation, weak chapters, or rank prediction.', 'bot', body);
+
+  // Suggestion pills based on current student
+  const s = G.stu;
+  const topWeak = (s&&s.slm_focus||[])[0];
+  const weakestSubj = s ? Object.entries(s.subjects||{}).sort((a,b)=>((a[1]||{}).acc||0)-((b[1]||{}).acc||0))[0] : null;
+  const pills = [
+    topWeak ? 'Why is '+topWeak.chapter+' weak and how do I fix it?' : 'What should I study first?',
+    weakestSubj ? 'Give me a 2-week plan for '+weakestSubj[0] : 'How do I improve my score?',
+    'Which topics should I revise first for '+(s&&s.target||'the exam')+'?',
+    'Compare my trajectory to what a top-100 student needs.',
+  ];
+  const pillWrap = document.createElement('div');
+  pillWrap.className = 'cp-pills';
+  pills.forEach(q => {
+    const p = document.createElement('button');
+    p.className = 'cp-pill'; p.textContent = q;
+    p.onclick = () => {
+      const inp = document.getElementById('cp-float-inp');
+      if(inp){ inp.value = q; inp.focus(); }
+      pillWrap.style.display = 'none';
+    };
+    pillWrap.appendChild(p);
+  });
+  body.appendChild(pillWrap);
+  panel.appendChild(body);
+
+  // Input row
+  const row = document.createElement('div');
+  row.className = 'cp-float-inp-row';
+  row.innerHTML = '<input class="cp-float-inp" id="cp-float-inp" placeholder="Ask anything about this student\'s performance…"/>'
+    +'<button class="cp-float-send" id="cp-float-send" onclick="_askCopilot()">Ask →</button>';
+  panel.appendChild(row);
+
+  document.getElementById('cp-float-inp').addEventListener('keydown', e => { if(e.key==='Enter') _askCopilot(); });
+}
+
+function _addMsg(text, type, container){
+  const b = document.createElement('div');
+  b.className = 'cpb ' + type;
+  b.textContent = text;
+  const c = container || document.getElementById('cp-float-body');
+  c.appendChild(b);
+  c.scrollTop = c.scrollHeight;
+  return b;
+}
+
+function _askCopilot(){
+  const inp = document.getElementById('cp-float-inp');
+  const btn = document.getElementById('cp-float-send');
+  const q = (inp.value||'').trim();
+  if(!q) return;
+  inp.value = '';
+  _addMsg(q, 'user');
+
+  const s = G.stu;
+  const weakChapters = (s&&s.slm_focus||[]).slice(0,3).map(f=>f.chapter).join(', ');
+  const contextQ = s
+    ? 'Student: '+s.name+' ('+s.id+'), '+s.target+' aspirant, latest score: '
+      +(s.metrics.latest_percentage||0).toFixed(1)+'%, rank: #'+(s.metrics.latest_rank||'—')
+      +', weakest chapters: '+weakChapters+'. Question: '+q
+    : q;
+
+  const thinking = _addMsg('Thinking…', 'thinking');
+  btn.disabled = true;
+
+  fetch('http://localhost:8001/api/v1/copilot/ask',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      exam_type: G.exam==='neet'?'neet':'jee_main',
+      target_year: new Date().getFullYear()+1,
+      question: contextQ,
+      persona: 'student'
+    })
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    let ans = d.answer||'No answer returned.';
+    if(d.follow_up_questions&&d.follow_up_questions.length)
+      ans += '\n\n💡 You might also ask:\n'+d.follow_up_questions.map(x=>'• '+x).join('\n');
+    thinking.className='cpb bot'; thinking.textContent=ans;
+    const body=document.getElementById('cp-float-body');
+    if(body) body.scrollTop=body.scrollHeight;
+  })
+  .catch(()=>{
+    thinking.className='cpb bot';
+    thinking.textContent='⚠️ Copilot offline. Run: python3 intelligence/run_api.py';
+  })
+  .finally(()=>{ btn.disabled=false; });
+}
 </script>
 </body>
 </html>

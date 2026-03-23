@@ -512,8 +512,12 @@ if selected_subject != "All":
 
 # Run predictions once (cached)
 @st.cache_data(ttl=300)
-def get_predictions_v2(db, year, exam):
-    return predict_topics_v2(db, target_year=year, exam=exam)
+def get_predictions_v4(db, year, exam, k):
+    try:
+        from analysis.predictor_v4 import predict_microtopics_v4
+        return predict_microtopics_v4(db, target_year=year, exam=exam, top_k=k)
+    except Exception:
+        return predict_microtopics_v3(db, target_year=year, exam=exam, top_k=k)
 
 @st.cache_data(ttl=300)
 def get_predictions_v3(db, year, exam, k):
@@ -608,10 +612,10 @@ _prog.progress(80, text="Computing revision schedule...")
 pred_list = active_micro if pred_level == "Micro-Topic" else active_v3
 pred_list = pred_list[:top_n]
 
-# v2: micro-topic level (for deep analysis / lesson plan)
+# v4: micro-topic level (for deep analysis / lesson plan)
 _prog.progress(95, text="Finalising...")
-predictions_v2 = get_predictions_v2(DB_PATH, target_year, exam_filter)
-active_preds_v2 = [p for p in predictions_v2 if p["syllabus_status"] != "REMOVED"]
+predictions_v4 = get_predictions_v4(DB_PATH, target_year, exam_filter, top_n)
+active_preds_v4 = [p for p in predictions_v4 if p["syllabus_status"] != "REMOVED"]
 
 _prog.progress(100, text="Done!")
 import time as _time; _time.sleep(0.25)
