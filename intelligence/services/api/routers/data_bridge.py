@@ -358,7 +358,12 @@ async def real_predict(
 
     try:
         if level == "micro":
-            preds = predict_microtopics_v3(DB_PATH, target_year=year, exam=exam, top_k=top_n)
+            try:
+                from analysis.predictor_v4 import predict_microtopics_v4
+                preds = predict_microtopics_v4(DB_PATH, target_year=year, exam=exam, top_k=top_n)
+            except Exception as exc:
+                log.warning("predictor_v4 failed, falling back to v3: %s", exc)
+                preds = predict_microtopics_v3(DB_PATH, target_year=year, exam=exam, top_k=top_n)
         else:
             preds = predict_chapters_v3(DB_PATH, target_year=year, exam=exam, top_k=top_n)
     except Exception as exc:
