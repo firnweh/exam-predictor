@@ -86,3 +86,85 @@ def test_dispersion_rewards_dense_appearances():
         list(range(2012,2022)), (2000,2022), 2023, 2022, 0.5, 10, flat_weights
     )
     assert signals_dense["dispersion"] > signals_thin["dispersion"]
+
+
+def _make_db(tmp_path):
+    """Helper: create a minimal test DB with known data."""
+    from utils.db import init_db, insert_questions
+    db = str(tmp_path / "test_v4.db")
+    init_db(db)
+    qs = []
+    # Chapter A: heavy (appears every year 2010-2022, multiple micro-topics)
+    for yr in range(2010, 2023):
+        qs.append({
+            "id": f"A_{yr}_1", "exam": "NEET", "year": yr, "shift": "P1",
+            "subject": "Biology", "topic": "Genetics",
+            "micro_topic": "Mendelian Inheritance",
+            "question_text": "q", "question_type": "MCQ_single",
+            "difficulty": 3, "concepts_tested": [], "answer": "A", "marks": 4,
+        })
+        qs.append({
+            "id": f"A_{yr}_2", "exam": "NEET", "year": yr, "shift": "P1",
+            "subject": "Biology", "topic": "Genetics",
+            "micro_topic": "Chromosomal Theory",
+            "question_text": "q", "question_type": "MCQ_single",
+            "difficulty": 3, "concepts_tested": [], "answer": "B", "marks": 4,
+        })
+    # Chapter B: sparse (appears only 3 years)
+    for yr in [2015, 2018, 2021]:
+        qs.append({
+            "id": f"B_{yr}", "exam": "NEET", "year": yr, "shift": "P1",
+            "subject": "Physics", "topic": "Optics",
+            "micro_topic": "Interference",
+            "question_text": "q", "question_type": "MCQ_single",
+            "difficulty": 3, "concepts_tested": [], "answer": "C", "marks": 4,
+        })
+    insert_questions(db, qs)
+    return db
+
+
+def test_predict_microtopics_v4_returns_list(tmp_path):
+    from analysis.predictor_v4 import predict_microtopics_v4
+    db = _make_db(tmp_path)
+    results = predict_microtopics_v4(db, target_year=2024, exam="NEET", top_k=50)
+    assert isinstance(results, list)
+    assert len(results) > 0
+
+
+def test_predict_microtopics_v4_output_schema(tmp_path):
+    from analysis.predictor_v4 import predict_microtopics_v4
+    db = _make_db(tmp_path)
+    results = predict_microtopics_v4(db, target_year=2024, exam="NEET", top_k=50)
+    required = {
+        "micro_topic", "chapter", "subject",
+        "appearance_probability", "expected_questions",
+        "final_score", "trend_direction", "parent_final_score",
+    }
+    for key in required:
+        assert key in results[0], f"Missing key: {key}"
+
+
+def test_heavy_chapter_micros_rank_above_sparse(tmp_path):
+    from analysis.predictor_v4 import predict_microtopics_v4
+    db = _make_db(tmp_path)
+    results = predict_microtopics_v4(db, target_year=2024, exam="NEET", top_k=50)
+    scores = {r["micro_topic"]: r["final_score"] for r in results}
+    assert scores.get("Mendelian Inheritance", 0) > scores.get("Interference", 0), \
+        "Heavy chapter micro-topic should outrank sparse chapter micro-topic"
+
+
+def test_parent_score_propagated(tmp_path):
+    from analysis.predictor_v4 import predict_microtopics_v4
+    db = _make_db(tmp_path)
+    results = predict_microtopics_v4(db, target_year=2024, exam="NEET", top_k=50)
+    for r in results:
+        assert 0 <= r["parent_final_score"] <= 1.0
+        assert r["parent_final_score"] > 0, "Parent score should be >0 (chapter was in gate)"
+
+
+def test_scores_sorted_descending(tmp_path):
+    from analysis.predictor_v4 import predict_microtopics_v4
+    db = _make_db(tmp_path)
+    results = predict_microtopics_v4(db, target_year=2024, exam="NEET", top_k=50)
+    scores = [r["final_score"] for r in results]
+    assert scores == sorted(scores, reverse=True)
