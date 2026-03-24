@@ -107,6 +107,44 @@ body[data-focused=true] #nav-org{display:none!important}
 .ins-txt{font-size:.81rem;line-height:1.55;color:var(--tx)}
 .ins-strong{color:#a855f7;font-weight:700}
 .loading{display:flex;align-items:center;justify-content:center;height:300px;flex-direction:column;gap:14px;color:var(--mt)}
+/* DEEP ANALYSIS */
+.deep-section{margin-top:4px}
+.deep-summary{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.06));
+  border:1px solid rgba(99,102,241,.25);border-radius:12px;padding:18px 22px;margin-bottom:14px}
+.deep-summary-title{font-size:.82rem;font-weight:800;color:#a5b4fc;margin-bottom:10px;letter-spacing:.3px}
+.deep-summary-counts{display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap}
+.deep-cnt{font-size:.78rem;font-weight:700;display:flex;align-items:center;gap:5px}
+.deep-actions{font-size:.76rem;color:var(--tx);line-height:1.6}
+.deep-actions li{margin:3px 0;list-style:none;padding-left:4px}
+.deep-actions li::before{content:'→ ';color:var(--mt)}
+.deep-subj{background:var(--sf2);border:1px solid var(--bd);border-radius:10px;margin-bottom:8px;overflow:hidden}
+.deep-subj>summary{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;
+  list-style:none;user-select:none;font-weight:700;font-size:.82rem;transition:background .15s}
+.deep-subj>summary:hover{background:rgba(255,255,255,.02)}
+.deep-subj>summary::-webkit-details-marker{display:none}
+.deep-subj-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.deep-subj-meta{font-size:.68rem;font-weight:400;color:var(--mt);margin-left:auto}
+.deep-subj-body{padding:0 12px 12px}
+.deep-ch{background:var(--bg);border:1px solid var(--bd);border-radius:8px;margin-bottom:6px;overflow:hidden}
+.deep-ch>summary{display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;
+  list-style:none;font-size:.78rem;transition:background .15s}
+.deep-ch>summary:hover{background:rgba(255,255,255,.025)}
+.deep-ch>summary::-webkit-details-marker{display:none}
+.deep-ch-name{font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.deep-ch-prob{font-size:.75rem;font-weight:700;flex-shrink:0}
+.deep-ch-meta{font-size:.65rem;color:var(--mt);flex-shrink:0;white-space:nowrap}
+.deep-ch-body{padding:6px 14px 10px;border-top:1px solid var(--bd)}
+.deep-ch-signals{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.deep-sig{font-size:.64rem;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.05);color:var(--mt)}
+.deep-sig strong{color:var(--tx)}
+.deep-micro{display:flex;align-items:center;gap:8px;padding:5px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);font-size:.76rem}
+.deep-micro:last-child{border-bottom:none}
+.deep-micro-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tx)}
+.deep-micro-acc{min-width:36px;text-align:right;font-weight:600;flex-shrink:0}
+.deep-micro-prob{min-width:36px;text-align:right;font-weight:600;flex-shrink:0;color:var(--mt)}
+.deep-micro-roi{font-size:.62rem;min-width:20px;text-align:right;font-weight:800;flex-shrink:0}
+.roi-crit{color:#ff6b6b}.roi-focus{color:#f59e0b}.roi-review{color:#818cf8}.roi-ok{color:#22c55e}
 .spinner{width:32px;height:32px;border:3px solid var(--bd);border-top-color:#7c3aed;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .empty-msg{padding:20px;color:var(--mt);text-align:center;font-size:.84rem}
@@ -284,7 +322,7 @@ const _user = AUTH.requireAuth(['student','center','central']);
 // Set data-role on <body> immediately — CSS uses this to hide sidebar/toggle for students
 if (_user) document.body.setAttribute('data-role', _user.role);
 /* ── Globals ── */
-const G = { exam:'neet', data:{neet:null,jee:null}, stu:null, charts:{} };
+const G = { exam:'neet', data:{neet:null,jee:null}, stu:null, charts:{}, microPreds:{} };
 
 /* ── Level helpers ── */
 const LC = {M:'#22c55e',S:'#84cc16',D:'#f59e0b',W:'#f97316',C:'#ef4444'};
@@ -545,7 +583,224 @@ function pick(s){
   document.querySelectorAll('.stu-item').forEach(e=>{
     e.classList.toggle('active',e.dataset.sid===s.id);
   });
+  // Fetch micro-predictions if not cached for this exam
+  const ex = G.exam;
+  if(!G.microPreds[ex]){
+    fetch('http://localhost:8001/api/v1/data/predict?exam_type='+(ex==='jee'?'jee_main':ex)+'&year=2026&level=micro&top_n=200')
+      .then(r=>r.ok?r.json():null).then(d=>{
+        if(d&&d.predictions){ G.microPreds[ex]=d.predictions; _refreshDeepAnalysis(s); }
+      }).catch(()=>{});
+  }
   render(s);
+}
+
+function _refreshDeepAnalysis(s){
+  const target=document.getElementById('deep-analysis-wrap');
+  if(target && G.microPreds[G.exam]){
+    target.innerHTML='';
+    target.appendChild(_buildDeepContent(s, G.microPreds[G.exam]));
+  }
+}
+
+/* ── Deep Analysis — 3-level drill-down (subject→chapter→micro-topic) ── */
+function buildDeepAnalysis(s){
+  const wrap=el('div','deep-section');
+  wrap.id='deep-analysis-container';
+
+  const hdr=el('div','section-hdr');
+  hdr.innerHTML='<span style="font-size:.72rem;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--mt)">🎯 PRAJNA Deep Analysis</span>'
+    +'<span style="font-size:.65rem;color:var(--mt);margin-left:8px">— Chapter → Micro-Topic × Your Performance × Exam Predictions</span>';
+  wrap.appendChild(hdr);
+
+  const content=el('div');
+  content.id='deep-analysis-wrap';
+
+  const preds=G.microPreds[G.exam];
+  if(preds && preds.length){
+    content.appendChild(_buildDeepContent(s, preds));
+  } else {
+    content.innerHTML='<div style="text-align:center;padding:24px;color:var(--mt);font-size:.8rem">'
+      +'⏳ Loading PRAJNA micro-topic predictions…<br>'
+      +'<span style="font-size:.7rem">Requires Intelligence API on port 8001</span></div>';
+  }
+  wrap.appendChild(content);
+  return wrap;
+}
+
+function _buildDeepContent(s, preds){
+  const SCOL={Physics:'#f59e0b',Chemistry:'#6c63ff',Biology:'#22c55e',Mathematics:'#a855f7',
+              Botany:'#22c55e',Zoology:'#10b981'};
+  const TREND_ICO={RISING:'↑',STABLE:'→',DECLINING:'↓',NEW:'★'};
+  const frag=document.createDocumentFragment();
+
+  // Group predictions by subject → chapter → micro_topics
+  const tree={};
+  preds.forEach(p=>{
+    if(p.syllabus_status==='REMOVED') return;
+    const subj=p.subject, ch=p.chapter||p.normalized_chapter||'Other';
+    if(!tree[subj]) tree[subj]={};
+    if(!tree[subj][ch]) tree[subj][ch]={preds:[], prob:0, expQ:0, trend:'STABLE', conf:0};
+    tree[subj][ch].preds.push(p);
+    tree[subj][ch].prob=Math.max(tree[subj][ch].prob, p.appearance_probability||0);
+    tree[subj][ch].expQ+=(p.expected_questions||0);
+    if((p.appearance_probability||0)>tree[subj][ch].prob) tree[subj][ch].trend=p.trend_direction||'STABLE';
+    tree[subj][ch].conf=Math.max(tree[subj][ch].conf, p.confidence_score||0);
+  });
+
+  // Compute ROI for each micro-topic
+  function _stuAcc(name){
+    const cd=s.chapters&&s.chapters[name];
+    if(cd) return cd[0];
+    // Fallback: check if it matches a subject name
+    const sd=s.subjects&&s.subjects[name];
+    if(sd) return sd.acc||0;
+    return null;
+  }
+  function _roi(stuAcc, prob, conf){
+    if(stuAcc===null) return 0;
+    return (1 - stuAcc/100) * (prob||0) * Math.max(conf||0, 0.5);
+  }
+  function _roiClass(r){ return r>0.4?'roi-crit':r>0.25?'roi-focus':r>0.1?'roi-review':'roi-ok'; }
+  function _roiLabel(r){ return r>0.4?'⚠ CRITICAL':r>0.25?'⚡ FOCUS':r>0.1?'📘 REVIEW':'✓ OK'; }
+
+  // Collect all micro ROIs for summary
+  let allMicros=[];
+  for(const subj in tree){
+    for(const ch in tree[subj]){
+      tree[subj][ch].preds.forEach(p=>{
+        const mt=p.micro_topic||p.chapter;
+        const acc=_stuAcc(mt)??_stuAcc(ch)??(_stuAcc(subj));
+        const roi=_roi(acc, p.appearance_probability, p.confidence_score);
+        allMicros.push({name:mt, chapter:ch, subject:subj, acc:acc, prob:p.appearance_probability, roi:roi});
+      });
+    }
+  }
+  allMicros.sort((a,b)=>b.roi-a.roi);
+
+  // Summary card
+  const crit=allMicros.filter(m=>m.roi>0.4).length;
+  const focus=allMicros.filter(m=>m.roi>0.25&&m.roi<=0.4).length;
+  const ok=allMicros.filter(m=>m.roi<=0.25).length;
+  const top3=allMicros.slice(0,3);
+
+  const summary=el('div','deep-summary');
+  summary.innerHTML=`<div class="deep-summary-title">🎯 PRAJNA Study Priority Summary — ${allMicros.length} micro-topics analyzed</div>
+    <div class="deep-summary-counts">
+      <span class="deep-cnt" style="color:#ff6b6b">⚠ ${crit} CRITICAL</span>
+      <span class="deep-cnt" style="color:#f59e0b">⚡ ${focus} FOCUS</span>
+      <span class="deep-cnt" style="color:#22c55e">✓ ${ok} on track</span>
+    </div>
+    <div style="font-size:.72rem;color:var(--mt);margin-bottom:6px;font-weight:600">Top actions:</div>
+    <ol class="deep-actions">${top3.map(m=>
+      `<li><strong style="color:${SCOL[m.subject]||'#818cf8'}">${m.name}</strong> `
+      +`<span style="color:var(--mt)">(${m.subject})</span> — `
+      +`Your: <strong style="color:${m.acc!==null&&m.acc<50?'#ff6b6b':'#22c55e'}">${m.acc!==null?m.acc.toFixed(0)+'%':'?'}</strong> · `
+      +`PRAJNA: <strong style="color:#a5b4fc">${(m.prob*100).toFixed(0)}%</strong></li>`
+    ).join('')}</ol>`;
+  frag.appendChild(summary);
+
+  // Subject-level drill-down
+  const subjOrder=Object.keys(tree).sort((a,b)=>{
+    // Weakest subject first
+    const aAcc=s.subjects&&s.subjects[a]?s.subjects[a].acc:100;
+    const bAcc=s.subjects&&s.subjects[b]?s.subjects[b].acc:100;
+    return aAcc-bAcc;
+  });
+
+  subjOrder.forEach(subj=>{
+    const sc=SCOL[subj]||'#818cf8';
+    const chapters=tree[subj];
+    const chCount=Object.keys(chapters).length;
+    const subjAcc=_stuAcc(subj)??(s.subjects&&s.subjects[subj]?s.subjects[subj].acc:null);
+    const totalMicros=Object.values(chapters).reduce((t,c)=>t+c.preds.length,0);
+
+    const subjEl=document.createElement('details');
+    subjEl.className='deep-subj';
+    subjEl.open=true;
+
+    const subjSum=document.createElement('summary');
+    subjSum.innerHTML=`<span class="deep-subj-dot" style="background:${sc}"></span>`
+      +`<span>${subj}</span>`
+      +`<span style="font-size:.7rem;font-weight:400;color:var(--mt)">Your: <strong style="color:${subjAcc!==null&&subjAcc<50?'#ff6b6b':sc}">${subjAcc!==null?subjAcc.toFixed(0)+'%':'—'}</strong></span>`
+      +`<span class="deep-subj-meta">${chCount} chapters · ${totalMicros} micro-topics</span>`;
+    subjEl.appendChild(subjSum);
+
+    const subjBody=el('div','deep-subj-body');
+
+    // Sort chapters by max micro ROI descending
+    const chEntries=Object.entries(chapters).sort((a,b)=>{
+      const aMax=Math.max(...a[1].preds.map(p=>_roi(_stuAcc(p.micro_topic||p.chapter)??_stuAcc(a[0])??subjAcc, p.appearance_probability, p.confidence_score)));
+      const bMax=Math.max(...b[1].preds.map(p=>_roi(_stuAcc(p.micro_topic||p.chapter)??_stuAcc(b[0])??subjAcc, p.appearance_probability, p.confidence_score)));
+      return bMax-aMax;
+    });
+
+    chEntries.forEach(([ch, chData])=>{
+      const chAcc=_stuAcc(ch)??subjAcc;
+      const chProb=(chData.prob*100).toFixed(0);
+      const chExpQ=chData.expQ.toFixed(1);
+      const chTrend=TREND_ICO[chData.trend]||'→';
+
+      const chEl=document.createElement('details');
+      chEl.className='deep-ch';
+
+      const chSum=document.createElement('summary');
+      chSum.innerHTML=`<span class="deep-ch-name">${ch}</span>`
+        +`<span style="font-size:.68rem;color:var(--mt)">Your: <strong style="color:${chAcc!==null&&chAcc<50?'#ff6b6b':'#22c55e'}">${chAcc!==null?chAcc.toFixed(0)+'%':'—'}</strong></span>`
+        +`<span class="deep-ch-prob" style="color:${sc}">${chProb}%</span>`
+        +`<span class="deep-ch-meta">~${chExpQ}Q · ${chTrend}</span>`;
+      chEl.appendChild(chSum);
+
+      const chBody=el('div','deep-ch-body');
+
+      // Signal badges
+      if(chData.preds[0]&&chData.preds[0].signal_breakdown){
+        const sigDiv=el('div','deep-ch-signals');
+        const sig=chData.preds[0].signal_breakdown;
+        for(const[k,v] of Object.entries(sig)){
+          const val=typeof v==='object'?v.value:v;
+          if(val>0){
+            const badge=el('span','deep-sig');
+            badge.innerHTML=`${k.replace(/_/g,' ')}: <strong>${(typeof val==='number'?val.toFixed(2):val)}</strong>`;
+            sigDiv.appendChild(badge);
+          }
+        }
+        chBody.appendChild(sigDiv);
+      }
+
+      // Micro-topic rows
+      const sortedMicros=[...chData.preds].sort((a,b)=>{
+        const aRoi=_roi(_stuAcc(a.micro_topic||a.chapter)??chAcc, a.appearance_probability, a.confidence_score);
+        const bRoi=_roi(_stuAcc(b.micro_topic||b.chapter)??chAcc, b.appearance_probability, b.confidence_score);
+        return bRoi-aRoi;
+      });
+
+      sortedMicros.forEach(p=>{
+        const mt=p.micro_topic||p.chapter;
+        const mtAcc=_stuAcc(mt)??chAcc;
+        const mtProb=(p.appearance_probability||0);
+        const roi=_roi(mtAcc, mtProb, p.confidence_score);
+        const rc=_roiClass(roi);
+        const rl=_roiLabel(roi);
+
+        const row=el('div','deep-micro');
+        row.innerHTML=`<span class="deep-micro-name">${mt}</span>`
+          +`<span class="deep-micro-acc" style="color:${mtAcc!==null&&mtAcc<50?'#ff6b6b':'#22c55e'}">${mtAcc!==null?mtAcc.toFixed(0)+'%':'—'}</span>`
+          +`<span class="deep-micro-prob" style="color:${sc}">${(mtProb*100).toFixed(0)}%</span>`
+          +`<span class="deep-micro-roi ${rc}">${rl}</span>`;
+        chBody.appendChild(row);
+      });
+
+      chEl.appendChild(chBody);
+      subjBody.appendChild(chEl);
+    });
+
+    subjEl.appendChild(subjBody);
+    frag.appendChild(subjEl);
+  });
+
+  const wrapper=el('div');
+  wrapper.appendChild(frag);
+  return wrapper;
 }
 
 /* ── Main render ── */
@@ -575,6 +830,7 @@ function render(s){
 
   dash.appendChild(buildZones(s));
   dash.appendChild(buildHeatmap(s));
+  dash.appendChild(buildDeepAnalysis(s));
   dash.appendChild(buildInsights(s));
   dash.appendChild(buildIntelligencePanel(s));
   dash.appendChild(buildPredictionsPanel(s));
