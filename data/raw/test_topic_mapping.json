@@ -1,0 +1,1256 @@
+{
+  "tests": [
+    {
+      "filename": "VP AIR Revision Part Test-11_Class 12th_NEET (2025-26)_11-01-2026_Questions Paper.pdf",
+      "test_name": "VP AIR Revision-01 Test-11",
+      "exam_type": "NEET",
+      "stream": "12th NEET",
+      "date": "11-01-2026",
+      "total_questions": 180,
+      "max_marks": 720,
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 45,
+          "topics": [
+            "Gravitation",
+            "Mechanical Properties of Solids",
+            "Mechanical Properties of Fluids",
+            "Thermal Properties of Matter",
+            "Kinetic Theory",
+            "Thermodynamics",
+            "Oscillations",
+            "Waves"
+          ],
+          "syllabus_note": "Part Test-11th"
+        },
+        "Chemistry": {
+          "q_start": 46,
+          "q_end": 90,
+          "topics": [
+            "Equilibrium",
+            "P-block Elements - Group 13 and 14",
+            "Organic Chemistry - IUPAC Nomenclature",
+            "Organic Chemistry - Isomerism",
+            "Organic Chemistry - General Organic Chemistry",
+            "Hydrocarbons",
+            "Purification and Analysis of Organic Compound"
+          ],
+          "syllabus_note": "Part Test-11th"
+        },
+        "Botany": {
+          "q_start": 91,
+          "q_end": 135,
+          "topics": [
+            "Morphology of Flowering Plants",
+            "Anatomy of Flowering Plants",
+            "Respiration in Plants",
+            "Photosynthesis in Higher Plants",
+            "Plant Growth and Development"
+          ]
+        },
+        "Zoology": {
+          "q_start": 136,
+          "q_end": 180,
+          "topics": [
+            "Locomotion and Movement",
+            "Neural Control and Coordination",
+            "Chemical Coordination and Integration",
+            "Animal Kingdom",
+            "Animal Morphology - including Cockroach & Frog"
+          ]
+        }
+      }
+    },
+    {
+      "filename": "VP AIR Revision Part Test-12_Class 12th_NEET (2025-26)_15-01-2026_Questions Paper.pdf",
+      "test_name": "VP AIR Revision-01 Test-12",
+      "exam_type": "NEET",
+      "stream": "12th NEET",
+      "date": "15-01-2026",
+      "total_questions": 180,
+      "max_marks": 720,
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 45,
+          "topics": ["Full Syllabus-12th"],
+          "syllabus_note": "Full Syllabus Class 12"
+        },
+        "Chemistry": {
+          "q_start": 46,
+          "q_end": 90,
+          "topics": ["Full Syllabus-12th"],
+          "syllabus_note": "Full Syllabus Class 12"
+        },
+        "Botany": {
+          "q_start": 91,
+          "q_end": 135,
+          "topics": ["Full Syllabus-12th"],
+          "syllabus_note": "Full Syllabus Class 12"
+        },
+        "Zoology": {
+          "q_start": 136,
+          "q_end": 180,
+          "topics": ["Full Syllabus-12th"],
+          "syllabus_note": "Full Syllabus Class 12"
+        }
+      }
+    },
+    {
+      "filename": "VP AIR Revision Part Test-13_Class 12th_NEET (2025-26)_21-01-2026_Questions Paper.pdf",
+      "test_name": "VP AIR Revision-01 Test-13",
+      "exam_type": "NEET",
+      "stream": "12th NEET",
+      "date": "21-01-2026",
+      "total_questions": 180,
+      "max_marks": 720,
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 45,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        },
+        "Chemistry": {
+          "q_start": 46,
+          "q_end": 90,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        },
+        "Botany": {
+          "q_start": 91,
+          "q_end": 135,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        },
+        "Zoology": {
+          "q_start": 136,
+          "q_end": 180,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        }
+      }
+    },
+    {
+      "filename": "VP AIR Revision Part Test-14_Class 12th_NEET (2025-26)_25-01-2026_Questions Paper.pdf",
+      "test_name": "VP AIR Revision-01 Test-14",
+      "exam_type": "NEET",
+      "stream": "12th NEET",
+      "date": "25-01-2026",
+      "total_questions": 180,
+      "max_marks": 720,
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 45,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        },
+        "Chemistry": {
+          "q_start": 46,
+          "q_end": 90,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        },
+        "Botany": {
+          "q_start": 91,
+          "q_end": 135,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        },
+        "Zoology": {
+          "q_start": 136,
+          "q_end": 180,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        }
+      }
+    },
+    {
+      "filename": "VP AIR Revision Part Test-15_Class 12th_NEET (2025-26)_28-01-2026_Questions Paper.pdf",
+      "test_name": "VP AIR Revision-01 Test-15",
+      "exam_type": "NEET",
+      "stream": "12th NEET",
+      "date": "28-01-2026",
+      "total_questions": 180,
+      "max_marks": 720,
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 45,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        },
+        "Chemistry": {
+          "q_start": 46,
+          "q_end": 90,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        },
+        "Botany": {
+          "q_start": 91,
+          "q_end": 135,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        },
+        "Zoology": {
+          "q_start": 136,
+          "q_end": 180,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        }
+      }
+    },
+    {
+      "filename": "VP AIR Revision Part Test-16_Class 12th_NEET (2025-26)_01-02-2026_Questions Paper.pdf",
+      "test_name": "VP AIR Revision-01 Test-16",
+      "exam_type": "NEET",
+      "stream": "12th NEET",
+      "date": "01-02-2026",
+      "total_questions": 180,
+      "max_marks": 720,
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 45,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        },
+        "Chemistry": {
+          "q_start": 46,
+          "q_end": 90,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        },
+        "Botany": {
+          "q_start": 91,
+          "q_end": 135,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        },
+        "Zoology": {
+          "q_start": 136,
+          "q_end": 180,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        }
+      }
+    },
+    {
+      "filename": "VP AIR Revision Part Test-17_Class 12th_NEET (2025-26)_04-02-2026_Questions Paper.pdf",
+      "test_name": "VP AIR Revision-01 Test-17",
+      "exam_type": "NEET",
+      "stream": "12th NEET",
+      "date": "04-02-2026",
+      "total_questions": 180,
+      "max_marks": 720,
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 45,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        },
+        "Chemistry": {
+          "q_start": 46,
+          "q_end": 90,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        },
+        "Botany": {
+          "q_start": 91,
+          "q_end": 135,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        },
+        "Zoology": {
+          "q_start": 136,
+          "q_end": 180,
+          "topics": ["Full Syllabus 11th and 12th as per NTA"],
+          "syllabus_note": "Full Syllabus 11th and 12th as per NTA"
+        }
+      }
+    },
+    {
+      "filename": "VP AIR Part Test-12_Class 11th_NEET (2025-26)_02-02-2026_Questions Paper.pdf",
+      "test_name": "VP AIR Part Test-12 (Class 11th)",
+      "exam_type": "NEET",
+      "stream": "11th NEET",
+      "date": "02-02-2026",
+      "total_questions": 180,
+      "max_marks": 720,
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 45,
+          "topics": [
+            "Waves"
+          ]
+        },
+        "Chemistry": {
+          "q_start": 46,
+          "q_end": 90,
+          "topics": [
+            "Hydrocarbons",
+            "Purification and Analysis of Organic Compound"
+          ]
+        },
+        "Botany": {
+          "q_start": 91,
+          "q_end": 135,
+          "topics": [
+            "Plant Growth and Development"
+          ]
+        },
+        "Zoology": {
+          "q_start": 136,
+          "q_end": 180,
+          "topics": [
+            "Animal Morphology - including Cockroach & Frog"
+          ]
+        }
+      }
+    },
+    {
+      "filename": "VP AIR Part Syllabus-01_Class 11th_NEET (2025-26)_04-02-2026_Questions Paper.pdf",
+      "test_name": "VP AIR Part Syllabus-01 (Class 11th)",
+      "exam_type": "NEET",
+      "stream": "11th NEET",
+      "date": "04-02-2026",
+      "total_questions": 180,
+      "max_marks": 720,
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 45,
+          "topics": [
+            "Gravitation",
+            "Mechanical Properties of Solids",
+            "Mechanical Properties of Fluids",
+            "Thermal Properties of Matter",
+            "Kinetic Theory",
+            "Thermodynamics",
+            "Oscillations",
+            "Waves"
+          ]
+        },
+        "Chemistry": {
+          "q_start": 46,
+          "q_end": 90,
+          "topics": [
+            "P-block Element - Group 13 and 14",
+            "Organic Chemistry - IUPAC Nomenclature",
+            "Organic Chemistry - Isomerism",
+            "Organic Chemistry - General Organic Chemistry",
+            "Hydrocarbons",
+            "Purification and Analysis of Organic Compound"
+          ]
+        },
+        "Botany": {
+          "q_start": 91,
+          "q_end": 135,
+          "topics": [
+            "Morphology of Flowering Plants",
+            "Anatomy of Flowering Plants",
+            "Respiration in Plants",
+            "Photosynthesis in Higher Plants",
+            "Plant Growth and Development"
+          ]
+        },
+        "Zoology": {
+          "q_start": 136,
+          "q_end": 180,
+          "topics": [
+            "Locomotion and Movement",
+            "Neural Control and Coordination",
+            "Chemical Coordination and Integration",
+            "Animal Kingdom",
+            "Animal Morphology - including Cockroach & Frog"
+          ]
+        }
+      }
+    },
+    {
+      "filename": "VP AIR Part Syllabus-02_Class 11th_NEET (2025-26)_06-02-2026_Questions Paper.pdf",
+      "test_name": "VP AIR Part Syllabus-02 (Class 11th)",
+      "exam_type": "NEET",
+      "stream": "11th NEET",
+      "date": "06-02-2026",
+      "total_questions": 180,
+      "max_marks": 720,
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 45,
+          "topics": [
+            "Units and Measurements",
+            "Mathematical Tools",
+            "Motion in a Straight Line",
+            "Motion in a Plane",
+            "Laws of Motion",
+            "Work, Energy and Power",
+            "Centre of Mass & System of Particles",
+            "Rotational Motion"
+          ]
+        },
+        "Chemistry": {
+          "q_start": 46,
+          "q_end": 90,
+          "topics": [
+            "Structure of Atom",
+            "Some Basic Concepts of Chemistry",
+            "Classification of Elements and Periodicity in Properties",
+            "Chemical Bonding and Molecular Structure",
+            "Thermodynamics",
+            "Redox Reactions",
+            "Equilibrium"
+          ]
+        },
+        "Botany": {
+          "q_start": 91,
+          "q_end": 135,
+          "topics": [
+            "Cell - The Unit of Life",
+            "Cell Cycle and Cell Division",
+            "The Living World",
+            "Biological Classification",
+            "Plant Kingdom"
+          ]
+        },
+        "Zoology": {
+          "q_start": 136,
+          "q_end": 180,
+          "topics": [
+            "Structural Organization in Animal - Tissue only",
+            "Biomolecules",
+            "Breathing and Exchange of Gases",
+            "Body Fluids and Circulation",
+            "Excretory Products and their Elimination"
+          ]
+        }
+      }
+    },
+    {
+      "filename": "VP AIR Full Test-01_Class 11th_NEET (2025-26)_10-02-2026_Questions Paper.pdf",
+      "test_name": "VP AIR Full Test-01 (Class 11th)",
+      "exam_type": "NEET",
+      "stream": "11th NEET",
+      "date": "10-02-2026",
+      "total_questions": 180,
+      "max_marks": 720,
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 45,
+          "topics": ["11th Full Syllabus"],
+          "syllabus_note": "Complete 11th Physics syllabus"
+        },
+        "Chemistry": {
+          "q_start": 46,
+          "q_end": 90,
+          "topics": ["11th Full Syllabus"],
+          "syllabus_note": "Complete 11th Chemistry syllabus"
+        },
+        "Botany": {
+          "q_start": 91,
+          "q_end": 135,
+          "topics": ["11th Full Syllabus"],
+          "syllabus_note": "Complete 11th Botany syllabus"
+        },
+        "Zoology": {
+          "q_start": 136,
+          "q_end": 180,
+          "topics": ["11th Full Syllabus"],
+          "syllabus_note": "Complete 11th Zoology syllabus"
+        }
+      }
+    },
+    {
+      "filename": "VP AIR Part Test-10_DROPPER_NEET (2025-26)_01-03-2026_Questions Paper.pdf",
+      "test_name": "VP AIR Part Test-10 (Dropper NEET)",
+      "exam_type": "NEET",
+      "stream": "DROPPER NEET",
+      "date": "01-03-2026",
+      "total_questions": 180,
+      "max_marks": 720,
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 45,
+          "topics": [
+            "Ray Optics and Optical Instruments",
+            "Wave Optics",
+            "Dual Nature of Radiation and Matter",
+            "Atoms",
+            "Nuclei",
+            "Semiconductor Electronics - Materials, Devices and Simple Circuits"
+          ]
+        },
+        "Chemistry": {
+          "q_start": 46,
+          "q_end": 90,
+          "topics": [
+            "Coordination Compounds",
+            "The p-Block Elements",
+            "The d- and f-block Elements",
+            "Salt Analysis"
+          ]
+        },
+        "Botany": {
+          "q_start": 91,
+          "q_end": 135,
+          "topics": [
+            "Plant Growth and Development",
+            "Organisms and Population",
+            "Ecosystem",
+            "Biodiversity and Conservation"
+          ]
+        },
+        "Zoology": {
+          "q_start": 136,
+          "q_end": 180,
+          "topics": [
+            "Human Health and Disease",
+            "Biotechnology - Principles and Processes",
+            "Biotechnology and its Applications"
+          ]
+        }
+      }
+    },
+    {
+      "filename": "PYQ Test-05_12th JEE 2026 (10.01.2026)_Test Paper-07-01-2026.pdf",
+      "test_name": "PYQ Test-05 (12th JEE 2026)",
+      "exam_type": "JEE Mains",
+      "stream": "12th JEE",
+      "date": "10-01-2026",
+      "total_questions": 75,
+      "max_marks": 300,
+      "sections": {
+        "Mathematics": {
+          "q_start": 1,
+          "q_end": 25,
+          "topics": ["Full Syllabus"],
+          "syllabus_note": "Full Syllabus - Section I: Q1-20 MCQ, Q21-25 Integer Type",
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 1, "q_end": 20},
+            "Section_B_Integer": {"q_start": 21, "q_end": 25}
+          }
+        },
+        "Physics": {
+          "q_start": 26,
+          "q_end": 50,
+          "topics": ["Full Syllabus"],
+          "syllabus_note": "Full Syllabus - Section II: Q26-45 MCQ, Q46-50 Integer Type",
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 26, "q_end": 45},
+            "Section_B_Integer": {"q_start": 46, "q_end": 50}
+          }
+        },
+        "Chemistry": {
+          "q_start": 51,
+          "q_end": 75,
+          "topics": ["Full Syllabus"],
+          "syllabus_note": "Full Syllabus - Section III: Q51-70 MCQ, Q71-75 Integer Type",
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 51, "q_end": 70},
+            "Section_B_Integer": {"q_start": 71, "q_end": 75}
+          }
+        }
+      },
+      "notes": "PYQ (Previous Year Questions) based test. Section order on cover: Physics, Chemistry, Mathematics. Section-I in paper starts with Mathematics (Q1-20 MCQ visible on page 2)."
+    },
+    {
+      "filename": "PYQ Test-06_12th JEE 2026 (17.01.2026)_Test Paper.pdf",
+      "test_name": "PYQ Test-06 (12th JEE 2026)",
+      "exam_type": "JEE Mains",
+      "stream": "12th JEE",
+      "date": "17-01-2026",
+      "total_questions": 75,
+      "max_marks": 300,
+      "sections": {
+        "Mathematics": {
+          "q_start": 1,
+          "q_end": 25,
+          "topics": ["Full Syllabus"],
+          "syllabus_note": "Full Syllabus - Q1-20 MCQ, Q21-25 Integer Type",
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 1, "q_end": 20},
+            "Section_B_Integer": {"q_start": 21, "q_end": 25}
+          }
+        },
+        "Physics": {
+          "q_start": 26,
+          "q_end": 50,
+          "topics": ["Full Syllabus"],
+          "syllabus_note": "Full Syllabus - Q26-45 MCQ, Q46-50 Integer Type",
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 26, "q_end": 45},
+            "Section_B_Integer": {"q_start": 46, "q_end": 50}
+          }
+        },
+        "Chemistry": {
+          "q_start": 51,
+          "q_end": 75,
+          "topics": ["Full Syllabus"],
+          "syllabus_note": "Full Syllabus - Q51-70 MCQ, Q71-75 Integer Type",
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 51, "q_end": 70},
+            "Section_B_Integer": {"q_start": 71, "q_end": 75}
+          }
+        }
+      },
+      "notes": "PYQ (Previous Year Questions) based test. Section order in paper starts with Mathematics."
+    },
+    {
+      "filename": "PYQ Test-07_12th JEE 2026 (19.01.2026)_Test Paper.pdf",
+      "test_name": "PYQ Test-07 (12th JEE 2026)",
+      "exam_type": "JEE Mains",
+      "stream": "12th JEE",
+      "date": "19-01-2026",
+      "total_questions": 75,
+      "max_marks": 300,
+      "sections": {
+        "Mathematics": {
+          "q_start": 1,
+          "q_end": 25,
+          "topics": ["Full Syllabus"],
+          "syllabus_note": "Full Syllabus - Q1-20 MCQ, Q21-25 Integer Type",
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 1, "q_end": 20},
+            "Section_B_Integer": {"q_start": 21, "q_end": 25}
+          }
+        },
+        "Physics": {
+          "q_start": 26,
+          "q_end": 50,
+          "topics": ["Full Syllabus"],
+          "syllabus_note": "Full Syllabus - Q26-45 MCQ, Q46-50 Integer Type",
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 26, "q_end": 45},
+            "Section_B_Integer": {"q_start": 46, "q_end": 50}
+          }
+        },
+        "Chemistry": {
+          "q_start": 51,
+          "q_end": 75,
+          "topics": ["Full Syllabus"],
+          "syllabus_note": "Full Syllabus - Q51-70 MCQ, Q71-75 Integer Type",
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 51, "q_end": 70},
+            "Section_B_Integer": {"q_start": 71, "q_end": 75}
+          }
+        }
+      },
+      "notes": "PYQ (Previous Year Questions) based test. Cover page lists Mathematics first, then Physics, then Chemistry. Section-I in paper is Mathematics."
+    },
+    {
+      "filename": "VP AIR_Test-10_Class-11th_P1_JEE Adv._11-01-2026_Question.pdf",
+      "test_name": "VP AIR Test-10 Paper-1 (Class 11th JEE Advanced)",
+      "exam_type": "JEE Advanced",
+      "stream": "11th JEE Advanced",
+      "date": "11-01-2026",
+      "total_questions": 48,
+      "max_marks": 180,
+      "paper": "Paper-1",
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 16,
+          "topics": [
+            "Thermal Properties of Matter",
+            "Kinetic Theory",
+            "Thermodynamics"
+          ],
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 1, "q_end": 4, "marks": "+3/-1"},
+            "Section2_MultiCorrect_3Qs": {"q_start": 5, "q_end": 7, "marks": "+4/-2 partial"},
+            "Section3_Numerical_6Qs": {"q_start": 8, "q_end": 13, "marks": "+4/0"},
+            "Section4_MatchingList_3Qs": {"q_start": 14, "q_end": 16, "marks": "+4/-1"}
+          }
+        },
+        "Chemistry": {
+          "q_start": 17,
+          "q_end": 32,
+          "topics": [
+            "ALKANE",
+            "ALKENE",
+            "ALKYNE"
+          ],
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 17, "q_end": 20, "marks": "+3/-1"},
+            "Section2_MultiCorrect_3Qs": {"q_start": 21, "q_end": 23, "marks": "+4/-2 partial"},
+            "Section3_Numerical_6Qs": {"q_start": 24, "q_end": 29, "marks": "+4/0"},
+            "Section4_MatchingList_3Qs": {"q_start": 30, "q_end": 32, "marks": "+4/-1"}
+          }
+        },
+        "Mathematics": {
+          "q_start": 33,
+          "q_end": 48,
+          "topics": [
+            "Complex Number - I",
+            "Complex Number - II"
+          ],
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 33, "q_end": 36, "marks": "+3/-1"},
+            "Section2_MultiCorrect_3Qs": {"q_start": 37, "q_end": 39, "marks": "+4/-2 partial"},
+            "Section3_Numerical_6Qs": {"q_start": 40, "q_end": 45, "marks": "+4/0"},
+            "Section4_MatchingList_3Qs": {"q_start": 46, "q_end": 48, "marks": "+4/-1"}
+          }
+        }
+      },
+      "notes": "JEE Advanced format: 4 sections per subject. Section-1: 4 SCQ (+3/-1), Section-2: 3 MCQ (+4/-2 partial), Section-3: 6 Numerical (+4/0), Section-4: 3 Matching List (+4/-1)."
+    },
+    {
+      "filename": "VP AIR_Test-10_Class-11th_P2_JEE Adv._11-01-2026_Question.pdf",
+      "test_name": "VP AIR Test-10 Paper-2 (Class 11th JEE Advanced)",
+      "exam_type": "JEE Advanced",
+      "stream": "11th JEE Advanced",
+      "date": "11-01-2026",
+      "total_questions": 48,
+      "max_marks": 180,
+      "paper": "Paper-2",
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 16,
+          "topics": [
+            "Thermal Properties of Matter",
+            "Kinetic Theory",
+            "Thermodynamics"
+          ],
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 1, "q_end": 4, "marks": "+3/-1"},
+            "Section2_MultiCorrect_4Qs": {"q_start": 5, "q_end": 8, "marks": "+4/-2 partial"},
+            "Section3_Numerical_8Qs": {"q_start": 9, "q_end": 16, "marks": "+4/0"}
+          }
+        },
+        "Chemistry": {
+          "q_start": 17,
+          "q_end": 32,
+          "topics": [
+            "ALKANE",
+            "ALKENE",
+            "ALKYNE"
+          ],
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 17, "q_end": 20, "marks": "+3/-1"},
+            "Section2_MultiCorrect_4Qs": {"q_start": 21, "q_end": 24, "marks": "+4/-2 partial"},
+            "Section3_Numerical_8Qs": {"q_start": 25, "q_end": 32, "marks": "+4/0"}
+          }
+        },
+        "Mathematics": {
+          "q_start": 33,
+          "q_end": 48,
+          "topics": [
+            "Complex Number - I",
+            "Complex Number - II"
+          ],
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 33, "q_end": 36, "marks": "+3/-1"},
+            "Section2_MultiCorrect_4Qs": {"q_start": 37, "q_end": 40, "marks": "+4/-2 partial"},
+            "Section3_Numerical_8Qs": {"q_start": 41, "q_end": 48, "marks": "+4/0"}
+          }
+        }
+      },
+      "notes": "JEE Advanced Paper-2 format: 3 sections per subject. Section-1: 4 SCQ (+3/-1), Section-2: 4 MCQ (+4/-2 partial), Section-3: 8 Numerical (+4/0)."
+    },
+    {
+      "filename": "VP AIR_Weekly Test-11_Class-11th_JEE Main_(25-01-2026)_Q.pdf",
+      "test_name": "VP AIR Weekly Test-11 (Class 11th JEE Main)",
+      "exam_type": "JEE Mains",
+      "stream": "11th JEE Main",
+      "date": "25-01-2026",
+      "total_questions": 75,
+      "max_marks": 300,
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 25,
+          "topics": [
+            "Oscillations",
+            "Waves"
+          ],
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 1, "q_end": 20},
+            "Section_B_Integer": {"q_start": 21, "q_end": 25}
+          }
+        },
+        "Chemistry": {
+          "q_start": 26,
+          "q_end": 50,
+          "topics": [
+            "Aromatic Hydrocarbon",
+            "Purification",
+            "Hydrogen + s block + Environmental Chemistry"
+          ],
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 26, "q_end": 45},
+            "Section_B_Integer": {"q_start": 46, "q_end": 50}
+          }
+        },
+        "Mathematics": {
+          "q_start": 51,
+          "q_end": 75,
+          "topics": [
+            "Limits and Derivatives",
+            "Statistics",
+            "Introduction to Three-dimensional Geometry",
+            "Probability"
+          ],
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 51, "q_end": 70},
+            "Section_B_Integer": {"q_start": 71, "q_end": 75}
+          }
+        }
+      }
+    },
+    {
+      "filename": "VP AIR_Weekly Test-11_Class-11th_JEE Adv._(25-01-2026)_Q.pdf",
+      "test_name": "VP AIR Weekly Test-11 Paper-1 (Class 11th JEE Advanced)",
+      "exam_type": "JEE Advanced",
+      "stream": "11th JEE Advanced",
+      "date": "25-01-2026",
+      "total_questions": 51,
+      "max_marks": 180,
+      "paper": "Paper-1",
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 17,
+          "topics": [
+            "Oscillations",
+            "Waves"
+          ],
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 1, "q_end": 4, "marks": "+3/-1"},
+            "Section2_MultiCorrect_3Qs": {"q_start": 5, "q_end": 7, "marks": "+4/-2 partial"},
+            "Section3_Numerical_6Qs": {"q_start": 8, "q_end": 13, "marks": "+4/0"},
+            "Section4_MatchingList_4Qs": {"q_start": 14, "q_end": 17, "marks": "+3/-1"}
+          }
+        },
+        "Chemistry": {
+          "q_start": 18,
+          "q_end": 34,
+          "topics": [
+            "Aromatic Hydrocarbon",
+            "Purification",
+            "Hydrogen + s block + Environmental Chemistry"
+          ],
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 18, "q_end": 21, "marks": "+3/-1"},
+            "Section2_MultiCorrect_3Qs": {"q_start": 22, "q_end": 24, "marks": "+4/-2 partial"},
+            "Section3_Numerical_6Qs": {"q_start": 25, "q_end": 30, "marks": "+4/0"},
+            "Section4_MatchingList_4Qs": {"q_start": 31, "q_end": 34, "marks": "+3/-1"}
+          }
+        },
+        "Mathematics": {
+          "q_start": 35,
+          "q_end": 51,
+          "topics": [
+            "Limits and Derivatives",
+            "Statistics",
+            "Introduction to Three-dimensional Geometry",
+            "Probability"
+          ],
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 35, "q_end": 38, "marks": "+3/-1"},
+            "Section2_MultiCorrect_3Qs": {"q_start": 39, "q_end": 41, "marks": "+4/-2 partial"},
+            "Section3_Numerical_6Qs": {"q_start": 42, "q_end": 47, "marks": "+4/0"},
+            "Section4_MatchingList_4Qs": {"q_start": 48, "q_end": 51, "marks": "+3/-1"}
+          }
+        }
+      }
+    },
+    {
+      "filename": "VP AIR_Weekly Test-01_Class-11th_JEE Main_(01-02-2026)_Q.pdf",
+      "test_name": "VP AIR Weekly Test-01 (Class 11th JEE Main)",
+      "exam_type": "JEE Mains",
+      "stream": "11th JEE Main",
+      "date": "01-02-2026",
+      "total_questions": 75,
+      "max_marks": 300,
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 25,
+          "topics": [
+            "Gravitation",
+            "Mechanical Properties of Solids",
+            "Mechanical Properties of Fluids",
+            "Thermal Properties of Matter",
+            "Kinetic Theory",
+            "Thermodynamics",
+            "Oscillations",
+            "Waves"
+          ],
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 1, "q_end": 20},
+            "Section_B_Integer": {"q_start": 21, "q_end": 25}
+          }
+        },
+        "Chemistry": {
+          "q_start": 26,
+          "q_end": 50,
+          "topics": [
+            "P-block Element - Group 13 and 14",
+            "Organic Chemistry - IUPAC Nomenclature",
+            "Organic Chemistry - Isomerism",
+            "Organic Chemistry - General Organic Chemistry",
+            "Hydrocarbons",
+            "Purification and Analysis of Organic Compound",
+            "Hydrogen",
+            "S-block",
+            "Environmental Chemistry"
+          ],
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 26, "q_end": 45},
+            "Section_B_Integer": {"q_start": 46, "q_end": 50}
+          }
+        },
+        "Mathematics": {
+          "q_start": 51,
+          "q_end": 75,
+          "topics": [
+            "Straight Lines",
+            "Circles",
+            "Conic Sections - Parabola",
+            "Conic Sections - Ellipse",
+            "Conic Sections - Hyperbola",
+            "Complex Number - I",
+            "Complex Number - II",
+            "Limits and Derivatives",
+            "Statistics",
+            "Introduction to Three-dimensional Geometry",
+            "Probability"
+          ],
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 51, "q_end": 70},
+            "Section_B_Integer": {"q_start": 71, "q_end": 75}
+          }
+        }
+      }
+    },
+    {
+      "filename": "VP AIR_Test-01_Class-11th_JEE Adv.(01-02-2026)_Q.pdf",
+      "test_name": "VP AIR Test-01 Paper-1 (Class 11th JEE Advanced)",
+      "exam_type": "JEE Advanced",
+      "stream": "11th JEE Advanced",
+      "date": "01-02-2026",
+      "total_questions": 48,
+      "max_marks": 180,
+      "paper": "Paper-1",
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 16,
+          "topics": [
+            "Gravitation",
+            "Mechanical Properties of Solids",
+            "Mechanical Properties of Fluids",
+            "Thermal Properties of Matter",
+            "Kinetic Theory",
+            "Thermodynamics",
+            "Oscillations",
+            "Waves"
+          ],
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 1, "q_end": 4, "marks": "+3/-1"},
+            "Section2_MultiCorrect_3Qs": {"q_start": 5, "q_end": 7, "marks": "+4/-2 partial"},
+            "Section3_Numerical_6Qs": {"q_start": 8, "q_end": 13, "marks": "+4/0"},
+            "Section4_MatchingList_3Qs": {"q_start": 14, "q_end": 16, "marks": "+4/-1"}
+          }
+        },
+        "Chemistry": {
+          "q_start": 17,
+          "q_end": 32,
+          "topics": [
+            "P-block Element - Group 13 and 14",
+            "Organic Chemistry - IUPAC Nomenclature",
+            "Organic Chemistry - Isomerism",
+            "Organic Chemistry - General Organic Chemistry",
+            "Hydrocarbons",
+            "Purification and Analysis of Organic Compound",
+            "Hydrogen",
+            "S-block",
+            "Environmental Chemistry"
+          ],
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 17, "q_end": 20, "marks": "+3/-1"},
+            "Section2_MultiCorrect_3Qs": {"q_start": 21, "q_end": 23, "marks": "+4/-2 partial"},
+            "Section3_Numerical_6Qs": {"q_start": 24, "q_end": 29, "marks": "+4/0"},
+            "Section4_MatchingList_3Qs": {"q_start": 30, "q_end": 32, "marks": "+4/-1"}
+          }
+        },
+        "Mathematics": {
+          "q_start": 33,
+          "q_end": 48,
+          "topics": [
+            "Straight Lines",
+            "Circles",
+            "Conic Sections - Parabola",
+            "Conic Sections - Ellipse",
+            "Conic Sections - Hyperbola",
+            "Complex Number - I",
+            "Complex Number - II",
+            "Limits and Derivatives",
+            "Statistics",
+            "Introduction to Three-dimensional Geometry",
+            "Probability"
+          ],
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 33, "q_end": 36, "marks": "+3/-1"},
+            "Section2_MultiCorrect_3Qs": {"q_start": 37, "q_end": 39, "marks": "+4/-2 partial"},
+            "Section3_Numerical_6Qs": {"q_start": 40, "q_end": 45, "marks": "+4/0"},
+            "Section4_MatchingList_3Qs": {"q_start": 46, "q_end": 48, "marks": "+4/-1"}
+          }
+        }
+      }
+    },
+    {
+      "filename": "VP AIR_Test-02_Class-11_JEE Main_(04-02-2026)_Question.pdf",
+      "test_name": "VP AIR Test-02 (Class 11th JEE Main)",
+      "exam_type": "JEE Mains",
+      "stream": "11th JEE Main",
+      "date": "04-02-2026",
+      "total_questions": 75,
+      "max_marks": 300,
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 25,
+          "topics": [
+            "Mathematical Tools",
+            "Units and Measurements",
+            "Motion in a Straight Line",
+            "Motion in a Plane",
+            "Laws of Motion",
+            "Work, Energy and Power",
+            "Centre of Mass & System of Particles",
+            "Rotational Motion"
+          ],
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 1, "q_end": 20},
+            "Section_B_Integer": {"q_start": 21, "q_end": 25}
+          }
+        },
+        "Chemistry": {
+          "q_start": 26,
+          "q_end": 50,
+          "topics": [
+            "Structure of Atom",
+            "Some Basic Concepts of Chemistry",
+            "Classification of Elements and Periodicity in Properties",
+            "Chemical Bonding and Molecular Structure",
+            "States of Matter",
+            "Thermodynamics",
+            "Redox Reactions",
+            "Equilibrium"
+          ],
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 26, "q_end": 45},
+            "Section_B_Integer": {"q_start": 46, "q_end": 50}
+          }
+        },
+        "Mathematics": {
+          "q_start": 51,
+          "q_end": 75,
+          "topics": [
+            "Basic Maths",
+            "Sets",
+            "Trigonometric Functions",
+            "Trigonometric Equation",
+            "Quadratic Equations",
+            "Sequence and Series",
+            "Binomial Theorem",
+            "Permutations and Combinations"
+          ],
+          "section_structure": {
+            "Section_A_MCQ": {"q_start": 51, "q_end": 70},
+            "Section_B_Integer": {"q_start": 71, "q_end": 75}
+          }
+        }
+      }
+    },
+    {
+      "filename": "VP AIR Test-02_11th- JEE Advanced_P1_(04-02-2026)_Question.pdf",
+      "test_name": "VP AIR Test-02 Paper-1 (Class 11th JEE Advanced)",
+      "exam_type": "JEE Advanced",
+      "stream": "11th JEE Advanced",
+      "date": "04-02-2026",
+      "total_questions": 51,
+      "max_marks": 180,
+      "paper": "Paper-1",
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 17,
+          "topics": [
+            "Mathematical Tools",
+            "Units and Measurements",
+            "Motion in a Straight Line",
+            "Motion in a Plane",
+            "Laws of Motion",
+            "Work, Energy and Power",
+            "Centre of Mass & System of Particles",
+            "Rotational Motion"
+          ],
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 1, "q_end": 4, "marks": "+3/-1"},
+            "Section2_MultiCorrect_3Qs": {"q_start": 5, "q_end": 7, "marks": "+4/-2 partial"},
+            "Section3_Numerical_6Qs": {"q_start": 8, "q_end": 13, "marks": "+4/0"},
+            "Section4_MatchingList_4Qs": {"q_start": 14, "q_end": 17, "marks": "+3/-1"}
+          }
+        },
+        "Chemistry": {
+          "q_start": 18,
+          "q_end": 34,
+          "topics": [
+            "Structure of Atom",
+            "Some Basic Concepts of Chemistry",
+            "Classification of Elements and Periodicity in Properties",
+            "Chemical Bonding and Molecular Structure",
+            "States of Matter",
+            "Thermodynamics",
+            "Redox Reactions",
+            "Equilibrium"
+          ],
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 18, "q_end": 21, "marks": "+3/-1"},
+            "Section2_MultiCorrect_3Qs": {"q_start": 22, "q_end": 24, "marks": "+4/-2 partial"},
+            "Section3_Numerical_6Qs": {"q_start": 25, "q_end": 30, "marks": "+4/0"},
+            "Section4_MatchingList_4Qs": {"q_start": 31, "q_end": 34, "marks": "+3/-1"}
+          }
+        },
+        "Mathematics": {
+          "q_start": 35,
+          "q_end": 51,
+          "topics": [
+            "Basic Maths",
+            "Sets",
+            "Trigonometric Functions",
+            "Trigonometric Equation",
+            "Quadratic Equations",
+            "Sequence and Series",
+            "Binomial Theorem",
+            "Permutations and Combinations"
+          ],
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 35, "q_end": 38, "marks": "+3/-1"},
+            "Section2_MultiCorrect_3Qs": {"q_start": 39, "q_end": 41, "marks": "+4/-2 partial"},
+            "Section3_Numerical_6Qs": {"q_start": 42, "q_end": 47, "marks": "+4/0"},
+            "Section4_MatchingList_4Qs": {"q_start": 48, "q_end": 51, "marks": "+3/-1"}
+          }
+        }
+      }
+    },
+    {
+      "filename": "AIR_VP Test-01_Class-11th_JEE Adv. P-1_(09-02-2026)_Q.pdf",
+      "test_name": "AIR VP Test-01 Paper-1 (Class 11th JEE Advanced)",
+      "exam_type": "JEE Advanced",
+      "stream": "11th JEE Advanced",
+      "date": "09-02-2026",
+      "total_questions": 48,
+      "max_marks": 180,
+      "paper": "Paper-1",
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 16,
+          "topics": ["Full Syllabus"],
+          "syllabus_note": "Full Syllabus 11th",
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 1, "q_end": 4, "marks": "+3/-1"},
+            "Section2_MultiCorrect_3Qs": {"q_start": 5, "q_end": 7, "marks": "+4/-2 partial"},
+            "Section3_Numerical_6Qs": {"q_start": 8, "q_end": 13, "marks": "+4/0"},
+            "Section4_MatchingList_3Qs": {"q_start": 14, "q_end": 16, "marks": "+4/-1"}
+          }
+        },
+        "Chemistry": {
+          "q_start": 17,
+          "q_end": 32,
+          "topics": ["Full Syllabus"],
+          "syllabus_note": "Full Syllabus 11th",
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 17, "q_end": 20, "marks": "+3/-1"},
+            "Section2_MultiCorrect_3Qs": {"q_start": 21, "q_end": 23, "marks": "+4/-2 partial"},
+            "Section3_Numerical_6Qs": {"q_start": 24, "q_end": 29, "marks": "+4/0"},
+            "Section4_MatchingList_3Qs": {"q_start": 30, "q_end": 32, "marks": "+4/-1"}
+          }
+        },
+        "Mathematics": {
+          "q_start": 33,
+          "q_end": 48,
+          "topics": ["Full Syllabus"],
+          "syllabus_note": "Full Syllabus 11th",
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 33, "q_end": 36, "marks": "+3/-1"},
+            "Section2_MultiCorrect_3Qs": {"q_start": 37, "q_end": 39, "marks": "+4/-2 partial"},
+            "Section3_Numerical_6Qs": {"q_start": 40, "q_end": 45, "marks": "+4/0"},
+            "Section4_MatchingList_3Qs": {"q_start": 46, "q_end": 48, "marks": "+4/-1"}
+          }
+        }
+      }
+    },
+    {
+      "filename": "AIR_VP Test-01_Class-11th_JEE Adv. P-2_(09-02-2026)_Q.pdf",
+      "test_name": "AIR VP Test-01 Paper-2 (Class 11th JEE Advanced)",
+      "exam_type": "JEE Advanced",
+      "stream": "11th JEE Advanced",
+      "date": "09-02-2026",
+      "total_questions": 48,
+      "max_marks": 180,
+      "paper": "Paper-2",
+      "sections": {
+        "Physics": {
+          "q_start": 1,
+          "q_end": 16,
+          "topics": ["Full Syllabus"],
+          "syllabus_note": "Full Syllabus 11th",
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 1, "q_end": 4, "marks": "+3/-1"},
+            "Section2_MultiCorrect_4Qs": {"q_start": 5, "q_end": 8, "marks": "+4/-2 partial"},
+            "Section3_Numerical_8Qs": {"q_start": 9, "q_end": 16, "marks": "+4/0"}
+          }
+        },
+        "Chemistry": {
+          "q_start": 17,
+          "q_end": 32,
+          "topics": ["Full Syllabus"],
+          "syllabus_note": "Full Syllabus 11th",
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 17, "q_end": 20, "marks": "+3/-1"},
+            "Section2_MultiCorrect_4Qs": {"q_start": 21, "q_end": 24, "marks": "+4/-2 partial"},
+            "Section3_Numerical_8Qs": {"q_start": 25, "q_end": 32, "marks": "+4/0"}
+          }
+        },
+        "Mathematics": {
+          "q_start": 33,
+          "q_end": 48,
+          "topics": ["Full Syllabus"],
+          "syllabus_note": "Full Syllabus 11th",
+          "section_structure": {
+            "Section1_SingleCorrect_4Qs": {"q_start": 33, "q_end": 36, "marks": "+3/-1"},
+            "Section2_MultiCorrect_4Qs": {"q_start": 37, "q_end": 40, "marks": "+4/-2 partial"},
+            "Section3_Numerical_8Qs": {"q_start": 41, "q_end": 48, "marks": "+4/0"}
+          }
+        }
+      }
+    }
+  ],
+  "_metadata": {
+    "generated_date": "2026-03-24",
+    "total_tests": 25,
+    "source": "PW AIR Vidyapeeth test papers",
+    "notes": [
+      "NEET tests: Physics Q1-45, Chemistry Q46-90, Botany Q91-135, Zoology Q136-180",
+      "JEE Mains tests: Physics Q1-25, Chemistry Q26-50, Mathematics Q51-75 (25 questions each, 20 MCQ + 5 Integer per section)",
+      "JEE Advanced Paper-1 tests: 48 or 51 questions across 3 subjects, 4 sections per subject (SCQ, MCQ, Numerical, Matching List)",
+      "JEE Advanced Paper-2 tests: 48 questions across 3 subjects, 3 sections per subject (SCQ, MCQ, Numerical)",
+      "PYQ Tests (13,14,15): Section order in paper begins with Mathematics then Physics then Chemistry",
+      "Tests 13-17 (12th NEET Revision): All cover Full Syllabus 11th+12th as per NTA - no specific chapter breakdown given",
+      "Test-12 (12th NEET Revision): Covers Full Syllabus Class 12 only",
+      "Tests where topics_covered lists Full Syllabus: no chapter-level breakdown available from cover page"
+    ]
+  }
+}

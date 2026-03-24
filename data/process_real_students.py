@@ -134,6 +134,38 @@ def _level(acc):
     return "Critical"
 
 
+def _find_topic_mapping(topic_map, test_name, exam_type):
+    """Find the topic mapping entry that best matches the test name."""
+    if not topic_map:
+        return None
+    for tm in topic_map.get("tests", []):
+        # Match by test name (fuzzy — test names may differ slightly)
+        tm_name = tm["test_name"].lower().replace("-", " ").replace(":", " ")
+        t_name = test_name.lower().replace("-", " ").replace(":", " ")
+        # Check if key parts match
+        if tm["exam_type"] != exam_type:
+            continue
+        # Extract test number and type for matching
+        if any(w in t_name and w in tm_name for w in ["test 11", "test 12", "test 13", "test 14",
+               "test 15", "test 16", "test 17", "test 10", "pyq 5", "pyq 6", "pyq 7",
+               "full test 1", "syllabus 01", "syllabus 02"]):
+            return tm
+        # Fallback: check if significant overlap
+        t_words = set(t_name.split())
+        tm_words = set(tm_name.split())
+        overlap = len(t_words & tm_words)
+        if overlap >= 3:
+            return tm
+    return None
+
+
+def _subject_to_sections(subject, exam_type):
+    """Map a merged subject name to section names in the topic mapping."""
+    if subject == "Biology":
+        return ["Botany", "Zoology"]
+    return [subject]
+
+
 def load_test_metadata():
     """Load test metadata from question paper sheet."""
     path = BASE / "data" / "raw" / "question_paper_sheet.csv"
@@ -170,7 +202,16 @@ def load_results():
         return list(csv.DictReader(f))
 
 
-def build_student_profiles(results, test_meta):
+def load_topic_mapping():
+    """Load test topic mapping from extracted PDF data."""
+    path = BASE / "data" / "raw" / "test_topic_mapping.json"
+    if path.exists():
+        with open(path) as f:
+            return json.load(f)
+    return None
+
+
+def build_student_profiles(results, test_meta, topic_map=None):
     """
     Build per-student profiles grouped by exam type (NEET/JEE).
     Returns {exam_type: [student_profile, ...]}
@@ -285,7 +326,38 @@ def build_student_profiles(results, test_meta):
             abilities[key] = round(sdata["acc"] / 100, 4)
 
         # Ranks (placeholder — will be computed after all students processed)
-        # Chapters (placeholder — needs tagging data for micro-topic mapping)
+
+        # Chapters: use topic mapping to assign chapter-level accuracy
+        # For each test the student took, find the topics covered per subject
+        # and assign the subject accuracy to each chapter
+        chapters_agg = defaultdict(lambda: {"acc_sum": 0, "count": 0})
+        if topic_map:
+            for r in test_results:
+                test_name = r["test_name"]
+                # Find matching topic mapping entry
+                tm = _find_topic_mapping(topic_map, test_name, exam_type)
+                if not tm:
+                    continue
+                for subj, scores in r["subjects"].items():
+                    attempted = scores["right"] + scores["wrong"]
+                    if attempted == 0:
+                        continue
+                    subj_acc = round(scores["right"] / attempted * 100, 1)
+                    # Map subject to section name(s) in the topic mapping
+                    section_names = _subject_to_sections(subj, exam_type)
+                    for sec_name in section_names:
+                        sec = tm["sections"].get(sec_name, {})
+                        topics = sec.get("topics", [])
+                        for topic in topics:
+                            if topic.startswith("Full Syllabus"):
+                                continue  # skip generic "Full Syllabus" entries
+                            chapters_agg[topic]["acc_sum"] += subj_acc
+                            chapters_agg[topic]["count"] += 1
+
+        chapters_out = {}
+        for ch, agg in chapters_agg.items():
+            avg_acc = round(agg["acc_sum"] / agg["count"], 1) if agg["count"] > 0 else 0
+            chapters_out[ch] = [avg_acc, _level(avg_acc)[0], agg["count"]]
 
         student_id = f"STU{erpid[-6:]}" if len(erpid) >= 6 else f"STU{erpid}"
 
@@ -310,17 +382,38 @@ def build_student_profiles(results, test_meta):
             "subjects": subjects_out,
             "trajectory": trajectory[-10:],
             "ranks": [],  # computed later
-            "chapters": {},  # needs tagging data
-            "slm_focus": [],  # needs tagging data
+            "chapters": chapters_out,
+            "slm_focus": [],  # computed below from weak chapters
             "strengths": [],  # computed from subjects
             "tests_taken": len(test_results),
         }
 
-        # Strengths: top 3 subjects by accuracy
-        sorted_subjs = sorted(subjects_out.items(), key=lambda x: x[1]["acc"], reverse=True)
-        profile["strengths"] = [
-            {"chapter": s, "acc": d["acc"]} for s, d in sorted_subjs[:3]
-        ]
+        # Strengths: top 5 chapters by accuracy (if available), else top subjects
+        if chapters_out:
+            sorted_chs = sorted(chapters_out.items(), key=lambda x: x[1][0], reverse=True)
+            profile["strengths"] = [
+                {"chapter": ch, "acc": data[0]} for ch, data in sorted_chs[:5]
+            ]
+            # SLM focus: weakest chapters with enough data
+            weak_chs = sorted(
+                [(ch, data) for ch, data in chapters_out.items() if data[2] >= 1],
+                key=lambda x: x[1][0]
+            )
+            profile["slm_focus"] = [
+                {
+                    "chapter": ch, "accuracy": data[0],
+                    "level": _level(data[0]),
+                    "slm_importance": 70 + (50 - data[0]) * 0.5,  # higher importance for weaker chapters
+                    "slm_priority_score": round((100 - data[0]) * 0.6, 1),
+                    "trend": 0, "consistency": data[2] * 10,
+                }
+                for ch, data in weak_chs[:5]
+            ]
+        else:
+            sorted_subjs = sorted(subjects_out.items(), key=lambda x: x[1]["acc"], reverse=True)
+            profile["strengths"] = [
+                {"chapter": s, "acc": d["acc"]} for s, d in sorted_subjs[:3]
+            ]
 
         profiles[exam_type].append(profile)
 
@@ -346,8 +439,15 @@ def main():
     results = load_results()
     print(f"  → {len(results)} result rows loaded")
 
+    print("Loading topic mapping...")
+    topic_map = load_topic_mapping()
+    if topic_map:
+        print(f"  → {len(topic_map.get('tests', []))} test topic mappings loaded")
+    else:
+        print("  → No topic mapping found (chapters will be empty)")
+
     print("Building student profiles...")
-    profiles = build_student_profiles(results, test_meta)
+    profiles = build_student_profiles(results, test_meta, topic_map)
 
     for exam_type, students in profiles.items():
         print(f"\n  {exam_type}: {len(students)} students")
