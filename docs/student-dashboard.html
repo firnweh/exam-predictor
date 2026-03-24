@@ -703,7 +703,7 @@ function buildSubjectCards(s){
     const sc=SUBJ_COL[subj]||'#818cf8';
     const ico=SUBJ_ICO[subj]||'\uD83D\uDCDA';
     const {tree, allMicros}=_buildSubjectTree(s, preds, subj);
-    const subjAcc=s.subjects[subj]?s.subjects[subj].acc:null;
+    const subjAcc=_stuAccFor(s,subj);
     const chCount=Object.keys(tree).length;
     const totalMicros=allMicros.length;
     if(totalMicros===0) return;
@@ -802,7 +802,7 @@ function buildSubjectView(s, subj){
   const ico=SUBJ_ICO[subj]||'\uD83D\uDCDA';
   const preds=G.microPreds[G.exam]||[];
   const {tree, allMicros}=_buildSubjectTree(s, preds, subj);
-  const subjAcc=s.subjects&&s.subjects[subj]?s.subjects[subj].acc:null;
+  const subjAcc=_stuAccFor(s,subj);
   const subjLvl=subjAcc!==null?pctLevel(subjAcc):null;
   const chCount=Object.keys(tree).length;
   const totalMicros=allMicros.length;
