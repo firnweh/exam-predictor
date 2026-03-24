@@ -419,12 +419,15 @@ async function loadData(exam){
   showLoading('Loading student data…');
   try{
     const r=await AUTH.apiFetch('/api/students?exam='+exam);
-    G.data[exam]=await r.json();
-  }catch(err){
-    showLoading('Could not load data. Run: python3 analysis/student_analyzer.py --exam '+exam,true);
-    return null;
-  }
-  return G.data[exam];
+    if(r.ok){ G.data[exam]=await r.json(); return G.data[exam]; }
+  }catch(err){}
+  // Fallback: load static JSON directly (works on Vercel without backend)
+  try{
+    const r2=await fetch('student_summary_'+exam+'.json');
+    if(r2.ok){ G.data[exam]=await r2.json(); return G.data[exam]; }
+  }catch(err2){}
+  showLoading('Could not load data. Ensure the backend or static JSON files are available.',true);
+  return null;
 }
 
 function showLoading(msg,err){
@@ -490,7 +493,7 @@ function _renderStudents(query, students){
 
   const lq=query.trim().toLowerCase();
   const matched = lq
-    ? students.filter(s=>(s.name+' '+s.id+' '+s.city).toLowerCase().includes(lq))
+    ? students.filter(s=>(s.name+' '+s.id+' '+(s.erpid||'')+' '+s.city).toLowerCase().includes(lq))
     : students;
 
   // Show all when searching; cap at PAGE_SIZE when idle
@@ -501,7 +504,7 @@ function _renderStudents(query, students){
     const lv=pctLevel(pct);
     const div=el('div','stu-item');
     div.dataset.sid=s.id;
-    div.dataset.q=(s.name+' '+s.id+' '+s.city).toLowerCase();
+    div.dataset.q=(s.name+' '+s.id+' '+(s.erpid||'')+' '+s.city).toLowerCase();
 
     const nameRow=el('div','stu-name');
     nameRow.appendChild(txt(s.name));
@@ -512,7 +515,7 @@ function _renderStudents(query, students){
     nameRow.appendChild(badge);
 
     const meta=el('div','stu-meta');
-    meta.appendChild(txt(s.id+' · '+s.city));
+    meta.appendChild(txt((s.erpid||s.id)+' · '+s.city));
 
     div.appendChild(nameRow);
     div.appendChild(meta);
@@ -595,7 +598,7 @@ function buildHero(s){
   const info=el('div','hero-info');
   const nm=el('div','hero-name'); nm.appendChild(txt(s.name)); info.appendChild(nm);
   const mt=el('div','hero-meta');
-  mt.appendChild(txt(s.id+' · '+s.city+' · '+s.coaching+' · Target: '+s.target));
+  mt.appendChild(txt(s.id+(s.erpid?' · ERP: '+s.erpid:'')+' · '+s.city+' · '+s.coaching+' · Target: '+s.target));
   info.appendChild(mt);
   bar.appendChild(info);
 

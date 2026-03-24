@@ -253,8 +253,16 @@ const zbg  = z => ZONE_BG[z] ||'#1a1d27';
 
 /* ── load ── */
 async function loadExam(exam){
-  const r = await AUTH.apiFetch('/api/students?exam='+exam);
-  return (await r.json()).students;
+  try{
+    const r = await AUTH.apiFetch('/api/students?exam='+exam);
+    if(r.ok) return (await r.json()).students;
+  }catch(e){}
+  // Fallback: load static JSON directly (works on Vercel without backend)
+  try{
+    const r2 = await fetch('student_summary_'+exam+'.json');
+    if(r2.ok) return (await r2.json()).students;
+  }catch(e2){}
+  return [];
 }
 async function loadPredictions(exam){
   try{

@@ -363,6 +363,7 @@ def build_student_profiles(results, test_meta, topic_map=None):
 
         profile = {
             "id": student_id,
+            "erpid": erpid,
             "name": name,
             "city": city,
             "coaching": center,
