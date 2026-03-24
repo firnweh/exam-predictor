@@ -665,146 +665,166 @@ with tab_main:
 
     st.caption(f"Top-{top_n} {pred_level} predictions | Reranked independently for K={top_n} | Subject split: {subj_str} | {len(filtered):,} questions in DB")
 
-    # ── SECTION 2: RANKED PREDICTION TABLE ──
+    # ── SECTION 2: RANKED PREDICTIONS — subject-wise collapsible ──
     is_micro = pred_level == "Micro-Topic"
-    with st.expander(f"📋 Ranked {pred_level} Predictions — Top {top_n}  ·  REAL ENGINE", expanded=False):
-        st.markdown(f'<div class="section-divider" style="margin-top:0">Ranked {pred_level} Predictions — Top {top_n} <span class="section-badge">REAL ENGINE</span></div>', unsafe_allow_html=True)
-        st.caption(f"Subject-balanced reranking for K={top_n}. {'Micro-topic + parent chapter.' if is_micro else 'Chapter-level aggregation.'}")
 
-        # ── Detailed Prediction Cards ─────────────────────────────────────────────
-        SUBJ_HEX    = {"Biology": "#22c55e", "Chemistry": "#06b6d4", "Physics": "#f59e0b", "Mathematics": "#a855f7"}
-        CONF_HEX    = {"HIGH": "#10b981", "MEDIUM": "#f59e0b", "LOW": "#ef4444", "SPECULATIVE": "#94a3b8"}
-        TREND_ARROW = {"RISING": "↑", "STABLE": "→", "DECLINING": "↓", "NEW": "★", "REMOVED": "✗"}
+    SUBJ_HEX    = {"Biology": "#22c55e", "Chemistry": "#06b6d4", "Physics": "#f59e0b", "Mathematics": "#a855f7"}
+    SUBJ_ICON   = {"Biology": "🧬", "Chemistry": "⚗️", "Physics": "⚡", "Mathematics": "📐"}
+    CONF_HEX    = {"HIGH": "#10b981", "MEDIUM": "#f59e0b", "LOW": "#ef4444", "SPECULATIVE": "#94a3b8"}
+    TREND_ARROW = {"RISING": "↑", "STABLE": "→", "DECLINING": "↓", "NEW": "★", "REMOVED": "✗"}
 
-        cards_html = []
-        for i, p in enumerate(pred_list, 1):
-            sc       = SUBJ_HEX.get(p["subject"], "#6366f1")
-            cc       = CONF_HEX.get(p["confidence"], "#6366f1")
-            prob     = p["appearance_probability"]
-            prob_pct = f"{prob:.0%}"
-            trend    = TREND_ARROW.get(p["trend_direction"], "→")
-            conf     = p["confidence"]
-            name     = p.get("micro_topic", p["chapter"]) if is_micro else p["chapter"]
-            exp_q    = p["expected_questions"]
-            q_min    = p["expected_qs_min"]
-            q_max    = p["expected_qs_max"]
-            fmts     = ", ".join(p["likely_formats"][:2])
-            diff     = round(p["likely_difficulty"], 1)
-            last     = p["last_appeared"]
-            subj     = p["subject"]
-            syllabus = p.get("syllabus_status", "RETAINED")
-            training = p.get("training_years", "1978–2026")
-            # Normalise legacy "...-2023" range to include 2026 data
-            if training and training.endswith("-2023"):
-                training = training.replace("-2023", "–2026")
+    st.markdown(
+        f'<div class="section-divider">Ranked {pred_level} Predictions — Top {top_n} · By Subject'
+        f' <span class="section-badge">REAL ENGINE</span></div>',
+        unsafe_allow_html=True,
+    )
+    st.caption(
+        f"Subject-balanced reranking for K={top_n}. "
+        f"{'Micro-topic ranked within each subject · chapter shown on each card.' if is_micro else 'Chapter-level aggregation.'} "
+        f"Expand a subject to see its predictions."
+    )
 
-            # Reason pills (first 2 shown inline in summary)
-            reasons = p.get("reasons", [])
-            reason_pills = "".join(
-                f'<span style="background:rgba(99,102,241,.12);color:#a5b4fc;border:1px solid rgba(99,102,241,.25);'
-                f'border-radius:6px;padding:2px 9px;font-size:11px;margin-right:6px;white-space:nowrap">{r}</span>'
-                for r in reasons[:2]
-            )
-            all_reasons_html = "".join(
-                f'<li style="font-size:12px;color:#94a3b8;margin:3px 0;line-height:1.4">{r}</li>'
-                for r in reasons
-            )
+    # ── Card builder (inner function so it's DRY across subjects) ────────────
+    def _pred_card(rank, p, sc):
+        cc       = CONF_HEX.get(p["confidence"], "#6366f1")
+        prob     = p["appearance_probability"]
+        prob_pct = f"{prob:.0%}"
+        trend    = TREND_ARROW.get(p["trend_direction"], "→")
+        conf     = p["confidence"]
+        name     = p.get("micro_topic", p["chapter"]) if is_micro else p["chapter"]
+        exp_q    = p["expected_questions"]
+        q_min    = p["expected_qs_min"]
+        q_max    = p["expected_qs_max"]
+        fmts     = ", ".join(p["likely_formats"][:2])
+        diff     = round(p["likely_difficulty"], 1)
+        last     = p["last_appeared"]
+        syllabus = p.get("syllabus_status", "RETAINED")
+        training = p.get("training_years", "1978–2026")
+        if training and training.endswith("-2023"):
+            training = training.replace("-2023", "–2026")
 
-            # Full-width signal bars — all non-zero signals sorted by value
-            sig = p.get("signal_breakdown", {})
-            sig_flat  = {k: (v if isinstance(v, (int, float)) else 0) for k, v in sig.items()}
-            sig_items = sorted(sig_flat.items(), key=lambda x: x[1], reverse=True)
-            sig_bars  = ""
-            for sname, sval in sig_items:
-                if sval <= 0:
-                    continue
-                pct = min(int(sval * 100), 100)
-                # Green for high signal, purple for lower (matches screenshot gradient)
-                bar_color = f"linear-gradient(90deg,#22c55e,#10b981)" if sval >= 0.5 else "linear-gradient(90deg,#6366f1,#a855f7)"
-                sig_bars += f"""
-            <div style="display:flex;align-items:center;gap:10px;margin:5px 0">
-              <span style="font-size:11px;color:#8888aa;min-width:110px;flex-shrink:0">{sname.replace('_',' ')}</span>
-              <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:3px;height:7px">
-                <div style="width:{pct}%;background:{bar_color};height:7px;border-radius:3px"></div>
-              </div>
-              <span style="font-size:11px;color:#8888aa;min-width:32px;text-align:right;flex-shrink:0">{sval:.2f}</span>
-            </div>"""
-
-            # Probability bar width for summary row
-            prob_bar_pct = min(int(prob * 100), 100)
-            training_str = f"Training: {training}" if training else ""
-
-            footer_html = (
-                f'<div style="font-size:11px;color:#8888aa;margin-top:12px">'
-                f'Syllabus: <b style="color:#94a3b8">{syllabus}</b>'
-                f'{" · " + training_str if training_str else ""}'
+        reasons = p.get("reasons", [])
+        reason_pills = "".join(
+            f'<span style="background:rgba(99,102,241,.12);color:#a5b4fc;border:1px solid rgba(99,102,241,.25);'
+            f'border-radius:6px;padding:2px 9px;font-size:11px;margin-right:6px;white-space:nowrap">{r}</span>'
+            for r in reasons[:2]
+        )
+        all_reasons_html = "".join(
+            f'<li style="font-size:12px;color:#94a3b8;margin:3px 0;line-height:1.4">{r}</li>'
+            for r in reasons
+        )
+        sig = p.get("signal_breakdown", {})
+        sig_flat  = {k: (v if isinstance(v, (int, float)) else 0) for k, v in sig.items()}
+        sig_items = sorted(sig_flat.items(), key=lambda x: x[1], reverse=True)
+        sig_bars  = ""
+        for sn, sv in sig_items:
+            if sv <= 0:
+                continue
+            pct = min(int(sv * 100), 100)
+            bc  = "linear-gradient(90deg,#22c55e,#10b981)" if sv >= 0.5 else "linear-gradient(90deg,#6366f1,#a855f7)"
+            sig_bars += (
+                f'<div style="display:flex;align-items:center;gap:10px;margin:5px 0">'
+                f'<span style="font-size:11px;color:#8888aa;min-width:110px;flex-shrink:0">{sn.replace("_"," ")}</span>'
+                f'<div style="flex:1;background:rgba(255,255,255,0.06);border-radius:3px;height:7px">'
+                f'<div style="width:{pct}%;background:{bc};height:7px;border-radius:3px"></div></div>'
+                f'<span style="font-size:11px;color:#8888aa;min-width:32px;text-align:right;flex-shrink:0">{sv:.2f}</span>'
                 f'</div>'
             )
-            sig_section = (
-                f'<div style="font-size:11px;color:#8888aa;margin-bottom:8px">Signal Breakdown:</div>{sig_bars}'
-                if sig_bars else ''
+
+        prob_bar_pct = min(int(prob * 100), 100)
+        training_str = f"Training: {training}" if training else ""
+        footer_html  = (
+            f'<div style="font-size:11px;color:#8888aa;margin-top:12px">'
+            f'Syllabus: <b style="color:#94a3b8">{syllabus}</b>'
+            f'{" · " + training_str if training_str else ""}</div>'
+        )
+        sig_section  = (
+            f'<div style="font-size:11px;color:#8888aa;margin-bottom:8px">Signal Breakdown:</div>{sig_bars}'
+            if sig_bars else ''
+        )
+        body_reasons = all_reasons_html or '<li style="font-size:12px;color:#8888aa">No reasons available</li>'
+        # Chapter label shown only in micro-topic view
+        chapter_sub  = (
+            f'<div style="font-size:10px;color:{sc}88;margin-bottom:3px;font-weight:600">'
+            f'↳ {p["chapter"]}</div>'
+        ) if is_micro else ""
+
+        return (
+            f'<details style="background:#131320;border:1px solid rgba(255,255,255,0.07);'
+            f'border-radius:12px;margin:5px 0;overflow:hidden">'
+            f'<summary style="display:flex;align-items:center;gap:0;padding:12px 16px;'
+            f'cursor:pointer;list-style:none;user-select:none;transition:background .15s" '
+            f'onmouseover="this.style.background=\'rgba(255,255,255,0.025)\'" '
+            f'onmouseout="this.style.background=\'transparent\'">'
+            f'<span style="font-size:11px;color:#8888aa;min-width:28px;flex-shrink:0">#{rank}</span>'
+            f'<div style="flex:1;min-width:0;padding-right:16px">'
+            f'{chapter_sub}'
+            f'<div style="font-size:14px;font-weight:700;color:#f1f5f9;margin-bottom:2px">{name}</div>'
+            f'<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px">{reason_pills}</div>'
+            f'<div style="font-size:11px;color:#6b7280">{fmts} · diff: {diff} · last: {last}</div>'
+            f'</div>'
+            f'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
+            f'<span style="font-size:13px;color:#8888aa">{trend}</span>'
+            f'<span style="background:{cc}22;color:{cc};border:1px solid {cc}44;'
+            f'border-radius:6px;padding:3px 10px;font-size:11px;font-weight:800">{conf}</span>'
+            f'<span style="font-size:12px;color:#e2e8f0;font-weight:600;white-space:nowrap">~{exp_q:.1f}Q ({q_min}–{q_max})</span>'
+            f'<div style="width:80px;background:rgba(255,255,255,0.06);border-radius:3px;height:6px;flex-shrink:0">'
+            f'<div style="width:{prob_bar_pct}%;background:linear-gradient(90deg,{sc},{sc}88);height:6px;border-radius:3px"></div>'
+            f'</div>'
+            f'<span style="font-size:14px;font-weight:800;color:{cc};min-width:36px;text-align:right">{prob_pct}</span>'
+            f'</div></summary>'
+            f'<div style="background:rgba(99,102,241,0.04);border-top:1px solid rgba(99,102,241,0.15);'
+            f'padding:14px 18px 14px 44px">'
+            f'<div style="font-size:12px;font-weight:700;color:#6366f1;margin-bottom:10px">PRAJNA Model Signals:</div>'
+            f'<ul style="margin:0 0 14px 0;padding-left:18px">{body_reasons}</ul>'
+            f'{sig_section}{footer_html}</div></details>'
+        )
+
+    # ── Subject-wise expanders ────────────────────────────────────────────────
+    from collections import defaultdict as _dd
+    _subj_order = ["Biology", "Physics", "Chemistry", "Mathematics"]
+    _groups: dict = _dd(list)
+    for _p in pred_list:
+        _groups[_p["subject"]].append(_p)
+
+    for _subj in _subj_order:
+        _items = _groups.get(_subj, [])
+        if not _items:
+            continue
+        _sc       = SUBJ_HEX.get(_subj, "#6366f1")
+        _icon     = SUBJ_ICON.get(_subj, "📌")
+        _total_q  = sum(_p["expected_questions"] for _p in _items)
+        _hi       = sum(1 for _p in _items if _p["confidence"] == "HIGH")
+        _label    = "micro-topics" if is_micro else "chapters"
+        with st.expander(
+            f"{_icon} {_subj}  ·  {len(_items)} {_label}  ·  ~{_total_q:.0f}Q expected  ·  {_hi} HIGH confidence",
+            expanded=True,
+        ):
+            st.markdown(
+                "\n".join(_pred_card(i + 1, _p, _sc) for i, _p in enumerate(_items)),
+                unsafe_allow_html=True,
             )
-            fallback_li = '<li style="font-size:12px;color:#8888aa">No reasons available</li>'
-            body_reasons = all_reasons_html if all_reasons_html else fallback_li
 
-            card = (
-                f'<details style="background:#131320;border:1px solid rgba(255,255,255,0.07);'
-                f'border-radius:12px;margin:5px 0;overflow:hidden">'
-                f'<summary style="display:flex;align-items:center;gap:0;padding:12px 16px;'
-                f'cursor:pointer;list-style:none;user-select:none;transition:background .15s" '
-                f'onmouseover="this.style.background=\'rgba(255,255,255,0.025)\'" '
-                f'onmouseout="this.style.background=\'transparent\'">'
-                f'<span style="font-size:11px;color:#8888aa;min-width:28px;flex-shrink:0">#{i}</span>'
-                f'<div style="flex:1;min-width:0;padding-right:16px">'
-                f'<div style="font-size:14px;font-weight:700;color:#f1f5f9;margin-bottom:2px">{name}</div>'
-                f'<div style="font-size:11px;color:#8888aa;margin-bottom:6px">{subj}</div>'
-                f'<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px">{reason_pills}</div>'
-                f'<div style="font-size:11px;color:#6b7280">{fmts} · diff: {diff} · last: {last}</div>'
-                f'</div>'
-                f'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
-                f'<span style="font-size:13px;color:#8888aa">{trend}</span>'
-                f'<span style="background:{cc}22;color:{cc};border:1px solid {cc}44;'
-                f'border-radius:6px;padding:3px 10px;font-size:11px;font-weight:800">{conf}</span>'
-                f'<span style="font-size:12px;color:#e2e8f0;font-weight:600;white-space:nowrap">~{exp_q:.1f}Q ({q_min}\u2013{q_max})</span>'
-                f'<div style="width:80px;background:rgba(255,255,255,0.06);border-radius:3px;height:6px;flex-shrink:0">'
-                f'<div style="width:{prob_bar_pct}%;background:linear-gradient(90deg,#22c55e,#10b981);height:6px;border-radius:3px"></div>'
-                f'</div>'
-                f'<span style="font-size:14px;font-weight:800;color:{cc};min-width:36px;text-align:right">{prob_pct}</span>'
-                f'</div>'
-                f'</summary>'
-                f'<div style="background:rgba(99,102,241,0.04);border-top:1px solid rgba(99,102,241,0.15);'
-                f'padding:14px 18px 14px 44px">'
-                f'<div style="font-size:12px;font-weight:700;color:#6366f1;margin-bottom:10px">PRAJNA Model Signals:</div>'
-                f'<ul style="margin:0 0 14px 0;padding-left:18px">{body_reasons}</ul>'
-                f'{sig_section}'
-                f'{footer_html}'
-                f'</div>'
-                f'</details>'
-            )
-            cards_html.append(card)
-
-        st.markdown("\n".join(cards_html), unsafe_allow_html=True)
-
-        # Downloads
-        dc1, dc2 = st.columns(2)
-        dl_data = [{
-            "Subject": p["subject"], "Chapter": p["chapter"], "Micro_Topic": p["micro_topic"],
-            "Appearance_Prob": p["appearance_probability"],
-            "Expected_Qs": p["expected_questions"],
-            "Qs_Min": p["expected_qs_min"], "Qs_Max": p["expected_qs_max"],
-            "Format": ", ".join(p["likely_formats"][:2]),
-            "Difficulty": p["likely_difficulty"], "Trend": p["trend_direction"],
-            "Syllabus": p["syllabus_status"], "Confidence": p["confidence"],
-            "Confidence_Score": p["confidence_score"],
-            "Appearances": p["total_appearances"], "Last_Asked": p["last_appeared"],
-        } for p in preds_micro]
-        dl_df = pd.DataFrame(dl_data)
-        with dc1:
-            st.download_button(f"Download Top {top_n} (CSV)", dl_df.head(top_n).to_csv(index=False),
-                               f"top{top_n}_{target_year}.csv", "text/csv")
-        with dc2:
-            st.download_button(f"Download ALL {len(dl_df)} (CSV)", dl_df.to_csv(index=False),
-                               f"all_{target_year}.csv", "text/csv")
+    # ── Downloads ─────────────────────────────────────────────────────────────
+    dc1, dc2 = st.columns(2)
+    dl_data = [{
+        "Subject": p["subject"], "Chapter": p["chapter"], "Micro_Topic": p["micro_topic"],
+        "Appearance_Prob": p["appearance_probability"],
+        "Expected_Qs": p["expected_questions"],
+        "Qs_Min": p["expected_qs_min"], "Qs_Max": p["expected_qs_max"],
+        "Format": ", ".join(p["likely_formats"][:2]),
+        "Difficulty": p["likely_difficulty"], "Trend": p["trend_direction"],
+        "Syllabus": p["syllabus_status"], "Confidence": p["confidence"],
+        "Confidence_Score": p["confidence_score"],
+        "Appearances": p["total_appearances"], "Last_Asked": p["last_appeared"],
+    } for p in preds_micro]
+    dl_df = pd.DataFrame(dl_data)
+    with dc1:
+        st.download_button(f"Download Top {top_n} (CSV)", dl_df.head(top_n).to_csv(index=False),
+                           f"top{top_n}_{target_year}.csv", "text/csv")
+    with dc2:
+        st.download_button(f"Download ALL {len(dl_df)} (CSV)", dl_df.to_csv(index=False),
+                           f"all_{target_year}.csv", "text/csv")
 
     # ── SECTION 3: TOP PROBABILITY + EXPECTED QUESTIONS ──
     st.markdown(f'<div class="section-divider">{pred_level} Probability & Expected Weightage <span class="section-badge">REAL ENGINE</span></div>', unsafe_allow_html=True)

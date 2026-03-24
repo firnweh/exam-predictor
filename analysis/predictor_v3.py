@@ -290,12 +290,26 @@ SUBJECT_QUOTAS = {
     "JEE Advanced": {"Physics": 0.33, "Chemistry": 0.33, "Mathematics": 0.34},
 }
 
+# Hard subject guard — prevents cross-exam leakage (Maths in NEET, Bio in JEE)
+EXAM_VALID_SUBJECTS = {
+    "NEET":         {"Biology", "Physics", "Chemistry"},
+    "JEE Main":     {"Physics", "Chemistry", "Mathematics"},
+    "JEE Advanced": {"Physics", "Chemistry", "Mathematics"},
+}
+
 
 def _subject_balanced_rerank(predictions, exam, top_k=50):
     """
     Rerank predictions with subject quotas.
     Ensures each subject gets proportional representation.
+    Also enforces hard subject guard to prevent cross-exam leakage
+    (e.g. Mathematics in NEET, Biology in JEE).
     """
+    # Hard subject guard: drop predictions that don't belong to this exam
+    valid_subjects = EXAM_VALID_SUBJECTS.get(exam, set())
+    if valid_subjects:
+        predictions = [p for p in predictions if p["subject"] in valid_subjects]
+
     quotas = SUBJECT_QUOTAS.get(exam, {})
     if not quotas:
         # Default: equal split
