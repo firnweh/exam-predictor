@@ -94,16 +94,8 @@ st.markdown("""
 /* ── Global ── */
 .stApp { background:#080810 !important; font-family:'Inter',system-ui,sans-serif; }
 .block-container { padding-top:0 !important; max-width:1520px; padding-left:1.5rem; padding-right:1.5rem; }
-[data-testid="stHeader"] { background:transparent !important; pointer-events:none; }
-[data-testid="stHeader"] button { pointer-events:auto; }
-/* Ensure sidebar toggle arrow is always visible and clickable */
-button[data-testid="stSidebarCollapsedControl"],
-button[kind="headerNoPadding"],
-[data-testid="collapsedControl"] {
-  z-index:999 !important; position:relative !important;
-  background:#0c0c18 !important; border:1px solid #1e1e3a !important;
-  border-radius:6px !important; opacity:1 !important; pointer-events:auto !important;
-}
+/* Keep Streamlit header functional but transparent — sidebar toggle lives here */
+[data-testid="stHeader"] { background:rgba(8,8,16,0.95) !important; z-index:999 !important; }
 /* Sidebar nav styling */
 [data-testid="stSidebar"] { background:#0c0c18 !important; border-right:1px solid #1e1e3a !important; }
 [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p { color:#94a3b8; font-size:.82rem; }
@@ -117,7 +109,7 @@ button[kind="headerNoPadding"],
   background:rgba(8,8,16,0.95);
   border-bottom:1px solid rgba(99,102,241,0.15);
   padding:0 1.5rem; height:58px;
-  position:sticky; top:0; z-index:200;
+  position:sticky; top:0; z-index:100;
   margin:0 -1.5rem 0 -1.5rem;
   backdrop-filter:blur(20px);
   -webkit-backdrop-filter:blur(20px);
