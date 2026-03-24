@@ -696,8 +696,19 @@ function renderPRAJNA(preds, students){
     </span><span class="istrip-sep"></span>`;
   }).join('');
 
-  /* prediction list — top 8 */
-  const top8 = preds.slice(0,8);
+  /* prediction list — subject-balanced top 8 (ensures every subject represented) */
+  const _perSubj = {};
+  preds.forEach(p=>{ const s=p.subject; if(!_perSubj[s]) _perSubj[s]=[]; _perSubj[s].push(p); });
+  const _subjKeys = Object.keys(_perSubj);
+  const _each = Math.max(2, Math.floor(8/_subjKeys.length));
+  let top8 = [];
+  _subjKeys.forEach(s=>top8.push(..._perSubj[s].slice(0,_each)));
+  // Fill remaining slots from leftover predictions
+  if(top8.length<8){
+    const used=new Set(top8.map(p=>p.chapter));
+    for(const p of preds){ if(!used.has(p.chapter)){top8.push(p);used.add(p.chapter);if(top8.length>=8)break;} }
+  }
+  top8 = top8.slice(0,8);
   const items = top8.map((p,i)=>{
     const prob = Math.round((p.appearance_probability||0)*100);
     const col  = SCOL[p.subject]||'#7880a4';
