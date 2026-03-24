@@ -472,9 +472,9 @@ with f2:
 with f3:
     target_year = st.number_input("Year", value=2026, min_value=2010, max_value=2035, key="gx_yr")
 with f4:
-    top_n = st.selectbox("Top K", [20, 40, 60, 80, 100, 150, 200], index=1, key="gx_topn")
+    top_n = st.selectbox("Top K", [20, 40, 60, 80, 100, 150, 200], index=4, key="gx_topn")
 with f5:
-    pred_level = st.selectbox("Level", ["Chapter", "Micro-Topic"], key="gx_level")
+    pred_level = st.selectbox("Level", ["Micro-Topic", "Chapter"], key="gx_level")
 st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown(f"""
