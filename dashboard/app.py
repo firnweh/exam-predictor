@@ -1034,16 +1034,19 @@ with tab_main:
                 st.plotly_chart(fig, use_container_width=True)
 
             with detail_col:
-                st.markdown("**Reasoning:**")
-                for r in p["reasons"]:
-                    st.markdown(f"- {r}")
+                reasons = p.get("reasons", [])
+                if reasons:
+                    st.markdown("**Reasoning:**")
+                    for r in reasons:
+                        st.markdown(f"- {r}")
                 if is_micro:
-                    st.markdown(f"**Micro-Topic:** {p['micro_topic']}")
-                st.markdown(f"**Chapter:** {p['chapter']}")
-                st.markdown(f"**Format:** {', '.join(p['likely_formats'])}")
-                st.markdown(f"**Difficulty:** {p['likely_difficulty']}")
-                st.markdown(f"**Syllabus:** {p['syllabus_status']}")
-                st.markdown(f"**Training data:** {p['training_years']}")
+                    st.markdown(f"**Micro-Topic:** {p.get('micro_topic', '—')}")
+                st.markdown(f"**Chapter:** {p.get('chapter', '—')}")
+                fmts = p.get("likely_formats", [])
+                st.markdown(f"**Format:** {', '.join(fmts) if fmts else '—'}")
+                st.markdown(f"**Difficulty:** {p.get('likely_difficulty', '—')}")
+                st.markdown(f"**Syllabus:** {p.get('syllabus_status', '—')}")
+                st.markdown(f"**Training data:** {p.get('training_years', '—')}")
 
     # ── SECTION 7: CONFIDENCE & RISK SCATTER ──
     st.markdown('<div class="section-divider">Confidence vs Probability — Risk Map <span class="section-badge">LIVE</span></div>', unsafe_allow_html=True)
