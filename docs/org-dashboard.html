@@ -258,11 +258,14 @@ async function loadExam(exam){
 }
 async function loadPredictions(exam){
   try{
-    const et = exam==='jee'?'jee':'neet';
-    const r = await fetch(`http://localhost:8001/api/v1/data/predict?exam_type=${et}&year=2026&level=chapter&top_n=15`);
+    // backend exam_map: "neet"→"NEET", "jee_main"→"JEE Main"; bare "jee" is NOT in the map
+    const et = exam==='jee'?'jee_main':'neet';
+    const r = await fetch(`http://localhost:8001/api/v1/data/predict?exam_type=${et}&year=2026&level=chapter&top_n=20`);
     if(!r.ok) return [];
     const d = await r.json();
-    return d.predictions||[];
+    // guard: keep only subjects that belong to this exam (avoids Bio showing in JEE, Maths in NEET)
+    const validSubjects = new Set(SUBJ[exam]||[]);
+    return (d.predictions||[]).filter(p=>validSubjects.size===0||validSubjects.has(p.subject));
   }catch(e){ return []; }
 }
 
