@@ -188,6 +188,29 @@ main{padding:1.2rem 1.5rem;display:flex;flex-direction:column;gap:1.5rem;max-wid
 .istrip-item{display:flex;align-items:center;gap:.35rem;font-size:.7rem}
 .istrip-dot{width:.45rem;height:.45rem;border-radius:50%;flex-shrink:0}
 .istrip-sep{width:1px;height:1rem;background:var(--border)}
+/* AT-RISK STUDENTS */
+.risk-section{margin-top:1rem}
+.risk-hdr{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.7rem;display:flex;align-items:center;gap:.5rem}
+.risk-hdr-badge{background:var(--warn);color:#fff;font-size:.58rem;padding:.1rem .4rem;border-radius:3px;font-weight:700}
+.risk-card{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:.5rem;overflow:hidden}
+.risk-card[open]{border-color:rgba(255,107,107,.3)}
+.risk-summary{display:flex;align-items:center;gap:.7rem;padding:.65rem 1rem;cursor:pointer;list-style:none;user-select:none;transition:background .15s}
+.risk-summary:hover{background:rgba(255,255,255,.02)}
+.risk-summary::-webkit-details-marker{display:none}
+.risk-ch{font-size:.82rem;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.risk-prob{font-size:.78rem;font-weight:700;flex-shrink:0}
+.risk-cnt{font-size:.62rem;font-weight:700;padding:.14rem .45rem;border-radius:4px;flex-shrink:0;white-space:nowrap}
+.rc-hi{background:#2e0d0d;color:#ff6b6b}.rc-med{background:#2e1a00;color:#f59e0b}.rc-lo{background:#1a1a2e;color:#8b7fff}
+.risk-body{border-top:1px solid var(--border);padding:.6rem 1rem}
+.risk-table{width:100%;border-collapse:collapse;font-size:.74rem}
+.risk-table th{font-size:.6rem;font-weight:700;letter-spacing:.06em;color:var(--muted);text-align:left;padding:.3rem .5rem;border-bottom:1px solid var(--border);text-transform:uppercase}
+.risk-table td{padding:.35rem .5rem;border-bottom:1px solid rgba(255,255,255,.04)}
+.risk-table tr:last-child td{border-bottom:none}
+.risk-table tr:hover td{background:rgba(255,255,255,.02)}
+.risk-name{font-weight:600;color:var(--text);cursor:pointer;text-decoration:none}
+.risk-name:hover{color:var(--accent);text-decoration:underline}
+.risk-erp{font-size:.65rem;color:var(--muted)}
+.risk-more{text-align:center;padding:.4rem;font-size:.68rem;color:var(--muted);font-style:italic}
 
 @media(max-width:1200px){.kpi-row{grid-template-columns:repeat(3,1fr)}.branch-grid{grid-template-columns:repeat(3,1fr)}.section-a{grid-template-columns:1fr}.intel-grid{grid-template-columns:1fr}}
 @media(max-width:800px){.kpi-row{grid-template-columns:repeat(2,1fr)}.branch-grid{grid-template-columns:repeat(2,1fr)}}
@@ -720,6 +743,73 @@ function renderPRAJNA(preds, students){
     </div>`;
   }).join('');
 
+  /* ── At-Risk Students by Predicted Topic ── */
+  const WEAK_THRESH = 50; // accuracy below this = at-risk
+  const MAX_SHOW = 8;     // max students shown per card
+  const riskCards = top8.map(p=>{
+    const col = SCOL[p.subject]||'#7880a4';
+    const prob = Math.round((p.appearance_probability||0)*100);
+    const ch = p.chapter||'—';
+
+    // Find students weak on this chapter
+    const weak = [];
+    students.forEach(s=>{
+      if(!s.chapters) return;
+      // Try exact chapter match
+      const cd = s.chapters[ch];
+      let acc = null;
+      if(cd){ acc = cd[0]; }
+      else {
+        // Fallback: check subject-level accuracy
+        const subj = s.subjects&&s.subjects[p.subject];
+        if(subj && subj.acc < WEAK_THRESH) acc = subj.acc;
+      }
+      if(acc!==null && acc < WEAK_THRESH){
+        weak.push({name:s.name, id:s.id, erpid:s.erpid||'', coaching:s.coaching, acc:acc, avg:s.metrics.avg_percentage||0});
+      }
+    });
+    weak.sort((a,b)=>a.acc-b.acc); // weakest first
+
+    if(!weak.length) return '';
+
+    const cntCls = weak.length>=20?'rc-hi':weak.length>=10?'rc-med':'rc-lo';
+    const shown = weak.slice(0,MAX_SHOW);
+    const rows = shown.map(w=>{
+      const zn = pct(w.acc);
+      return `<tr>
+        <td><a class="risk-name" href="student-dashboard.html?id=${w.id}&exam=${S.exam}">${w.name}</a><div class="risk-erp">${w.erpid}</div></td>
+        <td style="font-size:.7rem;color:var(--muted)">${w.coaching.replace('PW ','')}</td>
+        <td><span class="zb zb${zn}" style="font-size:.62rem">${w.acc.toFixed(0)}%</span></td>
+        <td style="font-size:.72rem;color:var(--muted)">${w.avg.toFixed(0)}%</td>
+      </tr>`;
+    }).join('');
+    const moreRow = weak.length>MAX_SHOW
+      ? `<tr><td colspan="4" class="risk-more">+ ${weak.length-MAX_SHOW} more students at risk</td></tr>` : '';
+
+    return `<details class="risk-card">
+      <summary class="risk-summary">
+        <span style="color:${col};font-size:.7rem">●</span>
+        <span class="risk-ch" style="color:var(--text)">${ch}</span>
+        <span class="risk-prob" style="color:${col}">${prob}%</span>
+        <span class="risk-cnt ${cntCls}">${weak.length} at risk</span>
+      </summary>
+      <div class="risk-body">
+        <table class="risk-table">
+          <thead><tr><th>Student</th><th>Center</th><th>Chapter Acc</th><th>Avg Score</th></tr></thead>
+          <tbody>${rows}${moreRow}</tbody>
+        </table>
+      </div>
+    </details>`;
+  }).filter(Boolean).join('');
+
+  const riskSection = riskCards
+    ? `<div class="risk-section">
+        <div class="risk-hdr">At-Risk Students by Predicted Topic <span class="risk-hdr-badge">ACTION NEEDED</span>
+          <span style="font-weight:400;color:var(--muted);font-size:.63rem;margin-left:.5rem">Students scoring &lt;${WEAK_THRESH}% on high-probability chapters</span>
+        </div>
+        ${riskCards}
+      </div>` : '';
+
   return `<div class="intel-strip">${stripItems}</div>
   <div class="intel-grid">
     <div>
@@ -734,7 +824,8 @@ function renderPRAJNA(preds, students){
         <strong style="color:#8b7fff">⚡ FOCUS</strong> = students moderate (&lt;55%) + exam load above average
       </div>
     </div>
-  </div>`;
+  </div>
+  ${riskSection}`;
 }
 
 /* ── main render ── */
