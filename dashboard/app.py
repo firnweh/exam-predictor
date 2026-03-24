@@ -652,6 +652,7 @@ with st.sidebar:
             "❓ Question Explorer",
             "📄 Paper Generator",
             "🤖 Ask PRAJNA",
+            "🧪 Mistake Analysis",
             "🔌 API Docs",
         ],
         label_visibility="collapsed",
@@ -2106,6 +2107,213 @@ if _nav == "🤖 Ask PRAJNA":
                     "role": "assistant", "content": "Chatbot module not available.",
                     "details": {},
                 })
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 🧪  Mistake Analysis
+# ═══════════════════════════════════════════════════════════════════════════════
+if _nav == "🧪 Mistake Analysis":
+    from pathlib import Path
+    import plotly.express as px
+    from analysis.mistake_analyzer import MistakeAnalyzer
+    from analysis.mistake_predictor import MistakePredictor
+
+    st.markdown(
+        '<div class="section-divider">🧪 Mistake Analysis '
+        '<span class="section-badge">LOGISTIC REGRESSION</span></div>',
+        unsafe_allow_html=True,
+    )
+
+    exam_key = "neet" if selected_exam in ("neet", "All") else "jee"
+    results_csv = Path("data/student_data") / f"{exam_key}_results_v2.csv"
+    students_csv = Path("data/student_data") / "students_v2.csv"
+
+    @st.cache_data(ttl=600)
+    def _load_results(path):
+        return pd.read_csv(path)
+
+    @st.cache_data(ttl=600)
+    def _load_students(path):
+        return pd.read_csv(path)
+
+    results_df = _load_results(str(results_csv))
+    students_df = _load_students(str(students_csv))
+
+    prajna_importance = {
+        p.get("micro_topic") or p.get("chapter", ""): p.get("appearance_probability", 0)
+        for p in (preds_micro if preds_micro else preds_v3)
+    }
+
+    topic_difficulty = (
+        results_df.groupby("micro_topic")["accuracy_pct"]
+        .mean()
+        .apply(lambda x: round((100 - x) / 20, 2))
+        .to_dict()
+    )
+
+    _ma_view = st.radio(
+        "View",
+        ["📊 Center View", "👤 Student View"],
+        horizontal=True,
+        label_visibility="collapsed",
+    )
+
+    # ── Center View ─────────────────────────────────────────────────────────────
+    if _ma_view == "📊 Center View":
+        analyzer = MistakeAnalyzer(results_df)
+
+        # Panel 1 — Danger Zones
+        st.subheader("⚠️ Danger Zones")
+        dz = analyzer.danger_zones(prajna_importance)
+        if dz.empty:
+            st.info("No danger zones found with current thresholds.")
+        else:
+            st.dataframe(dz, use_container_width=True, hide_index=True)
+
+        # Panel 2 — Co-failure Patterns
+        st.subheader("🔗 Co-failure Patterns")
+        cf = analyzer.cofailure_pairs()
+        if not cf:
+            st.info("No significant co-failure pairs detected.")
+        else:
+            st.dataframe(pd.DataFrame(cf), use_container_width=True, hide_index=True)
+
+        # Panel 3 — Time vs Accuracy
+        st.subheader("⏱️ Time vs Accuracy")
+        tva = analyzer.time_vs_accuracy()
+        if tva.empty:
+            st.info("Not enough data for time-accuracy scatter.")
+        else:
+            fig_tva = px.scatter(
+                tva,
+                x="avg_time",
+                y="avg_accuracy",
+                color="subject",
+                size="student_count",
+                hover_name="micro_topic",
+                template="plotly_dark",
+                labels={"avg_time": "Avg Time (min)", "avg_accuracy": "Avg Accuracy %"},
+            )
+            fig_tva.update_layout(
+                paper_bgcolor="#0f0f1a",
+                plot_bgcolor="#131320",
+                font_color="#e2e8f0",
+                title="Time vs Accuracy by Topic",
+            )
+            st.plotly_chart(fig_tva, use_container_width=True)
+
+    # ── Student View ────────────────────────────────────────────────────────────
+    else:
+        student_ids = sorted(results_df["student_id"].unique())
+        sel_student = st.selectbox("Select Student", student_ids)
+
+        @st.cache_resource
+        def _train_model(_results_hash, _students_hash, _prajna_hash):
+            mp = MistakePredictor()
+            X, y = mp.build_features(results_df, students_df, topic_difficulty, prajna_importance)
+            mp.train(X, y)
+            return mp
+
+        _rh = hash(results_df.shape)
+        _sh = hash(students_df.shape)
+        _ph = hash(frozenset(prajna_importance.items()))
+        predictor = _train_model(_rh, _sh, _ph)
+
+        preds_student = predictor.predict_for_student(
+            results_df, students_df, topic_difficulty, prajna_importance, sel_student,
+        )
+
+        # Panel 1 — Predicted Miss Probability
+        st.subheader("🎯 Predicted Miss Probability")
+        if not preds_student:
+            st.info("No predictions available for this student.")
+        else:
+            st.dataframe(
+                pd.DataFrame(preds_student),
+                use_container_width=True,
+                hide_index=True,
+            )
+
+        # Panel 2 — Personal Danger Zones
+        st.subheader("⚠️ Personal Danger Zones")
+        danger_personal = [
+            r for r in preds_student
+            if r["p_mistake"] > 0.5 and r["importance"] > 0.6
+        ]
+        if not danger_personal:
+            st.success("No high-risk topics for this student — keep it up!")
+        else:
+            st.dataframe(
+                pd.DataFrame(danger_personal),
+                use_container_width=True,
+                hide_index=True,
+            )
+
+        # Panel 3 — Improvement Trajectory
+        st.subheader("📈 Improvement Trajectory")
+        sdf = results_df[results_df["student_id"] == sel_student].copy()
+        if sdf.empty or sdf["exam_no"].nunique() < 2:
+            st.info("Not enough exam data for trajectory plot.")
+        else:
+            topic_trend = (
+                sdf.groupby(["micro_topic", "exam_no"])["accuracy_pct"]
+                .mean()
+                .reset_index()
+            )
+            delta = (
+                topic_trend.sort_values("exam_no")
+                .groupby("micro_topic")["accuracy_pct"]
+                .apply(lambda s: s.iloc[-1] - s.iloc[0])
+            )
+            top5_improved = delta.nlargest(5).index.tolist()
+            top5_declining = delta.nsmallest(5).index.tolist()
+            selected_topics = list(set(top5_improved + top5_declining))
+            traj = topic_trend[topic_trend["micro_topic"].isin(selected_topics)]
+
+            if traj.empty:
+                st.info("No trajectory data to display.")
+            else:
+                fig_traj = px.line(
+                    traj,
+                    x="exam_no",
+                    y="accuracy_pct",
+                    color="micro_topic",
+                    markers=True,
+                    template="plotly_dark",
+                    labels={"exam_no": "Exam #", "accuracy_pct": "Accuracy %"},
+                )
+                fig_traj.update_layout(
+                    paper_bgcolor="#0f0f1a",
+                    plot_bgcolor="#131320",
+                    font_color="#e2e8f0",
+                    title="Most Improved & Most Declining Topics",
+                )
+                st.plotly_chart(fig_traj, use_container_width=True)
+
+        # Panel 4 — Feature Importances
+        st.subheader("🧠 Feature Importances")
+        fi = predictor.feature_importances()
+        if not fi:
+            st.info("Model not trained — no importances available.")
+        else:
+            fi_df = pd.DataFrame(
+                {"feature": list(fi.keys()), "importance_pct": list(fi.values())}
+            ).sort_values("importance_pct", ascending=True)
+            fig_fi = px.bar(
+                fi_df,
+                x="importance_pct",
+                y="feature",
+                orientation="h",
+                template="plotly_dark",
+                labels={"importance_pct": "Importance %", "feature": "Feature"},
+            )
+            fig_fi.update_layout(
+                paper_bgcolor="#0f0f1a",
+                plot_bgcolor="#131320",
+                font_color="#e2e8f0",
+                title="Logistic Regression Feature Importances",
+            )
+            st.plotly_chart(fig_fi, use_container_width=True)
 
 
 if _nav == "🔌 API Docs":
