@@ -360,7 +360,7 @@ const _user = AUTH.requireAuth(['student','center','central']);
 // Set data-role on <body> immediately — CSS uses this to hide sidebar/toggle for students
 if (_user) document.body.setAttribute('data-role', _user.role);
 /* ── Globals ── */
-const G = { exam:'neet', data:{neet:null,jee:null}, stu:null, charts:{}, microPreds:{} };
+const G = { exam:'neet', data:{neet:null,jee:null}, stu:null, charts:{}, microPreds:{}, subjectView:null };
 
 /* ── Level helpers ── */
 const LC = {M:'#22c55e',S:'#84cc16',D:'#f59e0b',W:'#f97316',C:'#ef4444'};
@@ -523,6 +523,7 @@ document.getElementById('btn-neet').addEventListener('click',()=>switchExam('nee
 document.getElementById('btn-jee').addEventListener('click', ()=>switchExam('jee'));
 
 function switchExam(exam){
+  if(G.subjectView) closeSubject();
   G.exam=exam; G.stu=null;
   document.getElementById('btn-neet').className=exam==='neet'?'active':'';
   document.getElementById('btn-jee').className=exam==='jee'?'active':'';
@@ -617,6 +618,7 @@ document.getElementById('search').addEventListener('input',function(){
 });
 
 function pick(s){
+  if(G.subjectView) closeSubject();
   G.stu=s;
   document.querySelectorAll('.stu-item').forEach(e=>{
     e.classList.toggle('active',e.dataset.sid===s.id);
@@ -626,219 +628,486 @@ function pick(s){
   if(!G.microPreds[ex]){
     fetch('http://localhost:8001/api/v1/data/predict?exam_type='+(ex==='jee'?'jee_main':ex)+'&year=2026&level=micro&top_n=200')
       .then(r=>r.ok?r.json():null).then(d=>{
-        if(d&&d.predictions){ G.microPreds[ex]=d.predictions; _refreshDeepAnalysis(s); }
+        if(d&&d.predictions){ G.microPreds[ex]=d.predictions; render(s); }
       }).catch(()=>{});
   }
   render(s);
 }
 
-function _refreshDeepAnalysis(s){
-  const target=document.getElementById('deep-analysis-wrap');
-  if(target && G.microPreds[G.exam]){
-    target.innerHTML='';
-    target.appendChild(_buildDeepContent(s, G.microPreds[G.exam]));
+/* ── Subject Cards + Subject View ── */
+const SUBJ_COL = {Physics:'#f59e0b',Chemistry:'#6c63ff',Biology:'#22c55e',
+  Botany:'#22c55e',Zoology:'#10b981',Mathematics:'#a855f7'};
+const SUBJ_ICO = {Physics:'\u26A1',Chemistry:'\uD83E\uDDEA',Biology:'\uD83E\uDDEC',
+  Botany:'\uD83C\uDF3F',Zoology:'\uD83E\uDDEC',Mathematics:'\uD83D\uDCD0'};
+const TREND_ICO_SV = {RISING:'\u2191',STABLE:'\u2192',DECLINING:'\u2193',NEW:'\u2605'};
+
+function _stuAccFor(s, name){
+  const cd=s.chapters&&s.chapters[name];
+  if(cd) return cd[0];
+  const sd=s.subjects&&s.subjects[name];
+  if(sd) return sd.acc||0;
+  return null;
+}
+function _roiCalc(stuAcc, prob, conf){
+  if(stuAcc===null) return 0;
+  return (1 - stuAcc/100) * (prob||0) * Math.max(conf||0, 0.5);
+}
+function _roiCls(r){ return r>0.4?'roi-crit':r>0.25?'roi-focus':r>0.1?'roi-review':'roi-ok'; }
+function _roiLbl(r){ return r>0.4?'\u26A0 CRITICAL':r>0.25?'\u26A1 FOCUS':r>0.1?'\uD83D\uDCD8 REVIEW':'\u2713 OK'; }
+
+function _buildSubjectTree(s, preds, subjectFilter){
+  const filtered=preds.filter(p=>p.subject===subjectFilter && p.syllabus_status!=='REMOVED');
+  const tree={};
+  filtered.forEach(p=>{
+    const ch=p.chapter||p.normalized_chapter||'Other';
+    if(!tree[ch]) tree[ch]={preds:[], prob:0, expQ:0, trend:'STABLE', conf:0};
+    tree[ch].preds.push(p);
+    tree[ch].prob=Math.max(tree[ch].prob, p.appearance_probability||0);
+    tree[ch].expQ+=(p.expected_questions||0);
+    if((p.appearance_probability||0)>=tree[ch].prob) tree[ch].trend=p.trend_direction||'STABLE';
+    tree[ch].conf=Math.max(tree[ch].conf, p.confidence_score||0);
+  });
+  const allMicros=[];
+  for(const ch in tree){
+    tree[ch].preds.forEach(p=>{
+      const mt=p.micro_topic||p.chapter;
+      const acc=_stuAccFor(s,mt)??_stuAccFor(s,ch)??_stuAccFor(s,subjectFilter);
+      const roi=_roiCalc(acc, p.appearance_probability, p.confidence_score);
+      allMicros.push({name:mt, chapter:ch, subject:subjectFilter, acc:acc,
+        prob:p.appearance_probability, conf:p.confidence_score, roi:roi, pred:p});
+    });
   }
+  allMicros.sort((a,b)=>b.roi-a.roi);
+  return {tree, allMicros};
 }
 
-/* ── Deep Analysis — 3-level drill-down (subject→chapter→micro-topic) ── */
-function buildDeepAnalysis(s){
-  const wrap=el('div','deep-section');
-  wrap.id='deep-analysis-container';
-
-  const hdr=el('div','section-hdr');
-  hdr.innerHTML='<span style="font-size:.72rem;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--mt)">🎯 PRAJNA Deep Analysis</span>'
-    +'<span style="font-size:.65rem;color:var(--mt);margin-left:8px">— Chapter → Micro-Topic × Your Performance × Exam Predictions</span>';
-  wrap.appendChild(hdr);
-
-  const content=el('div');
-  content.id='deep-analysis-wrap';
+function buildSubjectCards(s){
+  const wrap=el('div','card');
+  const title=el('div','card-title');
+  title.textContent='\uD83C\uDFAF PRAJNA Deep Analysis \u2014 Click a subject to explore';
+  wrap.appendChild(title);
 
   const preds=G.microPreds[G.exam];
-  if(preds && preds.length){
-    content.appendChild(_buildDeepContent(s, preds));
-  } else {
-    content.innerHTML='<div style="text-align:center;padding:24px;color:var(--mt);font-size:.8rem">'
-      +'⏳ Loading PRAJNA micro-topic predictions…<br>'
-      +'<span style="font-size:.7rem">Requires Intelligence API on port 8001</span></div>';
+  if(!preds||!preds.length){
+    const msg=el('div');
+    msg.style.cssText='text-align:center;padding:24px;color:var(--mt);font-size:.8rem';
+    msg.textContent='\u23F3 Loading PRAJNA micro-topic predictions\u2026 Requires Intelligence API on port 8001';
+    wrap.appendChild(msg);
+    return wrap;
   }
-  wrap.appendChild(content);
+
+  const grid=el('div','subj-cards');
+  const subjects=Object.keys(s.subjects||{});
+
+  subjects.forEach(subj=>{
+    const sc=SUBJ_COL[subj]||'#818cf8';
+    const ico=SUBJ_ICO[subj]||'\uD83D\uDCDA';
+    const {tree, allMicros}=_buildSubjectTree(s, preds, subj);
+    const subjAcc=s.subjects[subj]?s.subjects[subj].acc:null;
+    const chCount=Object.keys(tree).length;
+    const totalMicros=allMicros.length;
+    if(totalMicros===0) return;
+
+    const critCount=allMicros.filter(m=>m.roi>0.4).length;
+    const focusCount=allMicros.filter(m=>m.roi>0.25&&m.roi<=0.4).length;
+    const avgProb=allMicros.reduce((t,m)=>t+(m.prob||0),0)/totalMicros;
+
+    const card=el('div','subj-card');
+    card.style.borderLeftColor=sc;
+    card.addEventListener('click',()=>openSubject(subj));
+
+    const icoEl=el('div','subj-card-icon');
+    icoEl.textContent=ico;
+    card.appendChild(icoEl);
+
+    const nameEl=el('div','subj-card-name');
+    nameEl.textContent=subj;
+    card.appendChild(nameEl);
+
+    // Accuracy stat + bar
+    const accStat=el('div','subj-card-stat');
+    accStat.textContent='Your accuracy: ';
+    const accVal=el('strong');
+    accVal.textContent=subjAcc!==null?subjAcc.toFixed(0)+'%':'\u2014';
+    accVal.style.color=subjAcc!==null&&subjAcc<50?'#ff6b6b':sc;
+    accStat.appendChild(accVal);
+    card.appendChild(accStat);
+
+    const barWrap=el('div','subj-card-bar');
+    const barFill=el('div','subj-card-bar-fill');
+    barFill.style.width=(subjAcc||0)+'%';
+    barFill.style.background=sc;
+    barWrap.appendChild(barFill);
+    card.appendChild(barWrap);
+
+    // PRAJNA exam load
+    const loadStat=el('div','subj-card-stat');
+    loadStat.textContent='PRAJNA exam load: ';
+    const loadVal=el('strong');
+    loadVal.textContent=(avgProb*100).toFixed(0)+'%';
+    loadStat.appendChild(loadVal);
+    card.appendChild(loadStat);
+
+    // Count pills
+    const counts=el('div','subj-card-counts');
+    if(critCount>0){
+      const cp=el('span','subj-card-cnt');
+      cp.style.color='#ff6b6b';
+      cp.textContent='\u26A0 '+critCount+' critical';
+      counts.appendChild(cp);
+    }
+    if(focusCount>0){
+      const fp=el('span','subj-card-cnt');
+      fp.style.color='#f59e0b';
+      fp.textContent='\u26A1 '+focusCount+' focus';
+      counts.appendChild(fp);
+    }
+    const chp=el('span','subj-card-cnt');
+    chp.textContent=chCount+' ch \u00B7 '+totalMicros+' topics';
+    counts.appendChild(chp);
+    card.appendChild(counts);
+
+    const go=el('div','subj-card-go');
+    go.textContent='Explore '+subj+' \u2192';
+    card.appendChild(go);
+
+    grid.appendChild(card);
+  });
+
+  wrap.appendChild(grid);
   return wrap;
 }
 
-function _buildDeepContent(s, preds){
-  const SCOL={Physics:'#f59e0b',Chemistry:'#6c63ff',Biology:'#22c55e',Mathematics:'#a855f7',
-              Botany:'#22c55e',Zoology:'#10b981'};
-  const TREND_ICO={RISING:'↑',STABLE:'→',DECLINING:'↓',NEW:'★'};
+function openSubject(subj){
+  G.subjectView=subj;
+  document.getElementById('dash').style.display='none';
+  const sv=document.getElementById('subject-view');
+  sv.textContent='';
+  sv.classList.add('active');
+  sv.appendChild(buildSubjectView(G.stu, subj));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function closeSubject(){
+  G.subjectView=null;
+  const sv=document.getElementById('subject-view');
+  sv.classList.remove('active');
+  sv.textContent='';
+  document.getElementById('dash').style.display='flex';
+}
+
+function buildSubjectView(s, subj){
   const frag=document.createDocumentFragment();
+  const sc=SUBJ_COL[subj]||'#818cf8';
+  const ico=SUBJ_ICO[subj]||'\uD83D\uDCDA';
+  const preds=G.microPreds[G.exam]||[];
+  const {tree, allMicros}=_buildSubjectTree(s, preds, subj);
+  const subjAcc=s.subjects&&s.subjects[subj]?s.subjects[subj].acc:null;
+  const subjLvl=subjAcc!==null?pctLevel(subjAcc):null;
+  const chCount=Object.keys(tree).length;
+  const totalMicros=allMicros.length;
+  const critCount=allMicros.filter(m=>m.roi>0.4).length;
+  const focusCount=allMicros.filter(m=>m.roi>0.25&&m.roi<=0.4).length;
+  const okCount=totalMicros-critCount-focusCount;
+  const avgProb=totalMicros?allMicros.reduce((t,m)=>t+(m.prob||0),0)/totalMicros:0;
+  const totalExpQ=allMicros.reduce((t,m)=>t+(m.pred.expected_questions||0),0);
 
-  // Group predictions by subject → chapter → micro_topics
-  const tree={};
-  preds.forEach(p=>{
-    if(p.syllabus_status==='REMOVED') return;
-    const subj=p.subject, ch=p.chapter||p.normalized_chapter||'Other';
-    if(!tree[subj]) tree[subj]={};
-    if(!tree[subj][ch]) tree[subj][ch]={preds:[], prob:0, expQ:0, trend:'STABLE', conf:0};
-    tree[subj][ch].preds.push(p);
-    tree[subj][ch].prob=Math.max(tree[subj][ch].prob, p.appearance_probability||0);
-    tree[subj][ch].expQ+=(p.expected_questions||0);
-    if((p.appearance_probability||0)>tree[subj][ch].prob) tree[subj][ch].trend=p.trend_direction||'STABLE';
-    tree[subj][ch].conf=Math.max(tree[subj][ch].conf, p.confidence_score||0);
+  /* Header */
+  const hdr=el('div','sv-header');
+  const backBtn=el('button','sv-back');
+  backBtn.textContent='\u2190 Back to Dashboard';
+  backBtn.addEventListener('click',closeSubject);
+  hdr.appendChild(backBtn);
+  const titleEl=el('div','sv-title');
+  titleEl.style.color=sc;
+  titleEl.textContent=ico+' '+subj;
+  hdr.appendChild(titleEl);
+  frag.appendChild(hdr);
+
+  /* Zone A -- KPI Strip */
+  const kpiRow=el('div','sv-kpi-row');
+
+  // KPI 1: Student accuracy
+  const kpi1=el('div','sv-kpi');
+  const kpi1v=el('div','sv-kpi-val');
+  kpi1v.style.color=subjAcc!==null&&subjAcc<50?'#ff6b6b':sc;
+  kpi1v.textContent=subjAcc!==null?subjAcc.toFixed(1)+'%':'\u2014';
+  kpi1.appendChild(kpi1v);
+  const kpi1l=el('div','sv-kpi-lbl'); kpi1l.textContent='Your Accuracy'; kpi1.appendChild(kpi1l);
+  if(subjLvl){
+    const kpi1s=el('div','sv-kpi-sub');
+    kpi1s.textContent=LL[subjLvl]||'';
+    kpi1s.style.color=LC[subjLvl]||'var(--mt)';
+    kpi1.appendChild(kpi1s);
+  }
+  kpiRow.appendChild(kpi1);
+
+  // KPI 2: PRAJNA exam load
+  const kpi2=el('div','sv-kpi');
+  const kpi2v=el('div','sv-kpi-val');
+  kpi2v.style.color='#a5b4fc';
+  kpi2v.textContent=(avgProb*100).toFixed(0)+'%';
+  kpi2.appendChild(kpi2v);
+  const kpi2l=el('div','sv-kpi-lbl'); kpi2l.textContent='PRAJNA Exam Load'; kpi2.appendChild(kpi2l);
+  const kpi2s=el('div','sv-kpi-sub');
+  kpi2s.textContent='~'+totalExpQ.toFixed(1)+' expected Qs';
+  kpi2.appendChild(kpi2s);
+  kpiRow.appendChild(kpi2);
+
+  // KPI 3: Critical / Focus / OK
+  const kpi3=el('div','sv-kpi');
+  const kpi3v=el('div','sv-kpi-val');
+  kpi3v.style.color=critCount>0?'#ff6b6b':'#22c55e';
+  kpi3v.textContent=critCount+' critical';
+  kpi3.appendChild(kpi3v);
+  const kpi3l=el('div','sv-kpi-lbl'); kpi3l.textContent='Priority Topics'; kpi3.appendChild(kpi3l);
+  const kpi3s=el('div','sv-kpi-sub');
+  kpi3s.textContent=focusCount+' focus \u00B7 '+okCount+' on track';
+  kpi3.appendChild(kpi3s);
+  kpiRow.appendChild(kpi3);
+
+  // KPI 4: Chapters + micros
+  const kpi4=el('div','sv-kpi');
+  const kpi4v=el('div','sv-kpi-val');
+  kpi4v.style.color=sc;
+  kpi4v.textContent=chCount+' chapters';
+  kpi4.appendChild(kpi4v);
+  const kpi4l=el('div','sv-kpi-lbl'); kpi4l.textContent='Predicted Coverage'; kpi4.appendChild(kpi4l);
+  const kpi4s=el('div','sv-kpi-sub');
+  kpi4s.textContent=totalMicros+' micro-topics';
+  kpi4.appendChild(kpi4s);
+  kpiRow.appendChild(kpi4);
+
+  frag.appendChild(kpiRow);
+
+  /* Zone B -- Top 5 Priority Actions */
+  const priWrap=el('div','sv-priority');
+  const priTitle=el('div','sv-priority-title');
+  priTitle.textContent='\u26A1 Top 5 Priority Actions';
+  priWrap.appendChild(priTitle);
+
+  const priGrid=el('div','sv-priority-grid');
+  ['Micro-Topic','Chapter','Your %','PRAJNA','Priority'].forEach(h=>{
+    const hd=el('div','hdr'); hd.textContent=h; priGrid.appendChild(hd);
   });
 
-  // Compute ROI for each micro-topic
-  function _stuAcc(name){
-    const cd=s.chapters&&s.chapters[name];
-    if(cd) return cd[0];
-    // Fallback: check if it matches a subject name
-    const sd=s.subjects&&s.subjects[name];
-    if(sd) return sd.acc||0;
-    return null;
-  }
-  function _roi(stuAcc, prob, conf){
-    if(stuAcc===null) return 0;
-    return (1 - stuAcc/100) * (prob||0) * Math.max(conf||0, 0.5);
-  }
-  function _roiClass(r){ return r>0.4?'roi-crit':r>0.25?'roi-focus':r>0.1?'roi-review':'roi-ok'; }
-  function _roiLabel(r){ return r>0.4?'⚠ CRITICAL':r>0.25?'⚡ FOCUS':r>0.1?'📘 REVIEW':'✓ OK'; }
+  allMicros.slice(0,5).forEach(m=>{
+    const nameCell=el('div'); nameCell.textContent=m.name;
+    nameCell.style.cssText='font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+    priGrid.appendChild(nameCell);
 
-  // Collect all micro ROIs for summary
-  let allMicros=[];
-  for(const subj in tree){
-    for(const ch in tree[subj]){
-      tree[subj][ch].preds.forEach(p=>{
-        const mt=p.micro_topic||p.chapter;
-        const acc=_stuAcc(mt)??_stuAcc(ch)??(_stuAcc(subj));
-        const roi=_roi(acc, p.appearance_probability, p.confidence_score);
-        allMicros.push({name:mt, chapter:ch, subject:subj, acc:acc, prob:p.appearance_probability, roi:roi});
-      });
-    }
-  }
-  allMicros.sort((a,b)=>b.roi-a.roi);
+    const chCell=el('div'); chCell.textContent=m.chapter;
+    chCell.style.cssText='color:var(--mt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+    priGrid.appendChild(chCell);
 
-  // Summary card
-  const crit=allMicros.filter(m=>m.roi>0.4).length;
-  const focus=allMicros.filter(m=>m.roi>0.25&&m.roi<=0.4).length;
-  const ok=allMicros.filter(m=>m.roi<=0.25).length;
-  const top3=allMicros.slice(0,3);
+    const accCell=el('div');
+    accCell.textContent=m.acc!==null?m.acc.toFixed(0)+'%':'\u2014';
+    accCell.style.color=m.acc!==null&&m.acc<50?'#ff6b6b':'#22c55e';
+    accCell.style.fontWeight='700';
+    priGrid.appendChild(accCell);
 
-  const summary=el('div','deep-summary');
-  summary.innerHTML=`<div class="deep-summary-title">🎯 PRAJNA Study Priority Summary — ${allMicros.length} micro-topics analyzed</div>
-    <div class="deep-summary-counts">
-      <span class="deep-cnt" style="color:#ff6b6b">⚠ ${crit} CRITICAL</span>
-      <span class="deep-cnt" style="color:#f59e0b">⚡ ${focus} FOCUS</span>
-      <span class="deep-cnt" style="color:#22c55e">✓ ${ok} on track</span>
-    </div>
-    <div style="font-size:.72rem;color:var(--mt);margin-bottom:6px;font-weight:600">Top actions:</div>
-    <ol class="deep-actions">${top3.map(m=>
-      `<li><strong style="color:${SCOL[m.subject]||'#818cf8'}">${m.name}</strong> `
-      +`<span style="color:var(--mt)">(${m.subject})</span> — `
-      +`Your: <strong style="color:${m.acc!==null&&m.acc<50?'#ff6b6b':'#22c55e'}">${m.acc!==null?m.acc.toFixed(0)+'%':'?'}</strong> · `
-      +`PRAJNA: <strong style="color:#a5b4fc">${(m.prob*100).toFixed(0)}%</strong></li>`
-    ).join('')}</ol>`;
-  frag.appendChild(summary);
+    const probCell=el('div');
+    probCell.textContent=(m.prob*100).toFixed(0)+'%';
+    probCell.style.color='#a5b4fc';
+    probCell.style.fontWeight='700';
+    priGrid.appendChild(probCell);
 
-  // Subject-level drill-down
-  const subjOrder=Object.keys(tree).sort((a,b)=>{
-    // Weakest subject first
-    const aAcc=s.subjects&&s.subjects[a]?s.subjects[a].acc:100;
-    const bAcc=s.subjects&&s.subjects[b]?s.subjects[b].acc:100;
-    return aAcc-bAcc;
+    const roiCell=el('div');
+    roiCell.className=_roiCls(m.roi);
+    roiCell.style.fontWeight='800';
+    roiCell.style.fontSize='.72rem';
+    roiCell.textContent=_roiLbl(m.roi);
+    priGrid.appendChild(roiCell);
   });
 
-  subjOrder.forEach(subj=>{
-    const sc=SCOL[subj]||'#818cf8';
-    const chapters=tree[subj];
-    const chCount=Object.keys(chapters).length;
-    const subjAcc=_stuAcc(subj)??(s.subjects&&s.subjects[subj]?s.subjects[subj].acc:null);
-    const totalMicros=Object.values(chapters).reduce((t,c)=>t+c.preds.length,0);
+  priWrap.appendChild(priGrid);
+  frag.appendChild(priWrap);
 
-    const subjEl=document.createElement('details');
-    subjEl.className='deep-subj';
-    subjEl.open=true;
+  /* Zone C -- Chapter Breakdown */
+  const chEntries=Object.entries(tree).sort((a,b)=>{
+    const aMax=a[1].preds.reduce((mx,p)=>{
+      const acc=_stuAccFor(s,p.micro_topic||p.chapter)??_stuAccFor(s,a[0])??subjAcc;
+      return Math.max(mx,_roiCalc(acc,p.appearance_probability,p.confidence_score));
+    },0);
+    const bMax=b[1].preds.reduce((mx,p)=>{
+      const acc=_stuAccFor(s,p.micro_topic||p.chapter)??_stuAccFor(s,b[0])??subjAcc;
+      return Math.max(mx,_roiCalc(acc,p.appearance_probability,p.confidence_score));
+    },0);
+    return bMax-aMax;
+  });
 
-    const subjSum=document.createElement('summary');
-    subjSum.innerHTML=`<span class="deep-subj-dot" style="background:${sc}"></span>`
-      +`<span>${subj}</span>`
-      +`<span style="font-size:.7rem;font-weight:400;color:var(--mt)">Your: <strong style="color:${subjAcc!==null&&subjAcc<50?'#ff6b6b':sc}">${subjAcc!==null?subjAcc.toFixed(0)+'%':'—'}</strong></span>`
-      +`<span class="deep-subj-meta">${chCount} chapters · ${totalMicros} micro-topics</span>`;
-    subjEl.appendChild(subjSum);
+  chEntries.forEach(([ch, chData])=>{
+    const chAcc=_stuAccFor(s,ch)??subjAcc;
+    const chProb=(chData.prob*100).toFixed(0);
+    const chExpQ=chData.expQ.toFixed(1);
+    const chTrend=TREND_ICO_SV[chData.trend]||'\u2192';
 
-    const subjBody=el('div','deep-subj-body');
+    const det=document.createElement('details');
+    det.className='sv-ch';
 
-    // Sort chapters by max micro ROI descending
-    const chEntries=Object.entries(chapters).sort((a,b)=>{
-      const aMax=Math.max(...a[1].preds.map(p=>_roi(_stuAcc(p.micro_topic||p.chapter)??_stuAcc(a[0])??subjAcc, p.appearance_probability, p.confidence_score)));
-      const bMax=Math.max(...b[1].preds.map(p=>_roi(_stuAcc(p.micro_topic||p.chapter)??_stuAcc(b[0])??subjAcc, p.appearance_probability, p.confidence_score)));
-      return bMax-aMax;
-    });
+    const sum=document.createElement('summary');
+    sum.className='sv-ch-sum';
 
-    chEntries.forEach(([ch, chData])=>{
-      const chAcc=_stuAcc(ch)??subjAcc;
-      const chProb=(chData.prob*100).toFixed(0);
-      const chExpQ=chData.expQ.toFixed(1);
-      const chTrend=TREND_ICO[chData.trend]||'→';
+    const arrow=el('span','sv-ch-arrow');
+    arrow.textContent='\u25B6';
+    sum.appendChild(arrow);
 
-      const chEl=document.createElement('details');
-      chEl.className='deep-ch';
+    const chName=el('span','sv-ch-name');
+    chName.textContent=ch;
+    sum.appendChild(chName);
 
-      const chSum=document.createElement('summary');
-      chSum.innerHTML=`<span class="deep-ch-name">${ch}</span>`
-        +`<span style="font-size:.68rem;color:var(--mt)">Your: <strong style="color:${chAcc!==null&&chAcc<50?'#ff6b6b':'#22c55e'}">${chAcc!==null?chAcc.toFixed(0)+'%':'—'}</strong></span>`
-        +`<span class="deep-ch-prob" style="color:${sc}">${chProb}%</span>`
-        +`<span class="deep-ch-meta">~${chExpQ}Q · ${chTrend}</span>`;
-      chEl.appendChild(chSum);
+    const pills=el('span','sv-ch-pills');
 
-      const chBody=el('div','deep-ch-body');
+    const pAcc=el('span','sv-ch-pill');
+    pAcc.textContent='Your: '+(chAcc!==null?chAcc.toFixed(0)+'%':'\u2014');
+    pAcc.style.color=chAcc!==null&&chAcc<50?'#ff6b6b':'#22c55e';
+    pills.appendChild(pAcc);
 
-      // Signal badges
-      if(chData.preds[0]&&chData.preds[0].signal_breakdown){
-        const sigDiv=el('div','deep-ch-signals');
-        const sig=chData.preds[0].signal_breakdown;
-        for(const[k,v] of Object.entries(sig)){
-          const val=typeof v==='object'?v.value:v;
-          if(val>0){
-            const badge=el('span','deep-sig');
-            badge.innerHTML=`${k.replace(/_/g,' ')}: <strong>${(typeof val==='number'?val.toFixed(2):val)}</strong>`;
-            sigDiv.appendChild(badge);
-          }
+    const pProb=el('span','sv-ch-pill');
+    pProb.textContent='PRAJNA: '+chProb+'%';
+    pProb.style.color=sc;
+    pills.appendChild(pProb);
+
+    const pQ=el('span','sv-ch-pill');
+    pQ.textContent='~'+chExpQ+'Q '+chTrend;
+    pills.appendChild(pQ);
+
+    sum.appendChild(pills);
+    det.appendChild(sum);
+
+    const body=el('div','sv-ch-body');
+
+    // Signal badges
+    if(chData.preds[0]&&chData.preds[0].signal_breakdown){
+      const sigDiv=el('div','sv-ch-signals');
+      const sig=chData.preds[0].signal_breakdown;
+      for(const[k,v] of Object.entries(sig)){
+        const val=typeof v==='object'?v.value:v;
+        if(val>0){
+          const badge=el('span','sv-ch-sig');
+          const lbl=document.createTextNode(k.replace(/_/g,' ')+': ');
+          badge.appendChild(lbl);
+          const strong=el('strong');
+          strong.textContent=typeof val==='number'?val.toFixed(2):String(val);
+          badge.appendChild(strong);
+          sigDiv.appendChild(badge);
         }
-        chBody.appendChild(sigDiv);
       }
+      body.appendChild(sigDiv);
+    }
 
-      // Micro-topic rows
-      const sortedMicros=[...chData.preds].sort((a,b)=>{
-        const aRoi=_roi(_stuAcc(a.micro_topic||a.chapter)??chAcc, a.appearance_probability, a.confidence_score);
-        const bRoi=_roi(_stuAcc(b.micro_topic||b.chapter)??chAcc, b.appearance_probability, b.confidence_score);
-        return bRoi-aRoi;
-      });
+    // History metadata
+    if(chData.preds[0]){
+      const p0=chData.preds[0];
+      const hist=el('div','sv-ch-hist');
+      const parts=[];
+      if(p0.trend_direction) parts.push('Trend: '+p0.trend_direction);
+      if(p0.confidence_score) parts.push('Confidence: '+(p0.confidence_score*100).toFixed(0)+'%');
+      hist.textContent=parts.join(' \u00B7 ');
+      if(parts.length) body.appendChild(hist);
+    }
 
-      sortedMicros.forEach(p=>{
-        const mt=p.micro_topic||p.chapter;
-        const mtAcc=_stuAcc(mt)??chAcc;
-        const mtProb=(p.appearance_probability||0);
-        const roi=_roi(mtAcc, mtProb, p.confidence_score);
-        const rc=_roiClass(roi);
-        const rl=_roiLabel(roi);
+    // Micro-topic table
+    const tbl=document.createElement('table');
+    tbl.className='sv-mt-table';
+    const thead=document.createElement('thead');
+    const headRow=document.createElement('tr');
+    ['Micro-Topic','Your %','PRAJNA','Priority'].forEach(h=>{
+      const th=document.createElement('th');
+      th.textContent=h;
+      headRow.appendChild(th);
+    });
+    thead.appendChild(headRow);
+    tbl.appendChild(thead);
 
-        const row=el('div','deep-micro');
-        row.innerHTML=`<span class="deep-micro-name">${mt}</span>`
-          +`<span class="deep-micro-acc" style="color:${mtAcc!==null&&mtAcc<50?'#ff6b6b':'#22c55e'}">${mtAcc!==null?mtAcc.toFixed(0)+'%':'—'}</span>`
-          +`<span class="deep-micro-prob" style="color:${sc}">${(mtProb*100).toFixed(0)}%</span>`
-          +`<span class="deep-micro-roi ${rc}">${rl}</span>`;
-        chBody.appendChild(row);
-      });
-
-      chEl.appendChild(chBody);
-      subjBody.appendChild(chEl);
+    const tbody=document.createElement('tbody');
+    const sortedMicros=[...chData.preds].sort((a,b)=>{
+      const aAcc=_stuAccFor(s,a.micro_topic||a.chapter)??chAcc;
+      const bAcc=_stuAccFor(s,b.micro_topic||b.chapter)??chAcc;
+      return _roiCalc(bAcc,b.appearance_probability,b.confidence_score)
+            -_roiCalc(aAcc,a.appearance_probability,a.confidence_score);
     });
 
-    subjEl.appendChild(subjBody);
-    frag.appendChild(subjEl);
+    sortedMicros.forEach(p=>{
+      const mt=p.micro_topic||p.chapter;
+      const mtAcc=_stuAccFor(s,mt)??chAcc;
+      const mtProb=p.appearance_probability||0;
+      const roi=_roiCalc(mtAcc, mtProb, p.confidence_score);
+
+      const tr=document.createElement('tr');
+
+      const tdName=document.createElement('td');
+      tdName.className='mt-name';
+      tdName.textContent=mt;
+      tr.appendChild(tdName);
+
+      const tdAcc=document.createElement('td');
+      tdAcc.textContent=mtAcc!==null?mtAcc.toFixed(0)+'%':'\u2014';
+      tdAcc.style.color=mtAcc!==null&&mtAcc<50?'#ff6b6b':'#22c55e';
+      tdAcc.style.fontWeight='600';
+      tr.appendChild(tdAcc);
+
+      const tdProb=document.createElement('td');
+      tdProb.textContent=(mtProb*100).toFixed(0)+'%';
+      tdProb.style.color=sc;
+      tdProb.style.fontWeight='600';
+      tr.appendChild(tdProb);
+
+      const tdRoi=document.createElement('td');
+      tdRoi.className=_roiCls(roi);
+      tdRoi.style.fontWeight='800';
+      tdRoi.style.fontSize='.72rem';
+      tdRoi.textContent=_roiLbl(roi);
+      tr.appendChild(tdRoi);
+
+      tbody.appendChild(tr);
+    });
+
+    tbl.appendChild(tbody);
+    body.appendChild(tbl);
+
+    det.appendChild(body);
+    frag.appendChild(det);
   });
 
-  const wrapper=el('div');
-  wrapper.appendChild(frag);
-  return wrapper;
+  /* Zone D -- Question Distribution */
+  const histSection=el('div','sv-hist-section');
+  const histTitle=el('div','sv-hist-title');
+  histTitle.textContent='\uD83D\uDCCA Expected Question Distribution by Chapter';
+  histSection.appendChild(histTitle);
+
+  const chByQ=Object.entries(tree)
+    .map(([ch,d])=>({ch, q:d.expQ}))
+    .sort((a,b)=>b.q-a.q)
+    .slice(0,12);
+  const maxQ=chByQ.reduce((mx,c)=>Math.max(mx,c.q),0)||1;
+
+  const bars=el('div','sv-hist-bars');
+  chByQ.forEach(c=>{
+    const col=el('div','sv-hist-bar');
+
+    const valLbl=el('div','sv-hist-bar-val');
+    valLbl.textContent=c.q.toFixed(1);
+    valLbl.style.color=sc;
+    col.appendChild(valLbl);
+
+    const fill=el('div','sv-hist-bar-fill');
+    fill.style.height=Math.max(c.q/maxQ*100,2)+'%';
+    fill.style.background=sc;
+    col.appendChild(fill);
+
+    const lbl=el('div','sv-hist-bar-lbl');
+    lbl.textContent=c.ch.length>18?c.ch.slice(0,16)+'\u2026':c.ch;
+    lbl.title=c.ch;
+    col.appendChild(lbl);
+
+    bars.appendChild(col);
+  });
+
+  histSection.appendChild(bars);
+  frag.appendChild(histSection);
+
+  return frag;
 }
 
 /* ── Main render ── */
@@ -868,7 +1137,7 @@ function render(s){
 
   dash.appendChild(buildZones(s));
   dash.appendChild(buildHeatmap(s));
-  dash.appendChild(buildDeepAnalysis(s));
+  dash.appendChild(buildSubjectCards(s));
   dash.appendChild(buildInsights(s));
   dash.appendChild(buildIntelligencePanel(s));
   dash.appendChild(buildPredictionsPanel(s));
