@@ -43,7 +43,7 @@ class Settings(BaseSettings):
     port: int = 8001
     workers: int = 1
     cors_origins: List[str] = Field(
-        default=["http://localhost:3000", "http://localhost:8080", "http://localhost:8765", "http://localhost:8502", "http://127.0.0.1:8765"],
+        default=["http://localhost:3000", "http://localhost:4000", "http://localhost:8080", "http://localhost:8765", "http://localhost:8502", "http://127.0.0.1:8765", "http://127.0.0.1:4000"],
     )
 
     # ── SLM Provider ──────────────────────────────────────────────────────────
