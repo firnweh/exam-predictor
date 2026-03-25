@@ -6,7 +6,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://prajna-backend.up.railway.app/api/:path*"
+      "destination": "https://web-production-4ef64.up.railway.app/api/:path*"
     }
   ],
   "headers": [
