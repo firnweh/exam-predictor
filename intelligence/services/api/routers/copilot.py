@@ -216,7 +216,10 @@ def _is_broad_query(question: str) -> bool:
         r'difference between .+ and',
         r'classification of',
     ]
-    if len(q.split()) <= 5 and not any(c.isdigit() for c in q):
+    # Short queries are only broad if they don't contain specific terms
+    specific_terms = {'formula', 'law', 'equation', 'theorem', 'principle',
+                      'difference', 'define', 'solve', 'calculate', 'derive'}
+    if len(q.split()) <= 4 and not any(c.isdigit() for c in q) and not any(t in q for t in specific_terms):
         return True
     for p in broad_patterns:
         if re.search(p, q):
