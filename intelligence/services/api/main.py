@@ -23,6 +23,8 @@ from fastapi.responses import JSONResponse
 
 from config.settings import Settings, get_settings
 from services.api.routers import insights, reports, predictions, copilot, data_bridge
+from services.api.routers.qbank import router as qbank_router
+from services.api.routers.mistakes import router as mistakes_router
 
 logger = logging.getLogger(__name__)
 
@@ -121,6 +123,8 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
     app.include_router(predictions.router,  prefix="/api/v1/predictions",  tags=["Predictions"])
     app.include_router(copilot.router,      prefix="/api/v1/copilot",      tags=["Copilot"])
     app.include_router(data_bridge.router,  prefix="/api/v1/data",         tags=["Data Bridge"])
+    app.include_router(qbank_router)
+    app.include_router(mistakes_router)
 
     # ── Health ──
     @app.get("/health", tags=["Health"])
