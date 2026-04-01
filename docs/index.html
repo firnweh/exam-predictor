@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0f;color:#e2e8f0;font-family:'Space Grotesk',sans-serif}
+html,body{width:100%;height:100%;overflow:hidden;background:#f8fafc;color:#1e293b;font-family:'Space Grotesk',sans-serif}
 
 /* ── Carousel wrapper ── */
 .carousel{position:relative;width:100vw;height:100vh;overflow:hidden}
@@ -16,11 +16,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0f;color:#e2e8f
 .slide{min-width:100vw;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 40px;position:relative;overflow:hidden}
 
 /* ── Global bg gradient ── */
-.slide::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(99,102,241,.18) 0%,transparent 70%);pointer-events:none}
+.slide::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(79,70,229,.06) 0%,transparent 70%);pointer-events:none}
 
 /* ── Nav arrows ── */
-.arrow{position:fixed;top:50%;transform:translateY(-50%);z-index:100;width:52px;height:52px;border-radius:50%;border:1.5px solid rgba(99,102,241,.4);background:rgba(10,10,15,.7);backdrop-filter:blur(12px);color:#a5b4fc;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;user-select:none}
-.arrow:hover{background:rgba(99,102,241,.3);border-color:#818cf8;color:#fff}
+.arrow{position:fixed;top:50%;transform:translateY(-50%);z-index:100;width:52px;height:52px;border-radius:50%;border:1.5px solid rgba(79,70,229,.25);background:rgba(255,255,255,.85);backdrop-filter:blur(12px);color:#4f46e5;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;user-select:none}
+.arrow:hover{background:rgba(79,70,229,.1);border-color:#4f46e5;color:#4f46e5}
 #prev{left:18px}#next{right:18px}
 
 /* ── Dots ── */
@@ -32,31 +32,31 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0f;color:#e2e8f
   background:linear-gradient(135deg,#6366f1,#8b5cf6);
   border-radius:50px;font-size:.82rem;font-weight:700;color:#fff;
   text-decoration:none;letter-spacing:.04em;
-  box-shadow:0 0 18px rgba(99,102,241,.5);transition:all .2s}
-.nav-login:hover{box-shadow:0 0 28px rgba(99,102,241,.8);transform:translateX(-50%) scale(1.04)}
-.dot{width:9px;height:9px;border-radius:50%;background:rgba(165,180,252,.3);cursor:pointer;transition:all .25s}
-.dot.active{background:#818cf8;transform:scale(1.35)}
+  box-shadow:0 0 18px rgba(79,70,229,.35);transition:all .2s}
+.nav-login:hover{box-shadow:0 0 28px rgba(79,70,229,.45);transform:translateX(-50%) scale(1.04)}
+.dot{width:9px;height:9px;border-radius:50%;background:rgba(79,70,229,.15);cursor:pointer;transition:all .25s}
+.dot.active{background:#4f46e5;transform:scale(1.35)}
 
 /* ── Counter ── */
-.counter{position:fixed;top:16px;right:28px;font-size:12px;color:rgba(165,180,252,.5);letter-spacing:.08em;z-index:100;font-weight:500}
+.counter{position:fixed;top:16px;right:28px;font-size:12px;color:rgba(79,70,229,.35);letter-spacing:.08em;z-index:100;font-weight:500}
 
 /* ── PW badge ── */
-.pw-badge{position:fixed;top:18px;left:24px;font-size:12px;color:rgba(165,180,252,.6);letter-spacing:.06em;z-index:100;font-weight:600}
+.pw-badge{position:fixed;top:18px;left:24px;font-size:12px;color:rgba(79,70,229,.45);letter-spacing:.06em;z-index:100;font-weight:600}
 
 /* ── Common typography ── */
-.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#818cf8;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);padding:5px 14px;border-radius:20px;margin-bottom:18px}
-.slide h1{font-size:clamp(2.4rem,5.5vw,4.2rem);font-weight:800;line-height:1.1;text-align:center;background:linear-gradient(135deg,#e2e8f0 0%,#a5b4fc 50%,#818cf8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:14px}
-.slide h2{font-size:clamp(1.6rem,3.5vw,2.6rem);font-weight:700;text-align:center;background:linear-gradient(135deg,#e2e8f0,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px}
-.slide p.lead{font-size:clamp(.95rem,1.6vw,1.18rem);color:#94a3b8;text-align:center;max-width:640px;line-height:1.7;margin-bottom:28px}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#4f46e5;background:rgba(79,70,229,.08);border:1px solid rgba(79,70,229,.2);padding:5px 14px;border-radius:20px;margin-bottom:18px}
+.slide h1{font-size:clamp(2.4rem,5.5vw,4.2rem);font-weight:800;line-height:1.1;text-align:center;background:linear-gradient(135deg,#1e293b 0%,#4f46e5 50%,#4338ca 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:14px}
+.slide h2{font-size:clamp(1.6rem,3.5vw,2.6rem);font-weight:700;text-align:center;background:linear-gradient(135deg,#1e293b,#4f46e5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px}
+.slide p.lead{font-size:clamp(.95rem,1.6vw,1.18rem);color:#64748b;text-align:center;max-width:640px;line-height:1.7;margin-bottom:28px}
 
 /* ── Login CTA ── */
-.cta{display:inline-flex;align-items:center;gap:10px;padding:18px 42px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:50px;font-size:1.15rem;font-weight:700;color:#fff;text-decoration:none;letter-spacing:.02em;box-shadow:0 0 36px rgba(99,102,241,.55),0 0 80px rgba(99,102,241,.2);transition:all .25s;border:none;cursor:pointer}
-.cta:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 0 54px rgba(99,102,241,.75),0 0 110px rgba(99,102,241,.3)}
+.cta{display:inline-flex;align-items:center;gap:10px;padding:18px 42px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:50px;font-size:1.15rem;font-weight:700;color:#fff;text-decoration:none;letter-spacing:.02em;box-shadow:0 4px 24px rgba(79,70,229,.3);transition:all .25s;border:none;cursor:pointer}
+.cta:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 8px 32px rgba(79,70,229,.4)}
 .cta-sm{padding:12px 30px;font-size:.95rem}
 
 /* ── Glass card ── */
-.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:28px 24px;backdrop-filter:blur(10px);transition:transform .2s,border-color .2s}
-.card:hover{transform:translateY(-4px);border-color:rgba(99,102,241,.4)}
+.card{background:rgba(0,0,0,.02);border:1px solid rgba(0,0,0,.06);border-radius:18px;padding:28px 24px;backdrop-filter:blur(10px);transition:transform .2s,border-color .2s}
+.card:hover{transform:translateY(-4px);border-color:rgba(79,70,229,.25)}
 
 /* ── Grid helpers ── */
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;width:100%;max-width:900px}
@@ -64,8 +64,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0f;color:#e2e8f
 .g2{display:grid;grid-template-columns:repeat(2,1fr);gap:30px;width:100%;max-width:780px}
 
 /* ── Icon circle ── */
-.icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:14px;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.25)}
-.card h3{font-size:1.05rem;font-weight:700;color:#e2e8f0;margin-bottom:8px}
+.icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:14px;background:rgba(79,70,229,.08);border:1px solid rgba(79,70,229,.18)}
+.card h3{font-size:1.05rem;font-weight:700;color:#1e293b;margin-bottom:8px}
 .card p{font-size:.88rem;color:#64748b;line-height:1.6}
 
 /* ── Level pills ── */
@@ -82,21 +82,21 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0f;color:#e2e8f
 .avatar{width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid rgba(99,102,241,.5);margin-bottom:16px}
 .avatar-init{width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:800;margin-bottom:16px;border:3px solid rgba(99,102,241,.5)}
 .team-card{display:flex;flex-direction:column;align-items:center;text-align:center}
-.team-card .role{font-size:.83rem;color:#818cf8;font-weight:600;letter-spacing:.06em;margin-bottom:6px}
+.team-card .role{font-size:.83rem;color:#4f46e5;font-weight:600;letter-spacing:.06em;margin-bottom:6px}
 .team-card .bio{font-size:.83rem;color:#64748b;line-height:1.5;max-width:260px}
 
 /* ── Credentials table ── */
 .cred-table{width:100%;max-width:540px;border-collapse:collapse;font-size:.88rem;margin-top:20px}
-.cred-table th{padding:10px 16px;background:rgba(99,102,241,.15);color:#a5b4fc;font-weight:600;text-align:left;border-bottom:1px solid rgba(99,102,241,.2)}
-.cred-table td{padding:10px 16px;color:#94a3b8;border-bottom:1px solid rgba(255,255,255,.05)}
+.cred-table th{padding:10px 16px;background:rgba(79,70,229,.08);color:#4f46e5;font-weight:600;text-align:left;border-bottom:1px solid rgba(79,70,229,.15)}
+.cred-table td{padding:10px 16px;color:#64748b;border-bottom:1px solid rgba(0,0,0,.04)}
 .cred-table tr:last-child td{border-bottom:none}
 
 /* ── SLM bullets ── */
 .slm-list{list-style:none;display:flex;flex-direction:column;gap:14px;max-width:680px;width:100%}
-.slm-list li{display:flex;align-items:flex-start;gap:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px 20px}
+.slm-list li{display:flex;align-items:flex-start;gap:14px;background:rgba(0,0,0,.02);border:1px solid rgba(0,0,0,.05);border-radius:12px;padding:16px 20px}
 .slm-list li .bullet{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
-.slm-list li div{font-size:.9rem;color:#94a3b8;line-height:1.55}
-.slm-list li strong{display:block;font-size:.96rem;color:#e2e8f0;font-weight:600;margin-bottom:3px}
+.slm-list li div{font-size:.9rem;color:#64748b;line-height:1.55}
+.slm-list li strong{display:block;font-size:.96rem;color:#1e293b;font-weight:600;margin-bottom:3px}
 </style>
 </head>
 <body>
@@ -115,7 +115,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0f;color:#e2e8f
     <div class="slide">
       <div class="tag">Student Intelligence Platform</div>
       <h1>PRAJNA</h1>
-      <p style="font-size:.88rem;color:#94a3b8;letter-spacing:.12em;margin-bottom:8px;font-weight:600"><strong style="color:#a5b4fc">P</strong>redictive <strong style="color:#a5b4fc">R</strong>esource <strong style="color:#a5b4fc">A</strong>llocation for <strong style="color:#a5b4fc">J</strong>EE/<strong style="color:#a5b4fc">N</strong>EET <strong style="color:#a5b4fc">A</strong>spirants</p>
+      <p style="font-size:.88rem;color:#64748b;letter-spacing:.12em;margin-bottom:8px;font-weight:600"><strong style="color:#4f46e5">P</strong>redictive <strong style="color:#4f46e5">R</strong>esource <strong style="color:#4f46e5">A</strong>llocation for <strong style="color:#4f46e5">J</strong>EE/<strong style="color:#4f46e5">N</strong>EET <strong style="color:#4f46e5">A</strong>spirants</p>
       <p class="lead">AI-powered exam intelligence for JEE &amp; NEET aspirants — predict your rank, master your weak areas, ace the exam.</p>
       <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center">
         <a href="http://localhost:8501" target="_blank" class="cta" style="background:linear-gradient(135deg,#0e7490,#06b6d4);box-shadow:0 0 36px rgba(6,182,212,.5),0 0 80px rgba(6,182,212,.18)">⚡ PRAJNA Intelligence</a>
@@ -131,24 +131,24 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0f;color:#e2e8f
       <h2>Built on 48 Years of Real Exam Data</h2>
       <p class="lead">PRAJNA is the most data-intensive JEE/NEET prediction system ever built for students.</p>
       <div class="g4" style="max-width:860px">
-        <div class="card" style="text-align:center;border-color:rgba(99,102,241,.35)">
-          <div style="font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,#a5b4fc,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent">23,119</div>
-          <div style="font-size:.85rem;color:#94a3b8;margin-top:6px;font-weight:600">Exam Questions</div>
+        <div class="card" style="text-align:center;border-color:rgba(79,70,229,.2)">
+          <div style="font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,#4f46e5,#4338ca);-webkit-background-clip:text;-webkit-text-fill-color:transparent">23,119</div>
+          <div style="font-size:.85rem;color:#64748b;margin-top:6px;font-weight:600">Exam Questions</div>
           <div style="font-size:.75rem;color:#475569;margin-top:4px">JEE + NEET combined</div>
         </div>
-        <div class="card" style="text-align:center;border-color:rgba(139,92,246,.35)">
+        <div class="card" style="text-align:center;border-color:rgba(124,58,237,.2)">
           <div style="font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,#c4b5fd,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent">292</div>
-          <div style="font-size:.85rem;color:#94a3b8;margin-top:6px;font-weight:600">Exam Papers</div>
+          <div style="font-size:.85rem;color:#64748b;margin-top:6px;font-weight:600">Exam Papers</div>
           <div style="font-size:.75rem;color:#475569;margin-top:4px">Across all shifts &amp; years</div>
         </div>
         <div class="card" style="text-align:center;border-color:rgba(34,197,94,.25)">
           <div style="font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,#86efac,#4ade80);-webkit-background-clip:text;-webkit-text-fill-color:transparent">91%</div>
-          <div style="font-size:.85rem;color:#94a3b8;margin-top:6px;font-weight:600">Backtest Accuracy</div>
+          <div style="font-size:.85rem;color:#64748b;margin-top:6px;font-weight:600">Backtest Accuracy</div>
           <div style="font-size:.75rem;color:#475569;margin-top:4px">5-year holdout average</div>
         </div>
         <div class="card" style="text-align:center;border-color:rgba(251,191,36,.25)">
           <div style="font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,#fde68a,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent">755</div>
-          <div style="font-size:.85rem;color:#94a3b8;margin-top:6px;font-weight:600">Micro-topics</div>
+          <div style="font-size:.85rem;color:#64748b;margin-top:6px;font-weight:600">Micro-topics</div>
           <div style="font-size:.75rem;color:#475569;margin-top:4px">470 NEET · 285 JEE</div>
         </div>
       </div>
@@ -166,7 +166,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0f;color:#e2e8f
           <h3>Micro-topic Precision</h3>
           <p>PRAJNA predicts exactly which micro-topics to focus on — not just broad chapters — backed by 48 years of actual exam data.</p>
         </div>
-        <div class="card" style="border-color:rgba(99,102,241,.35)">
+        <div class="card" style="border-color:rgba(79,70,229,.2)">
           <div class="icon" style="background:rgba(139,92,246,.18);border-color:rgba(139,92,246,.3)">📊</div>
           <h3>Statistical Signal</h3>
           <p>Coaching institutes rely on intuition and hearsay. PRAJNA replaces guesswork with 7-signal weighted ensemble intelligence.</p>
@@ -183,33 +183,33 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0f;color:#e2e8f
     <div class="slide">
       <div class="tag">Model Evolution</div>
       <h2>Four Generations of Intelligence</h2>
-      <p class="lead">Each version addressed the limitations of the previous — the SLM now powers <strong style="color:#c4b5fd">PRAJNA v4</strong>, a hierarchical micro-topic engine with 10 signals and hill-climbing weight optimisation.</p>
+      <p class="lead">Each version addressed the limitations of the previous — the SLM now powers <strong style="color:#7c3aed">PRAJNA v4</strong>, a hierarchical micro-topic engine with 10 signals and hill-climbing weight optimisation.</p>
       <div class="g4" style="max-width:960px">
         <div class="card" style="text-align:center">
           <div style="font-size:1.5rem;font-weight:800;color:#64748b;margin-bottom:8px">v1</div>
-          <h3 style="color:#94a3b8">Frequency Model</h3>
+          <h3 style="color:#64748b">Frequency Model</h3>
           <p>Basic chapter frequency counting. No subject balance, no gap analysis.</p>
           <div style="margin-top:12px;font-size:.8rem;font-weight:700;color:#64748b">~68% accuracy</div>
         </div>
         <div class="card" style="text-align:center">
-          <div style="font-size:1.5rem;font-weight:800;color:#818cf8;margin-bottom:8px">v2</div>
+          <div style="font-size:1.5rem;font-weight:800;color:#4f46e5;margin-bottom:8px">v2</div>
           <h3>Micro-Topic Engine</h3>
           <p>Drilled to micro-topic level. Added weightage model and subject filtering.</p>
-          <div style="margin-top:12px;font-size:.8rem;font-weight:700;color:#818cf8">~74% accuracy</div>
+          <div style="margin-top:12px;font-size:.8rem;font-weight:700;color:#4f46e5">~74% accuracy</div>
         </div>
-        <div class="card" style="text-align:center;border-color:rgba(99,102,241,.4)">
-          <div style="font-size:1.5rem;font-weight:800;color:#a78bfa;margin-bottom:8px">v3</div>
+        <div class="card" style="text-align:center;border-color:rgba(79,70,229,.25)">
+          <div style="font-size:1.5rem;font-weight:800;color:#7c3aed;margin-bottom:8px">v3</div>
           <h3>3-Stage Pipeline</h3>
           <p>Appearance × Weightage × Format. 7-signal ensemble + cycle detection + subject-quota reranking.</p>
-          <div style="margin-top:12px;font-size:.8rem;font-weight:700;color:#a78bfa">~82% accuracy</div>
+          <div style="margin-top:12px;font-size:.8rem;font-weight:700;color:#7c3aed">~82% accuracy</div>
         </div>
-        <div class="card" style="text-align:center;border-color:rgba(139,92,246,.7);background:rgba(139,92,246,.10);position:relative;overflow:hidden">
+        <div class="card" style="text-align:center;border-color:rgba(124,58,237,.35);background:rgba(124,58,237,.06);position:relative;overflow:hidden">
           <div style="position:absolute;top:0;right:0;background:linear-gradient(135deg,#7c3aed,#4f46e5);font-size:.58rem;font-weight:800;letter-spacing:.08em;color:#fff;padding:.22rem .6rem;border-bottom-left-radius:6px">CURRENT</div>
-          <div style="font-size:1.5rem;font-weight:800;color:#c4b5fd;margin-bottom:8px">v4</div>
-          <h3 style="color:#e2e8f0">Prajna SLM</h3>
+          <div style="font-size:1.5rem;font-weight:800;color:#7c3aed;margin-bottom:8px">v4</div>
+          <h3 style="color:#1e293b">Prajna SLM</h3>
           <p>SLM chapter gate feeds a micro-topic scorer. 10-signal ensemble with hill-climbing weight optimisation and parent-score inheritance.</p>
           <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:5px;justify-content:center">
-            <span style="font-size:.65rem;font-weight:700;background:rgba(99,102,241,.2);color:#a78bfa;padding:.15rem .45rem;border-radius:4px">10 signals</span>
+            <span style="font-size:.65rem;font-weight:700;background:rgba(79,70,229,.1);color:#7c3aed;padding:.15rem .45rem;border-radius:4px">10 signals</span>
             <span style="font-size:.65rem;font-weight:700;background:rgba(0,212,170,.12);color:#00d4aa;padding:.15rem .45rem;border-radius:4px">parent gate</span>
             <span style="font-size:.65rem;font-weight:700;background:rgba(251,191,36,.12);color:#fbbf24;padding:.15rem .45rem;border-radius:4px">hill-climbing weights</span>
           </div>
@@ -225,47 +225,47 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0f;color:#e2e8f
       <p class="lead">PRAJNA v4's ensemble weighs ten independent signals from 48 years of exam papers. Seven core signals from v3, plus three new signals introduced in v4 for micro-topic precision.</p>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:960px">
         <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px">
-          <div style="width:44px;height:44px;border-radius:10px;background:rgba(99,102,241,.2);display:flex;align-items:center;justify-content:center;font-weight:800;color:#818cf8;font-size:1rem;flex-shrink:0">25</div>
-          <div><div style="font-size:.9rem;font-weight:700;color:#e2e8f0">Recency-Weighted Frequency</div><div style="font-size:.78rem;color:#64748b">Exponential decay — recent years count more</div></div>
+          <div style="width:44px;height:44px;border-radius:10px;background:rgba(79,70,229,.1);display:flex;align-items:center;justify-content:center;font-weight:800;color:#4f46e5;font-size:1rem;flex-shrink:0">25</div>
+          <div><div style="font-size:.9rem;font-weight:700;color:#1e293b">Recency-Weighted Frequency</div><div style="font-size:.78rem;color:#64748b">Exponential decay — recent years count more</div></div>
         </div>
         <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px">
-          <div style="width:44px;height:44px;border-radius:10px;background:rgba(139,92,246,.2);display:flex;align-items:center;justify-content:center;font-weight:800;color:#a78bfa;font-size:1rem;flex-shrink:0">20</div>
-          <div><div style="font-size:.9rem;font-weight:700;color:#e2e8f0">Appearance Rate</div><div style="font-size:.78rem;color:#64748b">Fraction of total years this topic appeared</div></div>
+          <div style="width:44px;height:44px;border-radius:10px;background:rgba(124,58,237,.1);display:flex;align-items:center;justify-content:center;font-weight:800;color:#7c3aed;font-size:1rem;flex-shrink:0">20</div>
+          <div><div style="font-size:.9rem;font-weight:700;color:#1e293b">Appearance Rate</div><div style="font-size:.78rem;color:#64748b">Fraction of total years this topic appeared</div></div>
         </div>
         <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px">
           <div style="width:44px;height:44px;border-radius:10px;background:rgba(34,197,94,.12);display:flex;align-items:center;justify-content:center;font-weight:800;color:#4ade80;font-size:1rem;flex-shrink:0">15</div>
-          <div><div style="font-size:.9rem;font-weight:700;color:#e2e8f0">Recent 3-Year Presence</div><div style="font-size:.78rem;color:#64748b">Did it appear in the last 3 exams?</div></div>
+          <div><div style="font-size:.9rem;font-weight:700;color:#1e293b">Recent 3-Year Presence</div><div style="font-size:.78rem;color:#64748b">Did it appear in the last 3 exams?</div></div>
         </div>
         <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px">
           <div style="width:44px;height:44px;border-radius:10px;background:rgba(251,191,36,.12);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fbbf24;font-size:1rem;flex-shrink:0">15</div>
-          <div><div style="font-size:.9rem;font-weight:700;color:#e2e8f0">Gap Return Probability</div><div style="font-size:.78rem;color:#64748b">"Due to return" — peaks when 2× overdue</div></div>
+          <div><div style="font-size:.9rem;font-weight:700;color:#1e293b">Gap Return Probability</div><div style="font-size:.78rem;color:#64748b">"Due to return" — peaks when 2× overdue</div></div>
         </div>
         <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px">
-          <div style="width:44px;height:44px;border-radius:10px;background:rgba(236,72,153,.12);display:flex;align-items:center;justify-content:center;font-weight:800;color:#f472b6;font-size:1rem;flex-shrink:0">12</div>
-          <div><div style="font-size:.9rem;font-weight:700;color:#e2e8f0">Trend Slope</div><div style="font-size:.78rem;color:#64748b">Linear regression on last 10 years of frequency</div></div>
+          <div style="width:44px;height:44px;border-radius:10px;background:rgba(236,72,153,.12);display:flex;align-items:center;justify-content:center;font-weight:800;color:#db2777;font-size:1rem;flex-shrink:0">12</div>
+          <div><div style="font-size:.9rem;font-weight:700;color:#1e293b">Trend Slope</div><div style="font-size:.78rem;color:#64748b">Linear regression on last 10 years of frequency</div></div>
         </div>
         <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px">
-          <div style="width:44px;height:44px;border-radius:10px;background:rgba(6,182,212,.12);display:flex;align-items:center;justify-content:center;font-weight:800;color:#22d3ee;font-size:1rem;flex-shrink:0">8+5</div>
-          <div><div style="font-size:.9rem;font-weight:700;color:#e2e8f0">Cycle Match + 5yr Presence</div><div style="font-size:.78rem;color:#64748b">Periodic reappearance + broader recency window</div></div>
+          <div style="width:44px;height:44px;border-radius:10px;background:rgba(6,182,212,.12);display:flex;align-items:center;justify-content:center;font-weight:800;color:#0891b2;font-size:1rem;flex-shrink:0">8+5</div>
+          <div><div style="font-size:.9rem;font-weight:700;color:#1e293b">Cycle Match + 5yr Presence</div><div style="font-size:.78rem;color:#64748b">Periodic reappearance + broader recency window</div></div>
         </div>
-        <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px;border-color:rgba(139,92,246,.35);background:rgba(139,92,246,.05)">
-          <div style="width:44px;height:44px;border-radius:10px;background:rgba(139,92,246,.2);display:flex;align-items:center;justify-content:center;font-weight:800;color:#c4b5fd;font-size:.75rem;flex-shrink:0;text-align:center;line-height:1.2">v4<br>NEW</div>
+        <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px;border-color:rgba(124,58,237,.2);background:rgba(124,58,237,.03)">
+          <div style="width:44px;height:44px;border-radius:10px;background:rgba(124,58,237,.1);display:flex;align-items:center;justify-content:center;font-weight:800;color:#7c3aed;font-size:.75rem;flex-shrink:0;text-align:center;line-height:1.2">v4<br>NEW</div>
           <div>
-            <div style="font-size:.9rem;font-weight:700;color:#e2e8f0">Parent Inheritance</div>
+            <div style="font-size:.9rem;font-weight:700;color:#1e293b">Parent Inheritance</div>
             <div style="font-size:.78rem;color:#64748b">Chapter's confidence score flows down to all its micro-topics</div>
           </div>
         </div>
-        <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px;border-color:rgba(139,92,246,.35);background:rgba(139,92,246,.05)">
-          <div style="width:44px;height:44px;border-radius:10px;background:rgba(139,92,246,.2);display:flex;align-items:center;justify-content:center;font-weight:800;color:#c4b5fd;font-size:.75rem;flex-shrink:0;text-align:center;line-height:1.2">v4<br>NEW</div>
+        <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px;border-color:rgba(124,58,237,.2);background:rgba(124,58,237,.03)">
+          <div style="width:44px;height:44px;border-radius:10px;background:rgba(124,58,237,.1);display:flex;align-items:center;justify-content:center;font-weight:800;color:#7c3aed;font-size:.75rem;flex-shrink:0;text-align:center;line-height:1.2">v4<br>NEW</div>
           <div>
-            <div style="font-size:.9rem;font-weight:700;color:#e2e8f0">Recency Burst</div>
+            <div style="font-size:.9rem;font-weight:700;color:#1e293b">Recency Burst</div>
             <div style="font-size:.78rem;color:#64748b">Fraction of last 3 years the micro-topic appeared — detects hot streaks</div>
           </div>
         </div>
-        <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px;border-color:rgba(139,92,246,.35);background:rgba(139,92,246,.05)">
-          <div style="width:44px;height:44px;border-radius:10px;background:rgba(139,92,246,.2);display:flex;align-items:center;justify-content:center;font-weight:800;color:#c4b5fd;font-size:.75rem;flex-shrink:0;text-align:center;line-height:1.2">v4<br>NEW</div>
+        <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px;border-color:rgba(124,58,237,.2);background:rgba(124,58,237,.03)">
+          <div style="width:44px;height:44px;border-radius:10px;background:rgba(124,58,237,.1);display:flex;align-items:center;justify-content:center;font-weight:800;color:#7c3aed;font-size:.75rem;flex-shrink:0;text-align:center;line-height:1.2">v4<br>NEW</div>
           <div>
-            <div style="font-size:.9rem;font-weight:700;color:#e2e8f0">Dispersion</div>
+            <div style="font-size:.9rem;font-weight:700;color:#1e293b">Dispersion</div>
             <div style="font-size:.78rem;color:#64748b">Rewards dense appearances — penalises topics that cluster in a single year</div>
           </div>
         </div>
@@ -280,35 +280,35 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0f;color:#e2e8f
       <div class="g4" style="max-width:960px">
         <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
           <div style="font-size:2rem">🐍</div>
-          <div><div style="font-weight:700;color:#e2e8f0">Python 3.9+</div><div style="font-size:.78rem;color:#64748b">Core language</div></div>
+          <div><div style="font-weight:700;color:#1e293b">Python 3.9+</div><div style="font-size:.78rem;color:#64748b">Core language</div></div>
         </div>
         <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
           <div style="font-size:2rem">🗄️</div>
-          <div><div style="font-weight:700;color:#e2e8f0">SQLite 3</div><div style="font-size:.78rem;color:#64748b">23,119-question DB</div></div>
+          <div><div style="font-weight:700;color:#1e293b">SQLite 3</div><div style="font-size:.78rem;color:#64748b">23,119-question DB</div></div>
         </div>
         <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
           <div style="font-size:2rem">🔥</div>
-          <div><div style="font-weight:700;color:#e2e8f0">PyTorch</div><div style="font-size:.78rem;color:#64748b">SLM training &amp; inference</div></div>
+          <div><div style="font-weight:700;color:#1e293b">PyTorch</div><div style="font-size:.78rem;color:#64748b">SLM training &amp; inference</div></div>
         </div>
         <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
           <div style="font-size:2rem">🤗</div>
-          <div><div style="font-weight:700;color:#e2e8f0">sentence-transformers</div><div style="font-size:.78rem;color:#64748b">Semantic embeddings (frozen)</div></div>
+          <div><div style="font-weight:700;color:#1e293b">sentence-transformers</div><div style="font-size:.78rem;color:#64748b">Semantic embeddings (frozen)</div></div>
         </div>
         <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
           <div style="font-size:2rem">🐼</div>
-          <div><div style="font-weight:700;color:#e2e8f0">Pandas + NumPy</div><div style="font-size:.78rem;color:#64748b">Signal engineering</div></div>
+          <div><div style="font-weight:700;color:#1e293b">Pandas + NumPy</div><div style="font-size:.78rem;color:#64748b">Signal engineering</div></div>
         </div>
         <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
           <div style="font-size:2rem">⚡</div>
-          <div><div style="font-weight:700;color:#e2e8f0">Node.js + Express</div><div style="font-size:.78rem;color:#64748b">REST API backend</div></div>
+          <div><div style="font-weight:700;color:#1e293b">Node.js + Express</div><div style="font-size:.78rem;color:#64748b">REST API backend</div></div>
         </div>
         <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
           <div style="font-size:2rem">🐘</div>
-          <div><div style="font-weight:700;color:#e2e8f0">PostgreSQL</div><div style="font-size:.78rem;color:#64748b">Student data on Railway</div></div>
+          <div><div style="font-weight:700;color:#1e293b">PostgreSQL</div><div style="font-size:.78rem;color:#64748b">Student data on Railway</div></div>
         </div>
         <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
           <div style="font-size:2rem">🚂</div>
-          <div><div style="font-weight:700;color:#e2e8f0">Railway.app</div><div style="font-size:.78rem;color:#64748b">Cloud deployment</div></div>
+          <div><div style="font-weight:700;color:#1e293b">Railway.app</div><div style="font-size:.78rem;color:#64748b">Cloud deployment</div></div>
         </div>
       </div>
     </div>
@@ -377,7 +377,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0f;color:#e2e8f
           <h3>Student Dashboard</h3>
           <p>Personal PRAJNA Score timeline, chapter-wise heat maps, predicted rank range, and today's study focus.</p>
         </div>
-        <div class="card" style="border-color:rgba(99,102,241,.35)">
+        <div class="card" style="border-color:rgba(79,70,229,.2)">
           <div class="icon" style="background:rgba(139,92,246,.18);border-color:rgba(139,92,246,.3)">🏫</div>
           <h3>Centre Dashboard</h3>
           <p>Batch-level performance distribution, at-risk student flagging, and centre-vs-network benchmarks.</p>
@@ -421,8 +421,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0f;color:#e2e8f
           <p style="font-size:.78rem;color:#64748b;margin-top:8px">Needs structured intervention &amp; re-learning.</p>
         </div>
         <div class="lv" style="background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.25)">
-          <span class="lv-letter" style="color:#a78bfa">C</span>
-          <span class="lv-name" style="color:#a78bfa">Critical</span>
+          <span class="lv-letter" style="color:#7c3aed">C</span>
+          <span class="lv-name" style="color:#7c3aed">Critical</span>
           <span class="lv-range">0 – 24</span>
           <p style="font-size:.78rem;color:#64748b;margin-top:8px">Urgent focus. Foundational rebuilding required.</p>
         </div>

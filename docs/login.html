@@ -12,18 +12,18 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #0a0a0f;
-      --surface:   rgba(255, 255, 255, 0.04);
-      --border:    rgba(255, 255, 255, 0.08);
-      --indigo:    #6366f1;
-      --purple:    #8b5cf6;
-      --pink:      #ec4899;
-      --text:      #f1f5f9;
-      --muted:     #94a3b8;
-      --input-bg:  rgba(255, 255, 255, 0.06);
-      --input-border: rgba(255, 255, 255, 0.12);
-      --error:     #f87171;
-      --success:   #34d399;
+      --bg:        #f8fafc;
+      --surface:   rgba(0, 0, 0, 0.02);
+      --border:    rgba(0, 0, 0, 0.08);
+      --indigo:    #4f46e5;
+      --purple:    #7c3aed;
+      --pink:      #db2777;
+      --text:      #1e293b;
+      --muted:     #64748b;
+      --input-bg:  rgba(0, 0, 0, 0.03);
+      --input-border: rgba(0, 0, 0, 0.12);
+      --error:     #dc2626;
+      --success:   #059669;
     }
 
     html, body {
@@ -40,9 +40,9 @@
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(99, 102, 241, 0.18) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 55%),
-        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(236, 72, 153, 0.07) 0%, transparent 60%);
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(79, 70, 229, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(124, 58, 237, 0.05) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(219, 39, 119, 0.03) 0%, transparent 60%);
       pointer-events: none;
       z-index: 0;
     }
@@ -52,7 +52,7 @@
       position: fixed;
       border-radius: 50%;
       filter: blur(80px);
-      opacity: 0.35;
+      opacity: 0.15;
       animation: drift 12s ease-in-out infinite alternate;
       pointer-events: none;
       z-index: 0;
@@ -81,16 +81,16 @@
     .card {
       width: 100%;
       max-width: 440px;
-      background: rgba(15, 15, 25, 0.72);
+      background: rgba(255, 255, 255, 0.85);
       border: 1px solid var(--border);
       border-radius: 24px;
       padding: 40px 36px 36px;
       backdrop-filter: blur(24px) saturate(180%);
       -webkit-backdrop-filter: blur(24px) saturate(180%);
       box-shadow:
-        0 0 0 1px rgba(99, 102, 241, 0.08),
-        0 32px 80px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        0 0 0 1px rgba(79, 70, 229, 0.08),
+        0 32px 80px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
       animation: fadeUp 0.5s ease both;
     }
 
@@ -119,7 +119,7 @@
       font-weight: 700;
       letter-spacing: -1px;
       color: #fff;
-      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.3);
       flex-shrink: 0;
     }
 
@@ -149,13 +149,13 @@
 
     .pw-badge {
       margin-left: auto;
-      background: rgba(236, 72, 153, 0.12);
-      border: 1px solid rgba(236, 72, 153, 0.25);
+      background: rgba(219, 39, 119, 0.08);
+      border: 1px solid rgba(219, 39, 119, 0.2);
       border-radius: 8px;
       padding: 4px 10px;
       font-size: 11px;
       font-weight: 600;
-      color: #f9a8d4;
+      color: #db2777;
       letter-spacing: 0.05em;
     }
 
@@ -176,7 +176,7 @@
       display: block;
       font-size: 13px;
       font-weight: 500;
-      color: #cbd5e1;
+      color: #475569;
       margin-bottom: 8px;
       letter-spacing: 0.02em;
     }
@@ -212,14 +212,14 @@
 
     input[type="email"]::placeholder,
     input[type="password"]::placeholder {
-      color: rgba(148, 163, 184, 0.5);
+      color: rgba(100, 116, 139, 0.5);
     }
 
     input[type="email"]:focus,
     input[type="password"]:focus {
-      border-color: rgba(99, 102, 241, 0.6);
-      background: rgba(99, 102, 241, 0.06);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+      border-color: rgba(79, 70, 229, 0.5);
+      background: rgba(79, 70, 229, 0.04);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
     }
 
     .toggle-pw {
@@ -241,8 +241,8 @@
     /* Error */
     #error-msg {
       display: none;
-      background: rgba(248, 113, 113, 0.1);
-      border: 1px solid rgba(248, 113, 113, 0.25);
+      background: rgba(220, 38, 38, 0.06);
+      border: 1px solid rgba(220, 38, 38, 0.2);
       border-radius: 10px;
       padding: 12px 14px;
       font-size: 13px;
@@ -266,7 +266,7 @@
       letter-spacing: 0.03em;
       cursor: pointer;
       transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
-      box-shadow: 0 6px 24px rgba(99, 102, 241, 0.38);
+      box-shadow: 0 6px 24px rgba(79, 70, 229, 0.3);
       position: relative;
       overflow: hidden;
     }
@@ -302,8 +302,8 @@
     /* Demo credentials */
     .demo-box {
       margin-top: 24px;
-      background: rgba(99, 102, 241, 0.06);
-      border: 1px solid rgba(99, 102, 241, 0.18);
+      background: rgba(79, 70, 229, 0.04);
+      border: 1px solid rgba(79, 70, 229, 0.15);
       border-radius: 12px;
       padding: 16px;
     }
@@ -311,7 +311,7 @@
     .demo-box-title {
       font-size: 11px;
       font-weight: 600;
-      color: #a5b4fc;
+      color: #4f46e5;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       margin-bottom: 12px;
@@ -340,7 +340,7 @@
       gap: 8px;
     }
 
-    .demo-cred:hover { background: rgba(99, 102, 241, 0.1); }
+    .demo-cred:hover { background: rgba(79, 70, 229, 0.06); }
 
     .demo-role {
       font-size: 11px;
@@ -354,25 +354,25 @@
     .demo-info {
       flex: 1;
       font-size: 12px;
-      color: #cbd5e1;
+      color: #475569;
       font-family: 'Space Grotesk', monospace;
     }
 
-    .demo-info span { color: #a5b4fc; }
+    .demo-info span { color: #4f46e5; }
 
     .demo-use-btn {
       font-size: 11px;
       font-weight: 600;
-      color: #818cf8;
+      color: #4f46e5;
       background: none;
-      border: 1px solid rgba(99, 102, 241, 0.3);
+      border: 1px solid rgba(79, 70, 229, 0.2);
       border-radius: 6px;
       padding: 3px 8px;
       cursor: pointer;
       transition: background 0.15s, color 0.15s;
       white-space: nowrap;
     }
-    .demo-use-btn:hover { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; }
+    .demo-use-btn:hover { background: rgba(79, 70, 229, 0.12); color: #4f46e5; }
 
     .divider { height: 1px; background: var(--border); margin: 8px 0; }
   </style>

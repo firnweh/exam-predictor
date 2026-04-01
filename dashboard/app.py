@@ -56,18 +56,18 @@ SUBJ_COLORS = ["#6366f1", "#f43f5e", "#10b981", "#f59e0b", "#a855f7"]
 SYL_COLORS = {"RETAINED": C_HIGH, "MODIFIED": C_MED, "NEW": C_BLUE, "REMOVED": C_LOW}
 
 PLOT_LAYOUT = dict(
-    plot_bgcolor  = "#0d0d1a",
-    paper_bgcolor = "#0d0d1a",
-    font = dict(family="Inter, system-ui, sans-serif", size=12, color="#8888aa"),
+    plot_bgcolor  = "#ffffff",
+    paper_bgcolor = "#ffffff",
+    font = dict(family="Inter, system-ui, sans-serif", size=12, color="#64748b"),
     margin  = dict(l=10, r=10, t=36, b=10),
-    hoverlabel = dict(bgcolor="#1e1e30", font_color="#e2e8f0", font_size=12),
+    hoverlabel = dict(bgcolor="#ffffff", font_color="#1e293b", font_size=12),
 )
-_LEGEND = dict(bgcolor="rgba(0,0,0,0)", font=dict(color="#8888aa", size=11))
+_LEGEND = dict(bgcolor="rgba(0,0,0,0)", font=dict(color="#64748b", size=11))
 _GRID = dict(
-    gridcolor     = "rgba(255,255,255,0.05)",
-    zerolinecolor = "rgba(255,255,255,0.08)",
-    linecolor     = "rgba(255,255,255,0.06)",
-    tickfont      = dict(color="#8888aa", size=11),
+    gridcolor     = "rgba(0,0,0,0.06)",
+    zerolinecolor = "rgba(0,0,0,0.1)",
+    linecolor     = "rgba(0,0,0,0.08)",
+    tickfont      = dict(color="#64748b", size=11),
 )
 
 def _style_fig(fig):
@@ -102,7 +102,7 @@ section[data-testid="stMain"] { margin-left:0 !important; }
 """ if _embed_mode else """
 /* Sidebar — always visible, never collapsible */
 [data-testid="stSidebar"] {
-  background:#0c0c18 !important; border-right:1px solid #1e1e3a !important;
+  background:#ffffff !important; border-right:1px solid #e2e8f0 !important;
   min-width:260px !important; width:260px !important;
   transform:none !important; position:relative !important;
 }
@@ -117,20 +117,20 @@ st.markdown(f"""
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap');
 
 /* ── Global ── */
-.stApp { background:#080810 !important; font-family:'Inter',system-ui,sans-serif; }
+.stApp { background:#f8fafc !important; font-family:'Inter',system-ui,sans-serif; }
 .block-container { padding-top:0 !important; max-width:1520px; padding-left:1.5rem; padding-right:1.5rem; }
 [data-testid="stHeader"] { background:transparent !important; }
 {_sidebar_css}
-[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p { color:#94a3b8; font-size:.82rem; }
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p { color:#64748b; font-size:.82rem; }
 [data-testid="stSidebar"] .stRadio label { font-size:.84rem !important; padding:6px 8px !important; border-radius:6px; transition:background .15s; }
-[data-testid="stSidebar"] .stRadio label:hover { background:#ffffff08; }
-[data-testid="stSidebar"] .stRadio [data-checked="true"] + label { background:rgba(99,102,241,.12) !important; color:#a5b4fc !important; font-weight:600 !important; }
+[data-testid="stSidebar"] .stRadio label:hover { background:rgba(0,0,0,.03); }
+[data-testid="stSidebar"] .stRadio [data-checked="true"] + label { background:rgba(79,70,229,.08) !important; color:#4f46e5 !important; font-weight:600 !important; }
 
 /* ── Topbar ── */
 .prajna-topbar {
   display:flex; align-items:center; justify-content:space-between;
-  background:rgba(8,8,16,0.95);
-  border-bottom:1px solid rgba(99,102,241,0.15);
+  background:rgba(255,255,255,0.95);
+  border-bottom:1px solid rgba(79,70,229,0.1);
   padding:0 1.5rem; height:58px;
   position:sticky; top:0; z-index:200;
   margin:0 -1.5rem 0 -1.5rem;
@@ -144,98 +144,98 @@ st.markdown(f"""
   display:flex; align-items:center; justify-content:center;
   font-size:12px; font-weight:900; color:#fff;
   font-family:'Space Grotesk',sans-serif; flex-shrink:0;
-  box-shadow:0 0 16px rgba(99,102,241,0.5);
+  box-shadow:0 0 16px rgba(79,70,229,0.3);
 }
 .prajna-brand {
-  font-size:16px; font-weight:800; color:#f1f5f9;
+  font-size:16px; font-weight:800; color:#1e293b;
   letter-spacing:-0.4px; font-family:'Space Grotesk',sans-serif;
 }
-.prajna-brand span { color:#a5b4fc; }
+.prajna-brand span { color:#4f46e5; }
 .prajna-topbar-links { display:flex; align-items:center; gap:8px; }
 .prajna-nav-link {
   font-size:12px; font-weight:600; padding:6px 14px; border-radius:20px;
   text-decoration:none; border:1px solid; transition:all .2s;
 }
 .prajna-nav-link:hover { opacity:.85; transform:translateY(-1px); }
-.prajna-nav-student { color:#c4b5fd; background:rgba(167,139,250,.1); border-color:rgba(167,139,250,.3); }
-.prajna-nav-api     { color:#6ee7b7; background:rgba(52,211,153,.1);  border-color:rgba(52,211,153,.3); }
+.prajna-nav-student { color:#7c3aed; background:rgba(124,58,237,.06); border-color:rgba(124,58,237,.2); }
+.prajna-nav-api     { color:#059669; background:rgba(5,150,105,.06);  border-color:rgba(5,150,105,.2); }
 
 /* ── Stat bar ── */
 .stat-bar {
   display:flex; flex-wrap:wrap; gap:10px;
-  background:rgba(13,13,24,0.8); padding:12px 1.5rem;
+  background:rgba(248,250,252,0.8); padding:12px 1.5rem;
   margin:0 -1.5rem .5rem -1.5rem;
-  border-bottom:1px solid rgba(255,255,255,0.05);
+  border-bottom:1px solid rgba(0,0,0,0.05);
 }
 .stat-chip {
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.07);
+  background:rgba(0,0,0,0.02);
+  border:1px solid rgba(0,0,0,0.06);
   border-radius:12px; padding:8px 16px;
   display:flex; flex-direction:column; align-items:flex-start;
   transition:border-color .2s;
 }
 .stat-chip:hover { border-color:rgba(99,102,241,0.35); }
-.stat-chip-val { font-size:19px; font-weight:800; color:#f1f5f9; font-family:'Space Grotesk',sans-serif; line-height:1; }
-.stat-chip-lbl { font-size:9px; font-weight:600; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:.7px; margin-top:3px; }
+.stat-chip-val { font-size:19px; font-weight:800; color:#1e293b; font-family:'Space Grotesk',sans-serif; line-height:1; }
+.stat-chip-lbl { font-size:9px; font-weight:600; color:rgba(0,0,0,0.45); text-transform:uppercase; letter-spacing:.7px; margin-top:3px; }
 
 /* ── Filter bar ── */
 .filter-bar-wrap {
-  background:rgba(13,13,24,0.6);
-  border-bottom:1px solid rgba(255,255,255,0.05);
+  background:rgba(248,250,252,0.6);
+  border-bottom:1px solid rgba(0,0,0,0.05);
   padding:10px 1.5rem; margin:0 -1.5rem 1rem -1.5rem;
 }
 
 /* ── Section headings ── */
 .section-divider {
-  font-size:14px; font-weight:700; color:#e2e8f0; letter-spacing:-0.2px;
+  font-size:14px; font-weight:700; color:#1e293b; letter-spacing:-0.2px;
   border-left:3px solid #6366f1; padding-left:12px;
   margin:28px 0 14px 0; display:flex; align-items:center; gap:10px;
 }
 .section-badge {
   font-size:10px; font-weight:700; padding:2px 9px; border-radius:10px;
-  background:rgba(99,102,241,.12); color:#a5b4fc;
-  border:1px solid rgba(99,102,241,.25);
+  background:rgba(79,70,229,.08); color:#4f46e5;
+  border:1px solid rgba(79,70,229,.18);
 }
 
 /* ── Metric cards ── */
 div[data-testid="stMetric"] {
-  background:rgba(13,13,24,0.9) !important;
-  border:1px solid rgba(255,255,255,0.07) !important;
+  background:rgba(255,255,255,0.95) !important;
+  border:1px solid rgba(0,0,0,0.06) !important;
   border-radius:16px !important; padding:20px 22px !important;
-  box-shadow:0 4px 24px rgba(0,0,0,0.3);
+  box-shadow:0 4px 24px rgba(0,0,0,0.06);
   transition:transform .2s,box-shadow .2s,border-color .2s;
 }
 div[data-testid="stMetric"]:hover {
   transform:translateY(-3px);
-  border-color:rgba(99,102,241,.4) !important;
-  box-shadow:0 8px 32px rgba(99,102,241,.15);
+  border-color:rgba(79,70,229,.25) !important;
+  box-shadow:0 8px 32px rgba(79,70,229,.08);
 }
 div[data-testid="stMetric"] label {
   font-size:10px !important; font-weight:700 !important;
-  color:rgba(255,255,255,0.35) !important;
+  color:rgba(0,0,0,0.45) !important;
   text-transform:uppercase !important; letter-spacing:.6px !important;
 }
 div[data-testid="stMetric"] [data-testid="stMetricValue"] {
-  font-size:28px !important; font-weight:800 !important; color:#ffffff !important;
+  font-size:28px !important; font-weight:800 !important; color:#1e293b !important;
   font-family:'Space Grotesk',sans-serif !important;
 }
 div[data-testid="stMetricDelta"] span { font-size:11px !important; }
 
 /* ── Tabs ── */
 .stTabs [data-baseweb="tab-list"] {
-  gap:2px; background:rgba(13,13,24,0.9);
+  gap:2px; background:rgba(255,255,255,0.95);
   border-radius:14px; padding:5px;
-  border:1px solid rgba(255,255,255,0.07);
+  border:1px solid rgba(0,0,0,0.06);
 }
 .stTabs [data-baseweb="tab"] {
   border-radius:10px; padding:10px 18px;
-  font-weight:600; font-size:13px; color:rgba(255,255,255,0.4);
+  font-weight:600; font-size:13px; color:rgba(0,0,0,0.5);
   transition:all .2s;
 }
 .stTabs [data-baseweb="tab"][aria-selected="true"] {
-  background:rgba(99,102,241,.2) !important;
-  color:#c4b5fd !important;
-  box-shadow:0 2px 12px rgba(99,102,241,.2);
+  background:rgba(79,70,229,.1) !important;
+  color:#7c3aed !important;
+  box-shadow:0 2px 12px rgba(79,70,229,.1);
   border-bottom:2px solid #818cf8 !important;
 }
 .stTabs [data-baseweb="tab-highlight"] { background:transparent !important; }
@@ -245,30 +245,30 @@ div[data-testid="stMetricDelta"] span { font-size:11px !important; }
 [data-testid="stNumberInput"] > div > div > input,
 [data-testid="stTextInput"] > div > div > input {
   border-radius:10px !important;
-  border-color:rgba(255,255,255,0.1) !important;
-  background:rgba(13,13,24,0.9) !important; color:#e2e8f0 !important;
+  border-color:rgba(0,0,0,0.08) !important;
+  background:rgba(255,255,255,0.95) !important; color:#334155 !important;
   font-size:13px !important;
 }
 [data-testid="stSelectbox"] label,
 [data-testid="stNumberInput"] label,
 [data-testid="stTextInput"] label {
-  font-size:10px !important; color:rgba(255,255,255,0.35) !important;
+  font-size:10px !important; color:rgba(0,0,0,0.45) !important;
   text-transform:uppercase; letter-spacing:.6px; font-weight:700 !important;
 }
 
 /* ── Buttons ── */
 .stButton > button {
   border-radius:10px; font-weight:600; font-size:13px;
-  border:1px solid rgba(255,255,255,0.1) !important;
-  background:rgba(13,13,24,0.9) !important; color:#e2e8f0 !important;
+  border:1px solid rgba(0,0,0,0.08) !important;
+  background:rgba(255,255,255,0.95) !important; color:#334155 !important;
   transition:all .2s;
 }
 .stButton > button:hover {
-  border-color:rgba(99,102,241,.4) !important; color:#a5b4fc !important;
+  border-color:rgba(79,70,229,.25) !important; color:#4f46e5 !important;
 }
 .stButton > button[kind="primary"] {
   background:linear-gradient(135deg,#6366f1,#8b5cf6) !important;
-  border:none !important; color:white !important;
+  border:none !important; color:#fff !important;
   box-shadow:0 4px 20px rgba(99,102,241,.4);
 }
 .stButton > button[kind="primary"]:hover {
@@ -276,53 +276,53 @@ div[data-testid="stMetricDelta"] span { font-size:11px !important; }
 }
 
 /* ── Expanders ── */
-.streamlit-expanderHeader { font-weight:600; font-size:13px; color:#cbd5e1; }
+.streamlit-expanderHeader { font-weight:600; font-size:13px; color:#475569; }
 details {
-  background:rgba(13,13,24,0.9) !important;
-  border:1px solid rgba(255,255,255,0.07) !important;
+  background:rgba(255,255,255,0.95) !important;
+  border:1px solid rgba(0,0,0,0.06) !important;
   border-radius:14px !important;
 }
 
 /* ── DataFrames ── */
 [data-testid="stDataFrame"] {
   border-radius:14px; overflow:hidden;
-  border:1px solid rgba(255,255,255,0.07);
+  border:1px solid rgba(0,0,0,0.06);
 }
-[data-testid="stDataFrame"] * { color:#e2e8f0 !important; }
+[data-testid="stDataFrame"] * { color:#334155 !important; }
 [data-testid="stDataFrame"] th {
-  background:rgba(99,102,241,.12) !important;
-  color:#a5b4fc !important; font-weight:700 !important;
+  background:rgba(79,70,229,.08) !important;
+  color:#4f46e5 !important; font-weight:700 !important;
 }
-[data-testid="stDataFrame"] td { background:rgba(255,255,255,0.02) !important; }
-[data-testid="stDataFrame"] tr:hover td { background:rgba(99,102,241,.06) !important; }
+[data-testid="stDataFrame"] td { background:rgba(0,0,0,0.01) !important; }
+[data-testid="stDataFrame"] tr:hover td { background:rgba(79,70,229,.04) !important; }
 
 /* ── Plotly containers ── */
 .stPlotlyChart {
-  background:rgba(13,13,24,0.9); border-radius:16px; padding:6px;
-  border:1px solid rgba(255,255,255,0.06);
-  box-shadow:0 4px 24px rgba(0,0,0,0.2);
+  background:rgba(255,255,255,0.95); border-radius:16px; padding:6px;
+  border:1px solid rgba(0,0,0,0.05);
+  box-shadow:0 4px 24px rgba(0,0,0,0.05);
 }
 
 /* ── Download buttons ── */
 .stDownloadButton > button {
   border-radius:10px; font-weight:600;
-  border:1px solid rgba(255,255,255,0.1) !important;
-  background:rgba(13,13,24,0.9) !important; color:#cbd5e1 !important;
+  border:1px solid rgba(0,0,0,0.08) !important;
+  background:rgba(255,255,255,0.95) !important; color:#475569 !important;
 }
 .stDownloadButton > button:hover {
-  border-color:rgba(99,102,241,.5) !important; color:#a5b4fc !important;
+  border-color:rgba(79,70,229,.3) !important; color:#4f46e5 !important;
 }
 
 /* ── Badges ── */
 .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; letter-spacing:.3px; }
-.badge-high     { background:rgba(16,185,129,.12); color:#6ee7b7; border:1px solid rgba(16,185,129,.25); }
-.badge-medium   { background:rgba(245,158,11,.12);  color:#fcd34d; border:1px solid rgba(245,158,11,.25);  }
-.badge-low      { background:rgba(239,68,68,.12);   color:#fca5a5; border:1px solid rgba(239,68,68,.25);   }
-.badge-spec     { background:rgba(148,163,184,.08);  color:#94a3b8; border:1px solid rgba(148,163,184,.18); }
-.badge-retained { background:rgba(16,185,129,.12);  color:#6ee7b7; border:1px solid rgba(16,185,129,.25);  }
-.badge-modified { background:rgba(245,158,11,.12);  color:#fcd34d; border:1px solid rgba(245,158,11,.25);  }
-.badge-new      { background:rgba(99,102,241,.12);  color:#a5b4fc; border:1px solid rgba(99,102,241,.25);  }
-.badge-removed  { background:rgba(239,68,68,.12);   color:#fca5a5; border:1px solid rgba(239,68,68,.25);   }
+.badge-high     { background:rgba(16,185,129,.12); color:#059669; border:1px solid rgba(16,185,129,.25); }
+.badge-medium   { background:rgba(245,158,11,.12);  color:#d97706; border:1px solid rgba(245,158,11,.25);  }
+.badge-low      { background:rgba(239,68,68,.12);   color:#dc2626; border:1px solid rgba(239,68,68,.25);   }
+.badge-spec     { background:rgba(148,163,184,.08);  color:#64748b; border:1px solid rgba(148,163,184,.18); }
+.badge-retained { background:rgba(16,185,129,.12);  color:#059669; border:1px solid rgba(16,185,129,.25);  }
+.badge-modified { background:rgba(245,158,11,.12);  color:#d97706; border:1px solid rgba(245,158,11,.25);  }
+.badge-new      { background:rgba(79,70,229,.08);  color:#4f46e5; border:1px solid rgba(79,70,229,.18);  }
+.badge-removed  { background:rgba(239,68,68,.12);   color:#dc2626; border:1px solid rgba(239,68,68,.25);   }
 
 /* ── Slider ── */
 .stSlider > div > div > div > div { background:linear-gradient(90deg,#6366f1,#a855f7) !important; }
@@ -330,36 +330,36 @@ details {
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width:5px; height:5px; }
 ::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background:rgba(99,102,241,.25); border-radius:3px; }
-::-webkit-scrollbar-thumb:hover { background:rgba(99,102,241,.45); }
+::-webkit-scrollbar-thumb { background:rgba(79,70,229,.2); border-radius:3px; }
+::-webkit-scrollbar-thumb:hover { background:rgba(79,70,229,.35); }
 
 /* ── Typography ── */
-.stApp, p, li, span { color:#cbd5e1; }
-h1,h2,h3,h4 { color:#f1f5f9 !important; font-family:'Space Grotesk',sans-serif !important; }
-.stCaption,[data-testid="stCaptionContainer"] { color:rgba(255,255,255,.3) !important; font-size:12px; }
-[data-testid="stAlert"] { border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); }
-.stSpinner > div { border-top-color:#6366f1 !important; }
+.stApp, p, li, span { color:#475569; }
+h1,h2,h3,h4 { color:#1e293b !important; font-family:'Space Grotesk',sans-serif !important; }
+.stCaption,[data-testid="stCaptionContainer"] { color:rgba(0,0,0,.35) !important; font-size:12px; }
+[data-testid="stAlert"] { border-radius:14px; background:rgba(0,0,0,.02); border:1px solid rgba(0,0,0,.06); }
+.stSpinner > div { border-top-color:#4f46e5 !important; }
 
 /* ── Footer ── */
 .prajna-footer {
-  background:linear-gradient(135deg,rgba(8,8,16,1),rgba(13,13,24,1));
-  border-top:1px solid rgba(99,102,241,.2);
+  background:linear-gradient(135deg,rgba(248,250,252,1),rgba(241,245,249,1));
+  border-top:1px solid rgba(79,70,229,.1);
   padding:32px 1.5rem; margin:56px -1.5rem 0 -1.5rem;
 }
 .team-card {
-  background:rgba(13,13,24,0.9); border:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,0.95); border:1px solid rgba(0,0,0,.06);
   border-radius:14px; padding:16px 20px; text-align:center;
 }
-.team-name  { font-size:14px; font-weight:700; color:#e2e8f0; }
-.team-org   { font-size:10px; color:rgba(255,255,255,.35); margin:2px 0; text-transform:uppercase; letter-spacing:.5px; }
-.team-code  { font-size:11px; color:#a5b4fc; font-weight:600; }
-.team-phone { font-size:10px; color:rgba(255,255,255,.25); }
+.team-name  { font-size:14px; font-weight:700; color:#1e293b; }
+.team-org   { font-size:10px; color:rgba(0,0,0,.4); margin:2px 0; text-transform:uppercase; letter-spacing:.5px; }
+.team-code  { font-size:11px; color:#4f46e5; font-weight:600; }
+.team-phone { font-size:10px; color:rgba(0,0,0,.3); }
 
 /* ── Prediction card expand ── */
 details summary::-webkit-details-marker { display:none; }
 details summary::marker { display:none; }
 details[open] .pred-chevron { transform:rotate(90deg); }
-details[open] { border-color:rgba(99,102,241,.3) !important; }
+details[open] { border-color:rgba(79,70,229,.2) !important; }
 
 /* ── Chrome hiding ── */
 #MainMenu { visibility:hidden; }
@@ -374,7 +374,7 @@ footer { visibility:hidden; }
   border-radius: 4px !important;
 }
 .stProgress > div > div {
-  background: rgba(255,255,255,0.05) !important;
+  background: rgba(0,0,0,.03) !important;
   border-radius: 4px !important; height: 6px !important;
 }
 
@@ -397,7 +397,7 @@ iframe[title="streamlit_loading_overlay"] { display: none !important; }
 /* ── Hero banner ── */
 .prajna-hero {
   background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(168,85,247,0.06) 50%, rgba(6,182,212,0.05) 100%);
-  border: 1px solid rgba(99,102,241,0.15);
+  border: 1px solid rgba(79,70,229,0.1);
   border-radius: 20px;
   padding: 28px 32px;
   margin: 12px 0 20px 0;
@@ -412,7 +412,7 @@ iframe[title="streamlit_loading_overlay"] { display: none !important; }
   content: '';
   position: absolute; top: -40px; right: -40px;
   width: 200px; height: 200px;
-  background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(79,70,229,0.05) 0%, transparent 70%);
   pointer-events: none;
 }
 .prajna-hero-title {
@@ -420,10 +420,10 @@ iframe[title="streamlit_loading_overlay"] { display: none !important; }
   font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.5px;
   margin-bottom: 4px;
 }
-.prajna-hero-sub { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+.prajna-hero-sub { font-size: 13px; color: #64748b; line-height: 1.5; }
 .prajna-hero-pill {
   display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.3);
+  background: rgba(79,70,229,0.06); border: 1px solid rgba(79,70,229,0.15);
   border-radius: 20px; padding: 5px 14px; font-size: 11px;
   font-weight: 700; color: #a5b4fc; letter-spacing: .05em; margin-top: 10px;
 }
@@ -435,7 +435,7 @@ iframe[title="streamlit_loading_overlay"] { display: none !important; }
   font-size: 42px; font-weight: 900; color: #22c55e;
   font-family: 'Space Grotesk', sans-serif; line-height: 1;
 }
-.prajna-accuracy-lbl { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 4px; text-transform: uppercase; letter-spacing: .6px; }
+.prajna-accuracy-lbl { font-size: 11px; color: #64748b; margin-top: 4px; text-transform: uppercase; letter-spacing: .6px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -753,12 +753,12 @@ if _nav == "📊 Predictions":
 
         reasons = p.get("reasons", [])
         reason_pills = "".join(
-            f'<span style="background:rgba(99,102,241,.12);color:#a5b4fc;border:1px solid rgba(99,102,241,.25);'
+            f'<span style="background:rgba(79,70,229,.08);color:#4f46e5;border:1px solid rgba(79,70,229,.18);'
             f'border-radius:6px;padding:2px 9px;font-size:11px;margin-right:6px;white-space:nowrap">{r}</span>'
             for r in reasons[:2]
         )
         all_reasons_html = "".join(
-            f'<li style="font-size:12px;color:#94a3b8;margin:3px 0;line-height:1.4">{r}</li>'
+            f'<li style="font-size:12px;color:#64748b;margin:3px 0;line-height:1.4">{r}</li>'
             for r in reasons
         )
         sig = p.get("signal_breakdown", {})
@@ -772,25 +772,25 @@ if _nav == "📊 Predictions":
             bc  = "linear-gradient(90deg,#22c55e,#10b981)" if sv >= 0.5 else "linear-gradient(90deg,#6366f1,#a855f7)"
             sig_bars += (
                 f'<div style="display:flex;align-items:center;gap:10px;margin:5px 0">'
-                f'<span style="font-size:11px;color:#8888aa;min-width:110px;flex-shrink:0">{sn.replace("_"," ")}</span>'
-                f'<div style="flex:1;background:rgba(255,255,255,0.06);border-radius:3px;height:7px">'
+                f'<span style="font-size:11px;color:#64748b;min-width:110px;flex-shrink:0">{sn.replace("_"," ")}</span>'
+                f'<div style="flex:1;background:rgba(0,0,0,0.04);border-radius:3px;height:7px">'
                 f'<div style="width:{pct}%;background:{bc};height:7px;border-radius:3px"></div></div>'
-                f'<span style="font-size:11px;color:#8888aa;min-width:32px;text-align:right;flex-shrink:0">{sv:.2f}</span>'
+                f'<span style="font-size:11px;color:#64748b;min-width:32px;text-align:right;flex-shrink:0">{sv:.2f}</span>'
                 f'</div>'
             )
 
         prob_bar_pct = min(int(prob * 100), 100)
         training_str = f"Training: {training}" if training else ""
         footer_html  = (
-            f'<div style="font-size:11px;color:#8888aa;margin-top:12px">'
-            f'Syllabus: <b style="color:#94a3b8">{syllabus}</b>'
+            f'<div style="font-size:11px;color:#64748b;margin-top:12px">'
+            f'Syllabus: <b style="color:#64748b">{syllabus}</b>'
             f'{" · " + training_str if training_str else ""}</div>'
         )
         sig_section  = (
-            f'<div style="font-size:11px;color:#8888aa;margin-bottom:8px">Signal Breakdown:</div>{sig_bars}'
+            f'<div style="font-size:11px;color:#64748b;margin-bottom:8px">Signal Breakdown:</div>{sig_bars}'
             if sig_bars else ''
         )
-        body_reasons = all_reasons_html or '<li style="font-size:12px;color:#8888aa">No reasons available</li>'
+        body_reasons = all_reasons_html or '<li style="font-size:12px;color:#64748b">No reasons available</li>'
         # Chapter label shown only in micro-topic view
         chapter_sub  = (
             f'<div style="font-size:10px;color:{sc}88;margin-bottom:3px;font-weight:600">'
@@ -798,25 +798,25 @@ if _nav == "📊 Predictions":
         ) if is_micro else ""
 
         return (
-            f'<details style="background:#131320;border:1px solid rgba(255,255,255,0.07);'
+            f'<details style="background:#ffffff;border:1px solid rgba(0,0,0,0.06);'
             f'border-radius:12px;margin:5px 0;overflow:hidden">'
             f'<summary style="display:flex;align-items:center;gap:0;padding:12px 16px;'
             f'cursor:pointer;list-style:none;user-select:none;transition:background .15s" '
-            f'onmouseover="this.style.background=\'rgba(255,255,255,0.025)\'" '
+            f'onmouseover="this.style.background=\'rgba(0,0,0,0.02)\'" '
             f'onmouseout="this.style.background=\'transparent\'">'
-            f'<span style="font-size:11px;color:#8888aa;min-width:28px;flex-shrink:0">#{rank}</span>'
+            f'<span style="font-size:11px;color:#64748b;min-width:28px;flex-shrink:0">#{rank}</span>'
             f'<div style="flex:1;min-width:0;padding-right:16px">'
             f'{chapter_sub}'
-            f'<div style="font-size:14px;font-weight:700;color:#f1f5f9;margin-bottom:2px">{name}</div>'
+            f'<div style="font-size:14px;font-weight:700;color:#1e293b;margin-bottom:2px">{name}</div>'
             f'<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px">{reason_pills}</div>'
             f'<div style="font-size:11px;color:#6b7280">{fmts} · diff: {diff} · last: {last}</div>'
             f'</div>'
             f'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
-            f'<span style="font-size:13px;color:#8888aa">{trend}</span>'
+            f'<span style="font-size:13px;color:#64748b">{trend}</span>'
             f'<span style="background:{cc}22;color:{cc};border:1px solid {cc}44;'
             f'border-radius:6px;padding:3px 10px;font-size:11px;font-weight:800">{conf}</span>'
-            f'<span style="font-size:12px;color:#e2e8f0;font-weight:600;white-space:nowrap">~{exp_q:.1f}Q ({q_min}–{q_max})</span>'
-            f'<div style="width:80px;background:rgba(255,255,255,0.06);border-radius:3px;height:6px;flex-shrink:0">'
+            f'<span style="font-size:12px;color:#334155;font-weight:600;white-space:nowrap">~{exp_q:.1f}Q ({q_min}–{q_max})</span>'
+            f'<div style="width:80px;background:rgba(0,0,0,0.04);border-radius:3px;height:6px;flex-shrink:0">'
             f'<div style="width:{prob_bar_pct}%;background:linear-gradient(90deg,{sc},{sc}88);height:6px;border-radius:3px"></div>'
             f'</div>'
             f'<span style="font-size:14px;font-weight:800;color:{cc};min-width:36px;text-align:right">{prob_pct}</span>'
@@ -1755,10 +1755,10 @@ if _nav == "📅 Revision Plan":
             phase_hours = round((phase_prob_sum / total_prob) * total_hours)
 
             st.markdown(f"""
-            <div style="background:#131320;border:1px solid rgba(255,255,255,0.07);border-radius:12px;
+            <div style="background:#ffffff;border:1px solid rgba(0,0,0,0.06);border-radius:12px;
                          padding:14px 18px;margin:12px 0;border-left:4px solid {phase_color}">
               <div style="display:flex;align-items:center;justify-content:space-between">
-                <span style="font-size:15px;font-weight:700;color:#f1f5f9">{phase_label}</span>
+                <span style="font-size:15px;font-weight:700;color:#1e293b">{phase_label}</span>
                 <span style="font-size:12px;color:{phase_color};font-weight:600">~{phase_hours}h allocated · {len(phase_topics)} topics</span>
               </div>
             </div>""", unsafe_allow_html=True)
@@ -1776,11 +1776,11 @@ if _nav == "📅 Revision Plan":
                 days_needed = max(1, round(topic_hours / hours_per_day))
 
                 st.markdown(f"""
-                <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);
+                <div style="background:rgba(0,0,0,0.01);border:1px solid rgba(0,0,0,0.04);
                              border-radius:10px;padding:12px 16px;margin:4px 0 4px 16px;
                              border-left:3px solid {sc}">
                   <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-                    <span style="font-size:13px;font-weight:700;color:#e2e8f0;flex:1">{chapter}</span>
+                    <span style="font-size:13px;font-weight:700;color:#334155;flex:1">{chapter}</span>
                     <span style="background:{sc}22;color:{sc};border:1px solid {sc}44;
                                   border-radius:20px;padding:1px 8px;font-size:10px;font-weight:600">{p['subject']}</span>
                     <span style="background:{cc}22;color:{cc};border:1px solid {cc}44;
@@ -1788,10 +1788,10 @@ if _nav == "📅 Revision Plan":
                     <span style="color:#6366f1;font-size:12px;font-weight:700">{topic_prob:.0%}</span>
                   </div>
                   <div style="display:flex;gap:20px;margin-bottom:4px">
-                    <span style="font-size:11px;color:#8888aa">⏱ <b style="color:#e2e8f0">{topic_hours}h</b> ({days_needed}d)</span>
-                    <span style="font-size:11px;color:#8888aa">~<b style="color:#e2e8f0">{p['expected_questions']:.0f} Qs</b> expected</span>
-                    <span style="font-size:11px;color:#8888aa">Format: <b style="color:#e2e8f0">{formats}</b></span>
-                    <span style="font-size:11px;color:#8888aa">Last: <b style="color:#e2e8f0">{p['last_appeared']}</b></span>
+                    <span style="font-size:11px;color:#64748b">⏱ <b style="color:#334155">{topic_hours}h</b> ({days_needed}d)</span>
+                    <span style="font-size:11px;color:#64748b">~<b style="color:#334155">{p['expected_questions']:.0f} Qs</b> expected</span>
+                    <span style="font-size:11px;color:#64748b">Format: <b style="color:#334155">{formats}</b></span>
+                    <span style="font-size:11px;color:#64748b">Last: <b style="color:#334155">{p['last_appeared']}</b></span>
                   </div>
                   {f'<div style="font-size:11px;color:#6366f1;font-style:italic">💡 {reason_str}</div>' if reason_str else ''}
                 </div>""", unsafe_allow_html=True)
@@ -2017,7 +2017,7 @@ if _nav == "🤖 Ask PRAJNA":
             <span style="background:rgba(16,185,129,0.15);color:#10b981;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:700;">
                 ✓ Prajna Model Loaded (22M params)
             </span>
-            <span style="background:rgba(99,102,241,0.15);color:#a5b4fc;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:700;">
+            <span style="background:rgba(99,102,241,0.15);color:#4f46e5;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:700;">
                 Chatbot Active
             </span>
         </div>
@@ -2209,8 +2209,8 @@ if _nav == "🧪 Mistake Analysis":
                 labels={"avg_time": "Avg Time (min)", "avg_accuracy": "Avg Accuracy %"},
             )
             fig_tva.update_layout(
-                paper_bgcolor="#0f0f1a",
-                plot_bgcolor="#131320",
+                paper_bgcolor="#ffffff",
+                plot_bgcolor="#ffffff",
                 font_color="#e2e8f0",
                 title="Time vs Accuracy by Topic",
             )
@@ -2297,8 +2297,8 @@ if _nav == "🧪 Mistake Analysis":
                     labels={"exam_no": "Exam #", "accuracy_pct": "Accuracy %"},
                 )
                 fig_traj.update_layout(
-                    paper_bgcolor="#0f0f1a",
-                    plot_bgcolor="#131320",
+                    paper_bgcolor="#ffffff",
+                    plot_bgcolor="#ffffff",
                     font_color="#e2e8f0",
                     title="Most Improved & Most Declining Topics",
                 )
@@ -2322,8 +2322,8 @@ if _nav == "🧪 Mistake Analysis":
                 labels={"importance_pct": "Importance %", "feature": "Feature"},
             )
             fig_fi.update_layout(
-                paper_bgcolor="#0f0f1a",
-                plot_bgcolor="#131320",
+                paper_bgcolor="#ffffff",
+                plot_bgcolor="#ffffff",
                 font_color="#e2e8f0",
                 title="Logistic Regression Feature Importances",
             )
@@ -2347,16 +2347,16 @@ if _nav == "🔌 API Docs":
     with ql2:
         st.markdown("""
         <a href="http://localhost:8001/redoc" target="_blank"
-           style="display:block;background:#131320;border:1px solid rgba(255,255,255,0.12);
-                  color:#e2e8f0;text-align:center;padding:12px;border-radius:10px;
+           style="display:block;background:#ffffff;border:1px solid rgba(0,0,0,0.08);
+                  color:#334155;text-align:center;padding:12px;border-radius:10px;
                   text-decoration:none;font-weight:700;font-size:13px">
           📄 ReDoc ↗
         </a>""", unsafe_allow_html=True)
     with ql3:
         st.markdown("""
         <a href="http://localhost:8001/openapi.json" target="_blank"
-           style="display:block;background:#131320;border:1px solid rgba(255,255,255,0.12);
-                  color:#e2e8f0;text-align:center;padding:12px;border-radius:10px;
+           style="display:block;background:#ffffff;border:1px solid rgba(0,0,0,0.08);
+                  color:#334155;text-align:center;padding:12px;border-radius:10px;
                   text-decoration:none;font-weight:700;font-size:13px">
           🗂 OpenAPI JSON ↗
         </a>""", unsafe_allow_html=True)
@@ -2442,17 +2442,17 @@ if _nav == "🔌 API Docs":
                     curl_cmd = f"curl -X POST '{full_url}' -H 'Content-Type: application/json' -d '{example}'"
 
                 st.markdown(f"""
-                <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);
+                <div style="background:rgba(0,0,0,0.01);border:1px solid rgba(0,0,0,0.05);
                              border-radius:10px;padding:12px 16px;margin:6px 0;border-left:3px solid {mc}">
                   <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
                     <span style="background:{mc}22;color:{mc};border:1px solid {mc}44;
                                   border-radius:6px;padding:2px 8px;font-size:11px;font-weight:800;
                                   font-family:monospace;flex-shrink:0">{method}</span>
-                    <span style="font-family:monospace;font-size:13px;color:#a5b4fc;flex:1">{group['prefix']}<b style="color:#f1f5f9">{path}</b></span>
+                    <span style="font-family:monospace;font-size:13px;color:#4f46e5;flex:1">{group['prefix']}<b style="color:#1e293b">{path}</b></span>
                   </div>
-                  <div style="font-size:12px;color:#94a3b8;margin-bottom:8px">{summary}</div>
-                  <div style="background:#0f0f1a;border-radius:6px;padding:8px 12px;
-                               font-family:monospace;font-size:11px;color:#6ee7b7;
+                  <div style="font-size:12px;color:#64748b;margin-bottom:8px">{summary}</div>
+                  <div style="background:#ffffff;border-radius:6px;padding:8px 12px;
+                               font-family:monospace;font-size:11px;color:#059669;
                                overflow-x:auto;white-space:nowrap">{curl_cmd}</div>
                 </div>""", unsafe_allow_html=True)
 
@@ -2467,9 +2467,9 @@ if _nav == "🔌 API Docs":
 st.markdown("""
 <div class="prajna-footer">
   <div style="text-align:center; margin-bottom:24px;">
-    <div style="font-size:11px; font-weight:700; letter-spacing:2px; color:rgba(255,255,255,0.3); text-transform:uppercase; margin-bottom:8px;">Built for AI Hackathon 2026</div>
+    <div style="font-size:11px; font-weight:700; letter-spacing:2px; color:rgba(0,0,0,0.35); text-transform:uppercase; margin-bottom:8px;">Built for AI Hackathon 2026</div>
     <div style="font-size:20px; font-weight:800; color:white; font-family:'Space Grotesk',sans-serif;">PRAJNA — Deep Dive by Physics Wallah</div>
-    <div style="font-size:13px; color:rgba(255,255,255,0.4); margin-top:4px;">Predictive Research & Analysis for JEE/NEET Intelligence</div>
+    <div style="font-size:13px; color:rgba(0,0,0,0.5); margin-top:4px;">Predictive Research & Analysis for JEE/NEET Intelligence</div>
   </div>
   <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:24px;">
     <div class="team-card" style="min-width:220px;">
@@ -2487,11 +2487,11 @@ st.markdown("""
   </div>
   <div style="text-align:center; margin-bottom:16px;">
     <a href="https://firnweh.github.io/exam-predictor/" target="_blank" rel="noopener"
-       style="display:inline-flex; align-items:center; gap:8px; background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.3); border-radius:20px; padding:6px 18px; color:#a5b4fc; text-decoration:none; font-size:12px; font-weight:600; letter-spacing:0.03em; transition:background 0.2s;">
+       style="display:inline-flex; align-items:center; gap:8px; background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.3); border-radius:20px; padding:6px 18px; color:#4f46e5; text-decoration:none; font-size:12px; font-weight:600; letter-spacing:0.03em; transition:background 0.2s;">
       🌐 View PRAJNA Webpage — Full Technical Documentation
     </a>
   </div>
-  <div style="text-align:center; font-size:11px; color:rgba(255,255,255,0.2);">
+  <div style="text-align:center; font-size:11px; color:rgba(0,0,0,.25);">
     PRAJNA v4 · 23,119 questions · 292 papers · 1978–2026 · Engine: Hierarchical Micro-Topic Predictor · 10 signals · parent gate · hill-climbing weights
   </div>
 </div>
