@@ -1,9 +1,13 @@
 """
-Copilot Router — Natural Language Q&A
+Copilot Router — Enhanced Natural Language Q&A
+Combines PRAJNA prediction engine with qbg.db question bank (1.14M questions)
 """
 
 from __future__ import annotations
+import re
 import uuid
+import sqlite3
+from pathlib import Path
 from fastapi import APIRouter, Depends
 from packages.schemas.contracts import CopilotRequest, CopilotResponse
 from services.api.deps import (
@@ -15,6 +19,131 @@ from services.prediction_adapter.client import PredictionAdapter
 
 router = APIRouter()
 
+QBG_DB = str(Path(__file__).resolve().parent.parent.parent.parent.parent / "data" / "qbg.db")
+
+# Keywords that indicate a concept/explanation question vs strategy question
+CONCEPT_KEYWORDS = [
+    "explain", "what is", "what are", "define", "describe", "how does",
+    "how do", "why does", "why do", "difference between", "derive",
+    "prove", "formula", "equation", "law", "principle", "theorem",
+    "mechanism", "process", "function", "structure", "diagram",
+    "example", "solve", "calculate", "find the", "evaluate",
+]
+
+STRATEGY_KEYWORDS = [
+    "prioritize", "priority", "focus", "strategy", "study plan",
+    "revision", "predict", "important", "likely", "upcoming",
+    "probability", "trending", "rising", "which topic", "which chapter",
+    "how many hours", "weak", "strong", "roi", "exam brief",
+]
+
+
+def _is_concept_question(question: str) -> bool:
+    q = question.lower().strip()
+    concept_score = sum(1 for kw in CONCEPT_KEYWORDS if kw in q)
+    strategy_score = sum(1 for kw in STRATEGY_KEYWORDS if kw in q)
+    return concept_score > strategy_score
+
+
+def _search_qbg(query: str, subject: str | None = None, top_n: int = 5) -> list[dict]:
+    """Search qbg.db for relevant questions with solutions."""
+    try:
+        if not Path(QBG_DB).exists():
+            return []
+        conn = sqlite3.connect(QBG_DB)
+        conn.row_factory = sqlite3.Row
+
+        # Clean query for FTS5 — use key nouns, skip stopwords
+        stopwords = {'the', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been',
+                      'what', 'how', 'why', 'when', 'where', 'which', 'who',
+                      'do', 'does', 'did', 'can', 'could', 'should', 'would',
+                      'explain', 'describe', 'define', 'give', 'me', 'with',
+                      'and', 'or', 'of', 'in', 'on', 'for', 'to', 'from', 'by',
+                      'it', 'its', 'this', 'that', 'these', 'those', 'some', 'any'}
+        clean_query = re.sub(r'[^\w\s]', ' ', query).strip().lower()
+        words = [w for w in clean_query.split() if w not in stopwords and len(w) > 2][:6]
+        if not words:
+            words = clean_query.split()[:4]
+        fts_query = ' AND '.join(words) if len(words) <= 3 else ' OR '.join(words)
+
+        # Try exact phrase match first, fall back to OR match
+        sql = """
+            SELECT q.qbgid, q.subject, q.difficulty, q.question_clean,
+                   q.answer_clean, q.text_solution, q.gpt_analysis,
+                   rank
+            FROM questions_fts fts
+            JOIN questions q ON q.rowid = fts.rowid
+            WHERE fts.questions_fts MATCH ?
+        """
+        # Use phrase match with OR fallback: "newton law motion" first
+        phrase_query = '"' + ' '.join(words[:4]) + '"'
+        params = [phrase_query]
+        if subject:
+            sql += " AND q.subject = ?"
+            params.append(subject)
+        sql += f" ORDER BY rank LIMIT {top_n}"
+
+        rows = conn.execute(sql, params).fetchall()
+
+        # If phrase match returns too few, fall back to OR match
+        if len(rows) < 3:
+            params[0] = fts_query
+            rows = conn.execute(sql, params).fetchall()
+
+        conn.close()
+
+        return [{k: row[k] for k in row.keys()} for row in rows]
+    except Exception:
+        return []
+
+
+def _build_concept_answer(question: str, qbg_results: list[dict]) -> str:
+    """Build an answer for concept questions using qbg.db results."""
+    if not qbg_results:
+        return f"I don't have specific content on \"{question}\" in my question bank. Try rephrasing or asking about a specific topic."
+
+    # Use GPT analysis if available, otherwise use text_solution
+    best = None
+    for q in qbg_results:
+        if q.get("gpt_analysis") and len(q["gpt_analysis"]) > 50:
+            best = q
+            break
+    if not best:
+        for q in qbg_results:
+            if q.get("text_solution") and len(q["text_solution"]) > 50:
+                best = q
+                break
+    if not best:
+        best = qbg_results[0]
+
+    parts = []
+    parts.append(f"📚 **Related to your question: \"{question}\"**\n")
+
+    # Show the best explanation
+    explanation = best.get("gpt_analysis") or best.get("text_solution") or ""
+    if explanation:
+        # Clean HTML tags
+        clean = re.sub(r'<[^>]+>', '', explanation)
+        # Truncate if too long
+        if len(clean) > 1500:
+            clean = clean[:1500] + "..."
+        parts.append(f"**Concept Explanation:**\n{clean}\n")
+
+    # Show related practice questions
+    parts.append(f"\n📝 **Practice Questions ({len(qbg_results)} found):**\n")
+    for i, q in enumerate(qbg_results[:3], 1):
+        q_text = q.get("question_clean", "")
+        if len(q_text) > 200:
+            q_text = q_text[:200] + "..."
+        answer = q.get("answer_clean", "—")
+        difficulty = q.get("difficulty", "unknown")
+        parts.append(f"{i}. [{difficulty.upper()}] {q_text}")
+        parts.append(f"   → Answer: {answer}\n")
+
+    parts.append("\n💡 Try asking me to **explain the solution** for any of these, or ask for **more practice problems**.")
+
+    return "\n".join(parts)
+
 
 @router.post("/ask", response_model=CopilotResponse,
              summary="Ask a natural language question about upcoming exam topics")
@@ -25,16 +154,43 @@ async def ask_copilot(
     generator:  InsightGenerator             = Depends(insight_generator_dep),
 ):
     """
-    Natural language question answering grounded in prediction data.
+    Enhanced Q&A combining PRAJNA predictions with 1.14M question bank.
 
-    Examples:
-    - "Which chapters in Physics should I prioritize for NEET 2026?"
-    - "What topics in Organic Chemistry are trending upward?"
-    - "Give me an exam brief for JEE Main 2026"
-    - "Which Biology micro-topics have a long gap and are overdue?"
+    - Concept questions → searches qbg.db, returns explanations + practice
+    - Strategy questions → uses prediction engine for exam-focused advice
     """
     req_id = str(uuid.uuid4())
+    is_concept = _is_concept_question(request.question)
 
+    if is_concept:
+        # Search qbg.db for related content
+        qbg_results = _search_qbg(
+            request.question,
+            subject=request.subject_filter,
+            top_n=5,
+        )
+        answer = _build_concept_answer(request.question, qbg_results)
+
+        # Build follow-ups based on the content
+        subject_hint = qbg_results[0]["subject"] if qbg_results else "Physics"
+        follow_ups = [
+            f"Give me 5 more practice problems on this topic",
+            f"What is the exam probability for {subject_hint} topics?",
+            f"Explain the solution step by step",
+        ]
+
+        return CopilotResponse(
+            success=True,
+            request_id=req_id,
+            question=request.question,
+            answer=answer,
+            confidence=0.75 if qbg_results else 0.2,
+            insights=[],
+            sources=[{"source": "qbg-pcmr", "type": "question_bank"}] if qbg_results else [],
+            follow_up_questions=follow_ups,
+        )
+
+    # Strategy question → use prediction engine (original behavior)
     micro_preds = await adapter.get_predictions(
         exam_type=request.exam_type,
         target_year=request.target_year,
@@ -43,7 +199,6 @@ async def ask_copilot(
     batch = aggregator.build_batch(micro_preds)
     insight = await generator.answer_copilot_question(request, batch)
 
-    # Build context-aware follow-up questions from the top predicted topics
     top_names = [t.micro_topic_name for t in micro_preds[:3]] if micro_preds else []
     exam_label = str(request.exam_type).split(".")[-1].upper()
     follow_ups = [
