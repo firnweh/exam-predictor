@@ -153,19 +153,48 @@ def _build_concept_answer(question: str, qbg_results: list[dict]) -> str:
     parts = []
     parts.append(f"📚 **Related to: \"{question}\"**\n")
 
-    # Show the best explanation
+    # Build explanation from best match
     explanation = best.get("gpt_analysis") or best.get("text_solution") or ""
     if explanation:
-        # Clean HTML tags
+        # Clean: remove HTML tags, channel tokens, GPT formatting noise
         clean = re.sub(r'<[^>]+>', '', explanation)
-        # Remove GPT analysis prefix noise (e.g., "analysisWe need to...", "assistantfinal**...")
+        clean = re.sub(r'<\|channel\|>[^<]*<\|message\|>', '', clean)
+        # Split on "assistantfinal" or "assistant" marker — take only the final answer part
+        for marker in ['assistantfinal', 'assistant final', 'assistant\n']:
+            if marker in clean.lower():
+                idx = clean.lower().index(marker)
+                clean = clean[idx + len(marker):]
+                break
+        # Remove leading analysis/thinking text (before the actual answer)
         clean = re.sub(r'^(analysis|assistant|final|user|system)\s*', '', clean, flags=re.IGNORECASE)
-        clean = re.sub(r'\b(analysis|assistantfinal|assistant)\b', '', clean)
         clean = clean.strip()
-        # Truncate if too long
+        # Remove "We need to..." thinking prefix if still present
+        if clean.lower().startswith(('we need to', 'we should', 'let me', 'i need to', 'the user')):
+            # Find the first sentence that looks like an actual answer
+            sentences = re.split(r'(?<=[.!?])\s+', clean)
+            # Skip thinking sentences, keep answer sentences
+            answer_sentences = []
+            started = False
+            for s in sentences:
+                s_lower = s.lower().strip()
+                if not started and any(s_lower.startswith(p) for p in ('we need', 'we should', 'let me', 'i need', 'the user', 'likely', 'probably', 'so ')):
+                    continue
+                started = True
+                answer_sentences.append(s)
+            if answer_sentences:
+                clean = ' '.join(answer_sentences)
+        clean = clean.strip()
         if len(clean) > 1200:
             clean = clean[:1200] + "..."
         parts.append(f"**Explanation:**\n{clean}\n")
+
+    # Show the source question for context
+    best_q = best.get("question_clean", "")
+    best_a = best.get("answer_clean", "")
+    if best_q:
+        parts.append(f"\n**Source question:** {best_q[:200]}")
+    if best_a:
+        parts.append(f"**Answer:** {best_a[:200]}\n")
 
     # Show related practice questions
     parts.append(f"\n📝 **Practice Questions ({len(qbg_results)} found):**\n")
