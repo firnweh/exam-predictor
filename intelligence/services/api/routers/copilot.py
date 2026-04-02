@@ -776,7 +776,7 @@ async def ask_copilot(
 async def _ocr_with_qwen(image_base64: str, prompt: str = "Extract all text, questions, and mathematical formulas from this image. Preserve LaTeX notation for any math expressions.") -> str:
     """Use Qwen2.5-VL via Ollama to extract text from an image."""
     try:
-        async with httpx.AsyncClient(timeout=OLLAMA_TIMEOUT) as client:
+        async with httpx.AsyncClient(timeout=180) as client:  # 3 min for vision model
             resp = await client.post(OLLAMA_CHAT_URL, json={
                 "model": OLLAMA_VISION_MODEL,
                 "messages": [
