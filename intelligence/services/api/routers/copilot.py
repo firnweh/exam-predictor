@@ -18,9 +18,54 @@ logger = logging.getLogger(__name__)
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 OLLAMA_CHAT_URL = "http://localhost:11434/api/chat"
-OLLAMA_MODEL = "llama3.2:3b"
-OLLAMA_VISION_MODEL = "qwen2.5vl:3b"
 OLLAMA_TIMEOUT = 90  # seconds
+
+# Three specialized models — routed by subject/task
+OLLAMA_MODELS = {
+    "math":    "aryabhata",       # Aryabhata 1.0 (7B) — JEE Math specialist (90% accuracy)
+    "general": "llama3.2:3b",     # Llama 3.2 3B — Biology, Chemistry, general Q&A
+    "vision":  "qwen2.5vl:3b",   # Qwen2.5-VL 3B — OCR from images/PDFs
+}
+
+# Subject → model routing
+MATH_SUBJECTS = {"mathematics", "maths", "math", "algebra", "calculus", "trigonometry",
+                 "coordinate geometry", "vectors", "probability", "matrices", "statistics"}
+PHYSICS_MATH_TOPICS = {"kinematics", "mechanics", "oscillations", "waves", "optics",
+                       "electrostatics", "current electricity", "magnetism", "modern physics"}
+
+
+def _select_model(question: str, subject: str | None = None) -> str:
+    """Route to the best model based on subject/content.
+
+    - Math/Physics numerical problems → Aryabhata (JEE-optimized, 90% accuracy)
+    - Biology/Chemistry/general → Llama 3.2 (broader knowledge)
+    - Images/PDFs → Qwen2.5-VL (handled separately in OCR endpoint)
+    """
+    q = question.lower()
+
+    # Explicit subject routing
+    if subject and subject.lower() in MATH_SUBJECTS:
+        return OLLAMA_MODELS["math"]
+
+    # Content-based routing: math-heavy questions → Aryabhata
+    math_signals = ["calculate", "find the value", "solve", "evaluate", "simplify",
+                    "differentiate", "integrate", "prove that", "if x =", "find x",
+                    "equation", "inequality", "matrix", "determinant", "vector",
+                    "probability", "permutation", "combination", "log", "sin", "cos", "tan"]
+    math_score = sum(1 for s in math_signals if s in q)
+
+    if math_score >= 2:
+        return OLLAMA_MODELS["math"]
+
+    # Physics with heavy math
+    if subject and subject.lower() == "physics":
+        # Check if it's a numerical/calculation problem
+        has_numbers = any(c.isdigit() for c in q)
+        has_units = any(u in q for u in ["kg", "m/s", "newton", "joule", "volt", "ampere", "ohm", "cm", "metre"])
+        if has_numbers and has_units:
+            return OLLAMA_MODELS["math"]
+
+    return OLLAMA_MODELS["general"]
 from fastapi import APIRouter, Depends, UploadFile, File, Form
 from packages.schemas.contracts import CopilotRequest, CopilotResponse
 from services.api.deps import (
@@ -556,11 +601,17 @@ def _clean_html(text: str) -> str:
     return re.sub(r'\s+', ' ', text).strip()
 
 
-async def _llm_format(question: str, context_items: list[dict]) -> str | None:
-    """Use local Llama 3.2 (via Ollama) to structure a clean answer from qbg.db results.
+async def _llm_format(question: str, context_items: list[dict], subject: str | None = None) -> str | None:
+    """Use local LLM (via Ollama) to structure a clean answer from qbg.db results.
+
+    Routes to the best model:
+    - Math/Physics numerical → Aryabhata 1.0 (JEE-optimized, 90% accuracy)
+    - Biology/Chemistry/general → Llama 3.2 3B (broader knowledge)
 
     Returns None if Ollama is offline — caller should fall back to rule-based formatting.
     """
+    model = _select_model(question, subject)
+    logger.info(f"Routing to model: {model} (subject={subject})")
     # Build context from top 3 results
     context_parts = []
     for q in context_items[:3]:
@@ -597,7 +648,7 @@ Rules:
     try:
         async with httpx.AsyncClient(timeout=OLLAMA_TIMEOUT) as client:
             resp = await client.post(OLLAMA_URL, json={
-                "model": OLLAMA_MODEL,
+                "model": model,
                 "prompt": prompt,
                 "stream": False,
                 "options": {
@@ -631,7 +682,9 @@ async def _build_concept_answer(question: str, qbg_results: list[dict]) -> str:
         return await _build_topic_overview(question, qbg_results)
 
     # Try Llama 3.2 for structured answer
-    llm_answer = await _llm_format(question, qbg_results)
+    # Detect subject from qbg results for model routing
+    _detected_subject = qbg_results[0].get("subject") if qbg_results else None
+    llm_answer = await _llm_format(question, qbg_results, subject=_detected_subject)
     if llm_answer:
         # Add practice questions below the LLM answer
         others = qbg_results[1:4]
@@ -778,7 +831,7 @@ async def _ocr_with_qwen(image_base64: str, prompt: str = "Extract all text, que
     try:
         async with httpx.AsyncClient(timeout=180) as client:  # 3 min for vision model
             resp = await client.post(OLLAMA_CHAT_URL, json={
-                "model": OLLAMA_VISION_MODEL,
+                "model": OLLAMA_MODELS["vision"],
                 "messages": [
                     {
                         "role": "user",
