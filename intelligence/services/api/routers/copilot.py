@@ -5,18 +5,23 @@ Combines PRAJNA prediction engine with qbg.db question bank (1.14M questions)
 
 from __future__ import annotations
 import re
+import os
 import uuid
+import base64
 import sqlite3
 import httpx
 import logging
+import tempfile
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
+OLLAMA_CHAT_URL = "http://localhost:11434/api/chat"
 OLLAMA_MODEL = "llama3.2:3b"
+OLLAMA_VISION_MODEL = "qwen2.5vl:3b"
 OLLAMA_TIMEOUT = 90  # seconds
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile, File, Form
 from packages.schemas.contracts import CopilotRequest, CopilotResponse
 from services.api.deps import (
     aggregator_dep, insight_generator_dep, prediction_adapter_dep,
@@ -764,3 +769,165 @@ async def ask_copilot(
         sources=[{"source": e.source_name, "type": str(e.evidence_type)} for e in insight.evidence],
         follow_up_questions=follow_ups,
     )
+
+
+# ── OCR Endpoint — Image/PDF → Extract text → Solve ──────────────────────────
+
+async def _ocr_with_qwen(image_base64: str, prompt: str = "Extract all text, questions, and mathematical formulas from this image. Preserve LaTeX notation for any math expressions.") -> str:
+    """Use Qwen2.5-VL via Ollama to extract text from an image."""
+    try:
+        async with httpx.AsyncClient(timeout=OLLAMA_TIMEOUT) as client:
+            resp = await client.post(OLLAMA_CHAT_URL, json={
+                "model": OLLAMA_VISION_MODEL,
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": prompt,
+                        "images": [image_base64],
+                    }
+                ],
+                "stream": False,
+                "options": {
+                    "temperature": 0.1,
+                    "num_predict": 800,
+                },
+            })
+            if resp.status_code == 200:
+                data = resp.json()
+                msg = data.get("message", {})
+                return msg.get("content", "").strip()
+    except Exception as e:
+        logger.error(f"Qwen OCR failed: {e}")
+    return ""
+
+
+def _pdf_to_images(pdf_path: str) -> list[str]:
+    """Convert PDF pages to base64 images.
+
+    Uses pdf2image if available, falls back to PyMuPDF.
+    Returns list of base64-encoded PNG images.
+    """
+    images_b64 = []
+    try:
+        import fitz  # PyMuPDF
+        doc = fitz.open(pdf_path)
+        for page_num in range(min(len(doc), 5)):  # max 5 pages
+            page = doc[page_num]
+            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))  # 2x zoom for clarity
+            img_bytes = pix.tobytes("png")
+            images_b64.append(base64.b64encode(img_bytes).decode())
+        doc.close()
+    except ImportError:
+        logger.warning("PyMuPDF not installed. Install with: pip install PyMuPDF")
+        # Fallback: try pdf2image
+        try:
+            from pdf2image import convert_from_path
+            import io
+            pages = convert_from_path(pdf_path, first_page=1, last_page=5, dpi=200)
+            for page in pages:
+                buf = io.BytesIO()
+                page.save(buf, format="PNG")
+                images_b64.append(base64.b64encode(buf.getvalue()).decode())
+        except ImportError:
+            logger.error("Neither PyMuPDF nor pdf2image installed for PDF processing")
+    return images_b64
+
+
+@router.post("/ocr-solve",
+             summary="Upload image/PDF → OCR extract text → solve with PRAJNA SLM")
+async def ocr_and_solve(
+    file: UploadFile = File(...),
+    exam_type: str = Form("neet"),
+    subject_filter: str = Form(None),
+):
+    """
+    Upload a photograph or PDF of a question:
+    1. Qwen2.5-VL extracts the text (OCR)
+    2. Extracted text is searched in qbg.db (1.14M questions)
+    3. PRAJNA SLM structures a clean answer
+
+    Supports: .jpg, .jpeg, .png, .pdf
+    """
+    req_id = str(uuid.uuid4())
+
+    # Validate file type
+    filename = file.filename or "upload"
+    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    if ext not in ("jpg", "jpeg", "png", "pdf", "webp"):
+        return {
+            "success": False,
+            "request_id": req_id,
+            "error": f"Unsupported file type: .{ext}. Use .jpg, .png, or .pdf",
+        }
+
+    # Read file content
+    content = await file.read()
+    if len(content) > 20 * 1024 * 1024:  # 20MB limit
+        return {
+            "success": False,
+            "request_id": req_id,
+            "error": "File too large. Maximum 20MB.",
+        }
+
+    # Convert to base64 images
+    images_b64 = []
+    if ext == "pdf":
+        # Save to temp file for PDF processing
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
+            tmp.write(content)
+            tmp_path = tmp.name
+        try:
+            images_b64 = _pdf_to_images(tmp_path)
+        finally:
+            os.unlink(tmp_path)
+    else:
+        # Direct image
+        images_b64 = [base64.b64encode(content).decode()]
+
+    if not images_b64:
+        return {
+            "success": False,
+            "request_id": req_id,
+            "error": "Could not process the file. Try a different image or PDF.",
+        }
+
+    # OCR each page/image with Qwen
+    extracted_texts = []
+    for i, img_b64 in enumerate(images_b64):
+        text = await _ocr_with_qwen(img_b64)
+        if text:
+            extracted_texts.append(text)
+
+    if not extracted_texts:
+        return {
+            "success": False,
+            "request_id": req_id,
+            "extracted_text": "",
+            "error": "OCR could not extract text from the image. Ensure the image is clear and well-lit.",
+        }
+
+    full_text = "\n\n".join(extracted_texts)
+
+    # Search qbg.db for matching questions
+    qbg_results = _search_qbg(full_text, subject=subject_filter, top_n=5)
+
+    # Build answer using existing pipeline
+    answer = await _build_concept_answer(full_text, qbg_results)
+
+    # Build follow-ups
+    follow_ups = [
+        "Explain this solution step by step",
+        "Give me 5 similar practice problems",
+        "What topic is this from and how important is it for the exam?",
+    ]
+
+    return {
+        "success": True,
+        "request_id": req_id,
+        "extracted_text": full_text,
+        "answer": answer,
+        "confidence": 0.75 if qbg_results else 0.3,
+        "pages_processed": len(images_b64),
+        "sources": [{"source": "qbg-pcmr + Qwen2.5-VL OCR", "type": "vision_ocr"}] if qbg_results else [],
+        "follow_up_questions": follow_ups,
+    }
