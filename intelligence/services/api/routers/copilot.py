@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 OLLAMA_MODEL = "llama3.2:3b"
-OLLAMA_TIMEOUT = 30  # seconds
+OLLAMA_TIMEOUT = 90  # seconds
 from fastapi import APIRouter, Depends
 from packages.schemas.contracts import CopilotRequest, CopilotResponse
 from services.api.deps import (
