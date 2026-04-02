@@ -602,7 +602,7 @@ Rules:
                 "stream": False,
                 "options": {
                     "temperature": 0.3,
-                    "num_predict": 400,
+                    "num_predict": 1200,
                 }
             })
             if resp.status_code == 200:
