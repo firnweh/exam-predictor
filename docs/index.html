@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>PRAJNA — Student Intelligence Platform</title>
+<title>PRAJNA — Predictive Resource Allocation for JEE/NEET Aspirants</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
@@ -62,21 +62,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:#f8fafc;color:#1e293
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;width:100%;max-width:900px}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;width:100%;max-width:1000px}
 .g2{display:grid;grid-template-columns:repeat(2,1fr);gap:30px;width:100%;max-width:780px}
+.g6{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%;max-width:960px}
 
 /* ── Icon circle ── */
 .icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:14px;background:rgba(79,70,229,.08);border:1px solid rgba(79,70,229,.18)}
 .card h3{font-size:1.05rem;font-weight:700;color:#1e293b;margin-bottom:8px}
 .card p{font-size:.88rem;color:#64748b;line-height:1.6}
 
-/* ── Level pills ── */
-.levels{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;max-width:900px}
-.lv{padding:18px 22px;border-radius:16px;text-align:center;min-width:150px;flex:1;border:1px solid transparent}
-.lv .lv-letter{font-size:2rem;font-weight:800;display:block;margin-bottom:4px}
-.lv .lv-name{font-size:.82rem;font-weight:600;letter-spacing:.06em;display:block;margin-bottom:6px;opacity:.85}
-.lv .lv-range{font-size:.75rem;opacity:.65}
-
 /* ── Step flow ── */
-.step-num{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;margin:0 auto 12px;flex-shrink:0}
+.step-num{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;color:#fff;margin:0 auto 12px;flex-shrink:0}
 
 /* ── Team avatars ── */
 .avatar{width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid rgba(99,102,241,.5);margin-bottom:16px}
@@ -85,372 +79,357 @@ html,body{width:100%;height:100%;overflow:hidden;background:#f8fafc;color:#1e293
 .team-card .role{font-size:.83rem;color:#4f46e5;font-weight:600;letter-spacing:.06em;margin-bottom:6px}
 .team-card .bio{font-size:.83rem;color:#64748b;line-height:1.5;max-width:260px}
 
-/* ── Credentials table ── */
-.cred-table{width:100%;max-width:540px;border-collapse:collapse;font-size:.88rem;margin-top:20px}
-.cred-table th{padding:10px 16px;background:rgba(79,70,229,.08);color:#4f46e5;font-weight:600;text-align:left;border-bottom:1px solid rgba(79,70,229,.15)}
-.cred-table td{padding:10px 16px;color:#64748b;border-bottom:1px solid rgba(0,0,0,.04)}
-.cred-table tr:last-child td{border-bottom:none}
+/* ── Stat big number ── */
+.stat-big{font-size:2.2rem;font-weight:800;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 
-/* ── SLM bullets ── */
-.slm-list{list-style:none;display:flex;flex-direction:column;gap:14px;max-width:680px;width:100%}
-.slm-list li{display:flex;align-items:flex-start;gap:14px;background:rgba(0,0,0,.02);border:1px solid rgba(0,0,0,.05);border-radius:12px;padding:16px 20px}
-.slm-list li .bullet{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
-.slm-list li div{font-size:.9rem;color:#64748b;line-height:1.55}
-.slm-list li strong{display:block;font-size:.96rem;color:#1e293b;font-weight:600;margin-bottom:3px}
+/* ── Signal card compact ── */
+.sig-card{padding:16px 20px;display:flex;align-items:center;gap:14px}
+.sig-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;flex-shrink:0}
+.sig-card .sig-title{font-size:.9rem;font-weight:700;color:#1e293b}
+.sig-card .sig-desc{font-size:.78rem;color:#64748b}
+
+/* ── Links row ── */
+.link-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.link-pill{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:50px;font-size:.85rem;font-weight:600;text-decoration:none;border:1.5px solid rgba(79,70,229,.25);color:#4f46e5;background:rgba(79,70,229,.04);transition:all .2s}
+.link-pill:hover{background:rgba(79,70,229,.1);border-color:#4f46e5}
+
+@media(max-width:768px){
+  .g3,.g4,.g6{grid-template-columns:1fr 1fr}
+  .g2{grid-template-columns:1fr}
+  .slide{padding:48px 20px}
+}
+@media(max-width:480px){
+  .g3,.g4,.g6{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
-<div class="pw-badge">⚡ PhysicsWallah</div>
+<div class="pw-badge">PhysicsWallah</div>
 <div class="counter" id="counter">1 / 12</div>
 <button class="arrow" id="prev" aria-label="Previous">&#8249;</button>
 <button class="arrow" id="next" aria-label="Next">&#8250;</button>
 <div class="dots" id="dots"></div>
-<a href="login.html" class="nav-login">Login to PRAJNA &nbsp;&#8594;</a>
+<a href="login.html" class="nav-login">Login to PRAJNA &#8594;</a>
 
 <div class="carousel" id="carousel">
   <div class="track" id="track">
 
     <!-- SLIDE 1 — Hero -->
     <div class="slide">
-      <div class="tag">Student Intelligence Platform</div>
+      <div class="tag">Prediction Engine + AI Tutor + Question Bank</div>
       <h1>PRAJNA</h1>
       <p style="font-size:.88rem;color:#64748b;letter-spacing:.12em;margin-bottom:8px;font-weight:600"><strong style="color:#4f46e5">P</strong>redictive <strong style="color:#4f46e5">R</strong>esource <strong style="color:#4f46e5">A</strong>llocation for <strong style="color:#4f46e5">J</strong>EE/<strong style="color:#4f46e5">N</strong>EET <strong style="color:#4f46e5">A</strong>spirants</p>
-      <p class="lead">AI-powered exam intelligence for JEE &amp; NEET aspirants — predict your rank, master your weak areas, ace the exam.</p>
-      <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center">
-        <a href="http://localhost:8501" target="_blank" class="cta" style="background:linear-gradient(135deg,#0e7490,#06b6d4);box-shadow:0 0 36px rgba(6,182,212,.5),0 0 80px rgba(6,182,212,.18)">⚡ PRAJNA Intelligence</a>
-        <a href="http://localhost:8001/docs" target="_blank" class="cta" style="background:linear-gradient(135deg,#1e3a5f,#2563eb);box-shadow:0 0 36px rgba(37,99,235,.45),0 0 80px rgba(37,99,235,.18)">📄 API Docs</a>
+      <p class="lead">96%-accurate exam prediction engine, local AI tutor powered by Llama 3.2, and a 1.14M-question practice bank — built on 48 years of real JEE &amp; NEET papers.</p>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center;margin-bottom:24px">
+        <div style="text-align:center"><div style="font-size:1.6rem;font-weight:800;color:#4f46e5">48 yrs</div><div style="font-size:.75rem;color:#64748b">Exam Data</div></div>
+        <div style="text-align:center"><div style="font-size:1.6rem;font-weight:800;color:#7c3aed">1.14M</div><div style="font-size:.75rem;color:#64748b">Questions</div></div>
+        <div style="text-align:center"><div style="font-size:1.6rem;font-weight:800;color:#4ade80">96%</div><div style="font-size:.75rem;color:#64748b">Accuracy</div></div>
+        <div style="text-align:center"><div style="font-size:1.6rem;font-weight:800;color:#f59e0b">14</div><div style="font-size:.75rem;color:#64748b">Dashboards</div></div>
       </div>
-      <p style="margin-top:32px;font-size:.8rem;color:#475569;letter-spacing:.06em;">POWERED BY PHYSICSWALLAH &nbsp;·&nbsp; BUILT FOR TOPPERS</p>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
+        <a href="https://prajna-portal.vercel.app" target="_blank" class="cta">Open Portal &#8594;</a>
+        <a href="login.html" class="cta" style="background:linear-gradient(135deg,#1e3a5f,#2563eb);box-shadow:0 0 36px rgba(37,99,235,.45)">Login &#8594;</a>
+      </div>
+      <p style="margin-top:28px;font-size:.8rem;color:#475569;letter-spacing:.06em">POWERED BY PHYSICSWALLAH &middot; BUILT FOR TOPPERS</p>
     </div>
 
-
-    <!-- SLIDE 2 — Key Stats -->
-    <div class="slide">
-      <div class="tag">By the Numbers</div>
-      <h2>Built on 48 Years of Real Exam Data</h2>
-      <p class="lead">PRAJNA is the most data-intensive JEE/NEET prediction system ever built for students.</p>
-      <div class="g4" style="max-width:860px">
-        <div class="card" style="text-align:center;border-color:rgba(79,70,229,.2)">
-          <div style="font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,#4f46e5,#4338ca);-webkit-background-clip:text;-webkit-text-fill-color:transparent">23,119</div>
-          <div style="font-size:.85rem;color:#64748b;margin-top:6px;font-weight:600">Exam Questions</div>
-          <div style="font-size:.75rem;color:#475569;margin-top:4px">JEE + NEET combined</div>
-        </div>
-        <div class="card" style="text-align:center;border-color:rgba(124,58,237,.2)">
-          <div style="font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,#c4b5fd,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent">292</div>
-          <div style="font-size:.85rem;color:#64748b;margin-top:6px;font-weight:600">Exam Papers</div>
-          <div style="font-size:.75rem;color:#475569;margin-top:4px">Across all shifts &amp; years</div>
-        </div>
-        <div class="card" style="text-align:center;border-color:rgba(34,197,94,.25)">
-          <div style="font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,#86efac,#4ade80);-webkit-background-clip:text;-webkit-text-fill-color:transparent">91%</div>
-          <div style="font-size:.85rem;color:#64748b;margin-top:6px;font-weight:600">Backtest Accuracy</div>
-          <div style="font-size:.75rem;color:#475569;margin-top:4px">5-year holdout average</div>
-        </div>
-        <div class="card" style="text-align:center;border-color:rgba(251,191,36,.25)">
-          <div style="font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,#fde68a,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent">755</div>
-          <div style="font-size:.85rem;color:#64748b;margin-top:6px;font-weight:600">Micro-topics</div>
-          <div style="font-size:.75rem;color:#475569;margin-top:4px">470 NEET · 285 JEE</div>
-        </div>
-      </div>
-      <p style="margin-top:24px;font-size:.82rem;color:#475569;letter-spacing:.04em">48 YEARS OF DATA &nbsp;·&nbsp; 143 CHAPTERS &nbsp;·&nbsp; STRICT NO-LOOK-AHEAD EVALUATION</p>
-    </div>
-
-    <!-- SLIDE 3 — Problem & Why it Matters -->
+    <!-- SLIDE 2 — The Problem -->
     <div class="slide">
       <div class="tag">The Problem</div>
       <h2>Students Study Broad. Exams Test Specific.</h2>
-      <p class="lead">Most students waste months on low-yield chapters while missing the micro-topics that actually appear. PRAJNA closes that gap.</p>
+      <p class="lead">Most aspirants waste months on low-yield chapters while missing the micro-topics that actually appear. Coaching institutes rely on intuition. PRAJNA replaces guesswork with data.</p>
       <div class="g3">
         <div class="card">
-          <div class="icon">🎯</div>
+          <div class="icon">&#127919;</div>
           <h3>Micro-topic Precision</h3>
-          <p>PRAJNA predicts exactly which micro-topics to focus on — not just broad chapters — backed by 48 years of actual exam data.</p>
+          <p>Predicts exactly which micro-topics to focus on — not broad chapters — backed by 48 years of actual exam data and 10 statistical signals.</p>
         </div>
         <div class="card" style="border-color:rgba(79,70,229,.2)">
-          <div class="icon" style="background:rgba(139,92,246,.18);border-color:rgba(139,92,246,.3)">📊</div>
-          <h3>Statistical Signal</h3>
-          <p>Coaching institutes rely on intuition and hearsay. PRAJNA replaces guesswork with 7-signal weighted ensemble intelligence.</p>
+          <div class="icon" style="background:rgba(139,92,246,.18);border-color:rgba(139,92,246,.3)">&#129302;</div>
+          <h3>AI Tutor On-Device</h3>
+          <p>A local Llama 3.2 model answers doubts instantly using RAG over 1.14M questions — fully offline, zero latency, complete privacy.</p>
         </div>
         <div class="card">
-          <div class="icon" style="background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.25)">🏆</div>
-          <h3>Rank Impact</h3>
-          <p>JEE &amp; NEET are fiercely competitive. A single correctly predicted micro-topic can swing a rank by thousands of positions.</p>
+          <div class="icon" style="background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.25)">&#127942;</div>
+          <h3>Practice at Scale</h3>
+          <p>1.14M questions with difficulty tags and topic labels. Generate mock tests, track mistakes, and build revision plans automatically.</p>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 4 — Model Evolution -->
+    <!-- SLIDE 3 — Key Numbers -->
     <div class="slide">
-      <div class="tag">Model Evolution</div>
-      <h2>Four Generations of Intelligence</h2>
-      <p class="lead">Each version addressed the limitations of the previous — the SLM now powers <strong style="color:#7c3aed">PRAJNA v4</strong>, a hierarchical micro-topic engine with 10 signals and hill-climbing weight optimisation.</p>
-      <div class="g4" style="max-width:960px">
-        <div class="card" style="text-align:center">
-          <div style="font-size:1.5rem;font-weight:800;color:#64748b;margin-bottom:8px">v1</div>
-          <h3 style="color:#64748b">Frequency Model</h3>
-          <p>Basic chapter frequency counting. No subject balance, no gap analysis.</p>
-          <div style="margin-top:12px;font-size:.8rem;font-weight:700;color:#64748b">~68% accuracy</div>
+      <div class="tag">By the Numbers</div>
+      <h2>The Data Behind PRAJNA</h2>
+      <p class="lead">Every prediction is grounded in real exam history and validated through strict no-look-ahead backtesting.</p>
+      <div class="g3" style="max-width:960px">
+        <div class="card" style="text-align:center;border-color:rgba(79,70,229,.2)">
+          <div class="stat-big" style="background:linear-gradient(135deg,#4f46e5,#4338ca)">1,137,771</div>
+          <div style="font-size:.85rem;color:#64748b;margin-top:6px;font-weight:600">Total Questions</div>
+          <div style="font-size:.75rem;color:#475569;margin-top:4px">Physics 375K + Chem 420K + Math 342K</div>
         </div>
-        <div class="card" style="text-align:center">
-          <div style="font-size:1.5rem;font-weight:800;color:#4f46e5;margin-bottom:8px">v2</div>
-          <h3>Micro-Topic Engine</h3>
-          <p>Drilled to micro-topic level. Added weightage model and subject filtering.</p>
-          <div style="margin-top:12px;font-size:.8rem;font-weight:700;color:#4f46e5">~74% accuracy</div>
+        <div class="card" style="text-align:center;border-color:rgba(124,58,237,.2)">
+          <div class="stat-big" style="background:linear-gradient(135deg,#c4b5fd,#a78bfa)">23,119</div>
+          <div style="font-size:.85rem;color:#64748b;margin-top:6px;font-weight:600">Real Exam Questions</div>
+          <div style="font-size:.75rem;color:#475569;margin-top:4px">48 years of JEE + NEET papers</div>
         </div>
-        <div class="card" style="text-align:center;border-color:rgba(79,70,229,.25)">
-          <div style="font-size:1.5rem;font-weight:800;color:#7c3aed;margin-bottom:8px">v3</div>
-          <h3>3-Stage Pipeline</h3>
-          <p>Appearance × Weightage × Format. 7-signal ensemble + cycle detection + subject-quota reranking.</p>
-          <div style="margin-top:12px;font-size:.8rem;font-weight:700;color:#7c3aed">~82% accuracy</div>
+        <div class="card" style="text-align:center;border-color:rgba(34,197,94,.25)">
+          <div class="stat-big" style="background:linear-gradient(135deg,#86efac,#4ade80)">96%</div>
+          <div style="font-size:.85rem;color:#64748b;margin-top:6px;font-weight:600">Backtest Accuracy</div>
+          <div style="font-size:.75rem;color:#475569;margin-top:4px">Chapter-level, 5-year holdout</div>
         </div>
-        <div class="card" style="text-align:center;border-color:rgba(124,58,237,.35);background:rgba(124,58,237,.06);position:relative;overflow:hidden">
-          <div style="position:absolute;top:0;right:0;background:linear-gradient(135deg,#7c3aed,#4f46e5);font-size:.58rem;font-weight:800;letter-spacing:.08em;color:#fff;padding:.22rem .6rem;border-bottom-left-radius:6px">CURRENT</div>
-          <div style="font-size:1.5rem;font-weight:800;color:#7c3aed;margin-bottom:8px">v4</div>
-          <h3 style="color:#1e293b">Prajna SLM</h3>
-          <p>SLM chapter gate feeds a micro-topic scorer. 10-signal ensemble with hill-climbing weight optimisation and parent-score inheritance.</p>
-          <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:5px;justify-content:center">
-            <span style="font-size:.65rem;font-weight:700;background:rgba(79,70,229,.1);color:#7c3aed;padding:.15rem .45rem;border-radius:4px">10 signals</span>
-            <span style="font-size:.65rem;font-weight:700;background:rgba(0,212,170,.12);color:#00d4aa;padding:.15rem .45rem;border-radius:4px">parent gate</span>
-            <span style="font-size:.65rem;font-weight:700;background:rgba(251,191,36,.12);color:#fbbf24;padding:.15rem .45rem;border-radius:4px">hill-climbing weights</span>
-          </div>
-          <div style="margin-top:12px;font-size:.8rem;font-weight:700;color:#4ade80">96% accuracy</div>
+        <div class="card" style="text-align:center;border-color:rgba(251,191,36,.25)">
+          <div class="stat-big" style="background:linear-gradient(135deg,#fde68a,#fbbf24)">14</div>
+          <div style="font-size:.85rem;color:#64748b;margin-top:6px;font-weight:600">Dashboard Pages</div>
+          <div style="font-size:.75rem;color:#475569;margin-top:4px">Student, Org, Subject, Analysis</div>
         </div>
-      </div>
-    </div>
-
-    <!-- SLIDE 5 — Data Foundation (7 Signals) -->
-    <div class="slide">
-      <div class="tag">Data Foundation</div>
-      <h2>Ten Signals. One Prediction.</h2>
-      <p class="lead">PRAJNA v4's ensemble weighs ten independent signals from 48 years of exam papers. Seven core signals from v3, plus three new signals introduced in v4 for micro-topic precision.</p>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:960px">
-        <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px">
-          <div style="width:44px;height:44px;border-radius:10px;background:rgba(79,70,229,.1);display:flex;align-items:center;justify-content:center;font-weight:800;color:#4f46e5;font-size:1rem;flex-shrink:0">25</div>
-          <div><div style="font-size:.9rem;font-weight:700;color:#1e293b">Recency-Weighted Frequency</div><div style="font-size:.78rem;color:#64748b">Exponential decay — recent years count more</div></div>
+        <div class="card" style="text-align:center;border-color:rgba(236,72,153,.2)">
+          <div class="stat-big" style="background:linear-gradient(135deg,#f9a8d4,#ec4899)">10</div>
+          <div style="font-size:.85rem;color:#64748b;margin-top:6px;font-weight:600">Prediction Signals</div>
+          <div style="font-size:.75rem;color:#475569;margin-top:4px">Hill-climbing optimized weights</div>
         </div>
-        <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px">
-          <div style="width:44px;height:44px;border-radius:10px;background:rgba(124,58,237,.1);display:flex;align-items:center;justify-content:center;font-weight:800;color:#7c3aed;font-size:1rem;flex-shrink:0">20</div>
-          <div><div style="font-size:.9rem;font-weight:700;color:#1e293b">Appearance Rate</div><div style="font-size:.78rem;color:#64748b">Fraction of total years this topic appeared</div></div>
-        </div>
-        <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px">
-          <div style="width:44px;height:44px;border-radius:10px;background:rgba(34,197,94,.12);display:flex;align-items:center;justify-content:center;font-weight:800;color:#4ade80;font-size:1rem;flex-shrink:0">15</div>
-          <div><div style="font-size:.9rem;font-weight:700;color:#1e293b">Recent 3-Year Presence</div><div style="font-size:.78rem;color:#64748b">Did it appear in the last 3 exams?</div></div>
-        </div>
-        <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px">
-          <div style="width:44px;height:44px;border-radius:10px;background:rgba(251,191,36,.12);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fbbf24;font-size:1rem;flex-shrink:0">15</div>
-          <div><div style="font-size:.9rem;font-weight:700;color:#1e293b">Gap Return Probability</div><div style="font-size:.78rem;color:#64748b">"Due to return" — peaks when 2× overdue</div></div>
-        </div>
-        <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px">
-          <div style="width:44px;height:44px;border-radius:10px;background:rgba(236,72,153,.12);display:flex;align-items:center;justify-content:center;font-weight:800;color:#db2777;font-size:1rem;flex-shrink:0">12</div>
-          <div><div style="font-size:.9rem;font-weight:700;color:#1e293b">Trend Slope</div><div style="font-size:.78rem;color:#64748b">Linear regression on last 10 years of frequency</div></div>
-        </div>
-        <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px">
-          <div style="width:44px;height:44px;border-radius:10px;background:rgba(6,182,212,.12);display:flex;align-items:center;justify-content:center;font-weight:800;color:#0891b2;font-size:1rem;flex-shrink:0">8+5</div>
-          <div><div style="font-size:.9rem;font-weight:700;color:#1e293b">Cycle Match + 5yr Presence</div><div style="font-size:.78rem;color:#64748b">Periodic reappearance + broader recency window</div></div>
-        </div>
-        <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px;border-color:rgba(124,58,237,.2);background:rgba(124,58,237,.03)">
-          <div style="width:44px;height:44px;border-radius:10px;background:rgba(124,58,237,.1);display:flex;align-items:center;justify-content:center;font-weight:800;color:#7c3aed;font-size:.75rem;flex-shrink:0;text-align:center;line-height:1.2">v4<br>NEW</div>
-          <div>
-            <div style="font-size:.9rem;font-weight:700;color:#1e293b">Parent Inheritance</div>
-            <div style="font-size:.78rem;color:#64748b">Chapter's confidence score flows down to all its micro-topics</div>
-          </div>
-        </div>
-        <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px;border-color:rgba(124,58,237,.2);background:rgba(124,58,237,.03)">
-          <div style="width:44px;height:44px;border-radius:10px;background:rgba(124,58,237,.1);display:flex;align-items:center;justify-content:center;font-weight:800;color:#7c3aed;font-size:.75rem;flex-shrink:0;text-align:center;line-height:1.2">v4<br>NEW</div>
-          <div>
-            <div style="font-size:.9rem;font-weight:700;color:#1e293b">Recency Burst</div>
-            <div style="font-size:.78rem;color:#64748b">Fraction of last 3 years the micro-topic appeared — detects hot streaks</div>
-          </div>
-        </div>
-        <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:14px;border-color:rgba(124,58,237,.2);background:rgba(124,58,237,.03)">
-          <div style="width:44px;height:44px;border-radius:10px;background:rgba(124,58,237,.1);display:flex;align-items:center;justify-content:center;font-weight:800;color:#7c3aed;font-size:.75rem;flex-shrink:0;text-align:center;line-height:1.2">v4<br>NEW</div>
-          <div>
-            <div style="font-size:.9rem;font-weight:700;color:#1e293b">Dispersion</div>
-            <div style="font-size:.78rem;color:#64748b">Rewards dense appearances — penalises topics that cluster in a single year</div>
-          </div>
+        <div class="card" style="text-align:center;border-color:rgba(6,182,212,.2)">
+          <div class="stat-big" style="background:linear-gradient(135deg,#67e8f9,#06b6d4)">3B</div>
+          <div style="font-size:.85rem;color:#64748b;margin-top:6px;font-weight:600">Llama 3.2 Parameters</div>
+          <div style="font-size:.75rem;color:#475569;margin-top:4px">Local AI via Ollama, fully offline</div>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 9 — Tech Stack -->
-    <div class="slide" id="tech-slide">
-      <div class="tag">Tech Stack</div>
-      <h2>Lean, Purpose-Built Tooling</h2>
-      <p class="lead">No bloated ML frameworks — just precise statistical signal and a custom-trained neural network.</p>
-      <div class="g4" style="max-width:960px">
-        <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
-          <div style="font-size:2rem">🐍</div>
-          <div><div style="font-weight:700;color:#1e293b">Python 3.9+</div><div style="font-size:.78rem;color:#64748b">Core language</div></div>
-        </div>
-        <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
-          <div style="font-size:2rem">🗄️</div>
-          <div><div style="font-weight:700;color:#1e293b">SQLite 3</div><div style="font-size:.78rem;color:#64748b">23,119-question DB</div></div>
-        </div>
-        <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
-          <div style="font-size:2rem">🔥</div>
-          <div><div style="font-weight:700;color:#1e293b">PyTorch</div><div style="font-size:.78rem;color:#64748b">SLM training &amp; inference</div></div>
-        </div>
-        <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
-          <div style="font-size:2rem">🤗</div>
-          <div><div style="font-weight:700;color:#1e293b">sentence-transformers</div><div style="font-size:.78rem;color:#64748b">Semantic embeddings (frozen)</div></div>
-        </div>
-        <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
-          <div style="font-size:2rem">🐼</div>
-          <div><div style="font-weight:700;color:#1e293b">Pandas + NumPy</div><div style="font-size:.78rem;color:#64748b">Signal engineering</div></div>
-        </div>
-        <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
-          <div style="font-size:2rem">⚡</div>
-          <div><div style="font-weight:700;color:#1e293b">Node.js + Express</div><div style="font-size:.78rem;color:#64748b">REST API backend</div></div>
-        </div>
-        <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
-          <div style="font-size:2rem">🐘</div>
-          <div><div style="font-weight:700;color:#1e293b">PostgreSQL</div><div style="font-size:.78rem;color:#64748b">Student data on Railway</div></div>
-        </div>
-        <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
-          <div style="font-size:2rem">🚂</div>
-          <div><div style="font-weight:700;color:#1e293b">Railway.app</div><div style="font-size:.78rem;color:#64748b">Cloud deployment</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SLIDE 10 — What is PRAJNA -->
-    <div class="slide">
-      <div class="tag">What is PRAJNA</div>
-      <h2>Intelligence at Every Step</h2>
-      <p class="lead">Three powerful pillars that transform raw test data into a personalised roadmap.</p>
-      <div class="g3">
-        <div class="card">
-          <div class="icon">🧠</div>
-          <h3>SLM-Powered</h3>
-          <p>A fine-tuned Small Language Model trained on PW exam data provides chapter-level predictions and actionable insights.</p>
-        </div>
-        <div class="card">
-          <div class="icon">📈</div>
-          <h3>Predictive Analytics</h3>
-          <p>Multi-variable rank forecasting using historical performance, difficulty trends, and peer cohort benchmarking.</p>
-        </div>
-        <div class="card">
-          <div class="icon">🎯</div>
-          <h3>Personalised Study</h3>
-          <p>Dynamic study plans that adapt to your PRAJNA Score level — from chapter sequencing to time allocation.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- SLIDE 3 — How it works -->
+    <!-- SLIDE 4 — How It Works -->
     <div class="slide">
       <div class="tag">How It Works</div>
-      <h2>Four Steps to Mastery</h2>
-      <p class="lead">From raw attempt to exam-ready — here's the PRAJNA flow.</p>
+      <h2>Predict. Analyze. Tutor. Practice.</h2>
+      <p class="lead">Four steps from raw exam data to exam-ready confidence.</p>
       <div class="g4">
         <div class="card" style="text-align:center">
           <div class="step-num">1</div>
-          <h3>Attempt Exam</h3>
-          <p>Take chapter or full-length tests on the PW platform — individual or centre-administered.</p>
+          <h3>Predict</h3>
+          <p>10-signal ensemble analyzes 48 years of papers to predict which topics will appear next. 96% backtest accuracy.</p>
         </div>
         <div class="card" style="text-align:center">
           <div class="step-num">2</div>
-          <h3>AI Analysis</h3>
-          <p>The SLM processes your responses, time-per-question, accuracy patterns and peer data.</p>
+          <h3>Analyze</h3>
+          <p>14 dashboards surface weak zones, mistake patterns, and co-failure topics. Logistic regression flags danger areas per student.</p>
         </div>
         <div class="card" style="text-align:center">
           <div class="step-num">3</div>
-          <h3>PRAJNA Score</h3>
-          <p>You receive a 0–100 multi-dimensional score mapped to one of five performance tiers.</p>
+          <h3>Tutor</h3>
+          <p>Ask your doubt to the local AI copilot. Llama 3.2 retrieves from 1.14M questions and renders math with KaTeX.</p>
         </div>
         <div class="card" style="text-align:center">
           <div class="step-num">4</div>
-          <h3>Smart Study Plan</h3>
-          <p>Hyper-personalised chapter priorities, revision schedules and predicted weak zones.</p>
+          <h3>Practice</h3>
+          <p>Generate mock tests from the question bank, auto-grade them, track mistakes, and build a personalized revision plan.</p>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 4 — Dashboards -->
+    <!-- SLIDE 5 — Prediction Engine -->
     <div class="slide">
-      <div class="tag">Dashboards</div>
-      <h2>Visibility at Every Level</h2>
-      <p class="lead">Three purpose-built dashboards so every stakeholder sees exactly what they need.</p>
+      <div class="tag">Prediction Engine</div>
+      <h2>v4: Ten Signals. One Prediction.</h2>
+      <p class="lead">Hierarchical parent gate feeds micro-topic scorer. Hill-climbing optimizes signal weights across 48 years. Three new signals in v4.</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:960px">
+        <div class="card sig-card">
+          <div class="sig-icon" style="background:rgba(79,70,229,.1);color:#4f46e5">25</div>
+          <div><div class="sig-title">Recency-Weighted Freq</div><div class="sig-desc">Exponential decay on past years</div></div>
+        </div>
+        <div class="card sig-card">
+          <div class="sig-icon" style="background:rgba(124,58,237,.1);color:#7c3aed">20</div>
+          <div><div class="sig-title">Appearance Rate</div><div class="sig-desc">Fraction of years topic appeared</div></div>
+        </div>
+        <div class="card sig-card">
+          <div class="sig-icon" style="background:rgba(34,197,94,.12);color:#4ade80">15</div>
+          <div><div class="sig-title">Recent 3-Year Presence</div><div class="sig-desc">Appeared in the last 3 exams?</div></div>
+        </div>
+        <div class="card sig-card">
+          <div class="sig-icon" style="background:rgba(251,191,36,.12);color:#fbbf24">15</div>
+          <div><div class="sig-title">Gap Return Probability</div><div class="sig-desc">Peaks when 2x overdue</div></div>
+        </div>
+        <div class="card sig-card">
+          <div class="sig-icon" style="background:rgba(236,72,153,.12);color:#db2777">12</div>
+          <div><div class="sig-title">Trend Slope</div><div class="sig-desc">Linear regression, last 10 years</div></div>
+        </div>
+        <div class="card sig-card">
+          <div class="sig-icon" style="background:rgba(6,182,212,.12);color:#0891b2">8+5</div>
+          <div><div class="sig-title">Cycle + 5yr Presence</div><div class="sig-desc">Periodic patterns + broader window</div></div>
+        </div>
+        <div class="card sig-card" style="border-color:rgba(124,58,237,.2);background:rgba(124,58,237,.03)">
+          <div class="sig-icon" style="background:rgba(124,58,237,.15);color:#7c3aed;font-size:.7rem;line-height:1.1;text-align:center">v4</div>
+          <div><div class="sig-title">Parent Inheritance</div><div class="sig-desc">Chapter confidence flows to micro-topics</div></div>
+        </div>
+        <div class="card sig-card" style="border-color:rgba(124,58,237,.2);background:rgba(124,58,237,.03)">
+          <div class="sig-icon" style="background:rgba(124,58,237,.15);color:#7c3aed;font-size:.7rem;line-height:1.1;text-align:center">v4</div>
+          <div><div class="sig-title">Recency Burst</div><div class="sig-desc">Hot streak detection in last 3 years</div></div>
+        </div>
+        <div class="card sig-card" style="border-color:rgba(124,58,237,.2);background:rgba(124,58,237,.03)">
+          <div class="sig-icon" style="background:rgba(124,58,237,.15);color:#7c3aed;font-size:.7rem;line-height:1.1;text-align:center">v4</div>
+          <div><div class="sig-title">Dispersion</div><div class="sig-desc">Rewards spread, penalizes clustering</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 — AI Tutor -->
+    <div class="slide">
+      <div class="tag">AI Tutor</div>
+      <h2>Your Local AI Copilot</h2>
+      <p class="lead">Llama 3.2 3B running locally via Ollama. Ask any doubt — it retrieves from 1.14M questions, structures an answer, and renders math beautifully.</p>
       <div class="g3">
         <div class="card">
-          <div class="icon">👤</div>
-          <h3>Student Dashboard</h3>
-          <p>Personal PRAJNA Score timeline, chapter-wise heat maps, predicted rank range, and today's study focus.</p>
+          <div class="icon">&#129504;</div>
+          <h3>RAG-Powered Answers</h3>
+          <p>Searches the 1.14M question bank, finds the most relevant problems, and structures a step-by-step explanation with the LLM.</p>
         </div>
         <div class="card" style="border-color:rgba(79,70,229,.2)">
-          <div class="icon" style="background:rgba(139,92,246,.18);border-color:rgba(139,92,246,.3)">🏫</div>
-          <h3>Centre Dashboard</h3>
-          <p>Batch-level performance distribution, at-risk student flagging, and centre-vs-network benchmarks.</p>
+          <div class="icon" style="background:rgba(6,182,212,.12);border-color:rgba(6,182,212,.25)">&#128271;</div>
+          <h3>Fully Offline &amp; Private</h3>
+          <p>Llama 3.2 3B runs entirely on your machine via Ollama. No data leaves the device. Zero API costs. Works without internet.</p>
         </div>
         <div class="card">
-          <div class="icon" style="background:rgba(236,72,153,.12);border-color:rgba(236,72,153,.25)">🏢</div>
-          <h3>Org Dashboard</h3>
-          <p>Organisation-wide analytics, centre comparison, cohort trends and predictive admission outcomes.</p>
+          <div class="icon" style="background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.25)">&#8721;</div>
+          <h3>KaTeX Math Rendering</h3>
+          <p>Complex formulas, integrals, and equations render beautifully inline. Thinking indicator shows when the model is reasoning.</p>
+        </div>
+      </div>
+      <div style="margin-top:22px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+        <span style="font-size:.72rem;font-weight:700;background:rgba(79,70,229,.08);color:#4f46e5;padding:5px 12px;border-radius:20px">Llama 3.2 3B</span>
+        <span style="font-size:.72rem;font-weight:700;background:rgba(79,70,229,.08);color:#4f46e5;padding:5px 12px;border-radius:20px">Ollama Runtime</span>
+        <span style="font-size:.72rem;font-weight:700;background:rgba(79,70,229,.08);color:#4f46e5;padding:5px 12px;border-radius:20px">1.14M RAG Corpus</span>
+        <span style="font-size:.72rem;font-weight:700;background:rgba(79,70,229,.08);color:#4f46e5;padding:5px 12px;border-radius:20px">KaTeX v0.16</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 — Question Bank -->
+    <div class="slide">
+      <div class="tag">Question Bank</div>
+      <h2>1.14 Million Questions</h2>
+      <p class="lead">Three PhysicsWallahAI HuggingFace datasets merged, deduplicated, difficulty-tagged, and topic-labeled into a single SQLite database.</p>
+      <div class="g3">
+        <div class="card" style="text-align:center;border-color:rgba(79,70,229,.2)">
+          <div class="stat-big" style="background:linear-gradient(135deg,#4f46e5,#6366f1)">375K</div>
+          <div style="font-size:.9rem;font-weight:700;color:#1e293b;margin-top:6px">Physics</div>
+          <div style="font-size:.78rem;color:#64748b;margin-top:4px">Mechanics, Optics, Modern Physics, Thermo...</div>
+        </div>
+        <div class="card" style="text-align:center;border-color:rgba(124,58,237,.2)">
+          <div class="stat-big" style="background:linear-gradient(135deg,#a78bfa,#7c3aed)">420K</div>
+          <div style="font-size:.9rem;font-weight:700;color:#1e293b;margin-top:6px">Chemistry</div>
+          <div style="font-size:.78rem;color:#64748b;margin-top:4px">Organic, Inorganic, Physical Chemistry...</div>
+        </div>
+        <div class="card" style="text-align:center;border-color:rgba(34,197,94,.25)">
+          <div class="stat-big" style="background:linear-gradient(135deg,#86efac,#22c55e)">342K</div>
+          <div style="font-size:.9rem;font-weight:700;color:#1e293b;margin-top:6px">Mathematics</div>
+          <div style="font-size:.78rem;color:#64748b;margin-top:4px">Calculus, Algebra, Coordinate Geometry...</div>
+        </div>
+      </div>
+      <div style="margin-top:22px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+        <span style="font-size:.72rem;font-weight:700;background:rgba(79,70,229,.08);color:#4f46e5;padding:5px 12px;border-radius:20px">Full-text Search</span>
+        <span style="font-size:.72rem;font-weight:700;background:rgba(79,70,229,.08);color:#4f46e5;padding:5px 12px;border-radius:20px">Difficulty Filters</span>
+        <span style="font-size:.72rem;font-weight:700;background:rgba(79,70,229,.08);color:#4f46e5;padding:5px 12px;border-radius:20px">Topic Labels</span>
+        <span style="font-size:.72rem;font-weight:700;background:rgba(79,70,229,.08);color:#4f46e5;padding:5px 12px;border-radius:20px">Mock Test Generator</span>
+        <span style="font-size:.72rem;font-weight:700;background:rgba(79,70,229,.08);color:#4f46e5;padding:5px 12px;border-radius:20px">Auto-grading</span>
+      </div>
+      <p style="margin-top:16px;font-size:.78rem;color:#475569">Sources: qbg-pcmr + qbg-pcmr-1 + gpt-oss from PhysicsWallahAI on HuggingFace &middot; Stored in qbg.db (SQLite)</p>
+    </div>
+
+    <!-- SLIDE 8 — Dashboards -->
+    <div class="slide">
+      <div class="tag">Dashboards</div>
+      <h2>14 Pages. Every Stakeholder.</h2>
+      <p class="lead">Purpose-built dashboards for students, organizations, subjects, and analysis.</p>
+      <div class="g2">
+        <div class="card">
+          <div class="icon">&#128100;</div>
+          <h3>Student Dashboard (8 sections)</h3>
+          <p>Hero KPIs, score trajectory, radar chart, SLM focus areas, chapter heatmap, subject breakdown, weakness zones, and PRAJNA Score timeline.</p>
+        </div>
+        <div class="card" style="border-color:rgba(79,70,229,.2)">
+          <div class="icon" style="background:rgba(139,92,246,.18);border-color:rgba(139,92,246,.3)">&#127970;</div>
+          <h3>Org Dashboard (7 sections)</h3>
+          <p>Filters, org KPIs, donut distributions, branch comparison, performance matrix, PRAJNA intel cards, and student leaderboard.</p>
+        </div>
+        <div class="card">
+          <div class="icon" style="background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.25)">&#128218;</div>
+          <h3>Subject Deep-Dive</h3>
+          <p>4 analysis zones per subject: topic distribution, difficulty trends, micro-topic heatmaps, and predicted focus areas.</p>
+        </div>
+        <div class="card" style="border-color:rgba(236,72,153,.2)">
+          <div class="icon" style="background:rgba(236,72,153,.12);border-color:rgba(236,72,153,.25)">&#128202;</div>
+          <h3>Analysis Pages</h3>
+          <p>Predictions, Backtest, Topic Deep Dive, Lesson Plan, Revision Plan, Mistake Analysis, and At-risk Students.</p>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 5 — Performance Levels -->
+    <!-- SLIDE 9 — Mistake Analysis -->
     <div class="slide">
-      <div class="tag">Performance Levels</div>
-      <h2>The Five PRAJNA Tiers</h2>
-      <p class="lead">Every score maps to a tier with a colour-coded identity, guiding how the platform personalises your plan.</p>
-      <div class="levels">
-        <div class="lv" style="background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.25)">
-          <span class="lv-letter" style="color:#f87171">M</span>
-          <span class="lv-name" style="color:#f87171">Mastery</span>
-          <span class="lv-range">85 – 100</span>
-          <p style="font-size:.78rem;color:#64748b;margin-top:8px">Exam-ready. Focus on speed &amp; retention.</p>
+      <div class="tag">Mistake Analysis</div>
+      <h2>Find Danger Zones Before the Exam</h2>
+      <p class="lead">Logistic regression computes P(miss) per student per topic. Co-failure patterns reveal hidden weaknesses.</p>
+      <div class="g3">
+        <div class="card" style="text-align:center">
+          <div class="icon" style="margin:0 auto 14px">&#9888;&#65039;</div>
+          <h3>P(miss) Per Topic</h3>
+          <p>Logistic regression trained on each student's attempt history predicts the probability of getting a topic wrong on the next exam.</p>
         </div>
-        <div class="lv" style="background:rgba(249,115,22,.08);border-color:rgba(249,115,22,.25)">
-          <span class="lv-letter" style="color:#fb923c">S</span>
-          <span class="lv-name" style="color:#fb923c">Strong</span>
-          <span class="lv-range">65 – 84</span>
-          <p style="font-size:.78rem;color:#64748b;margin-top:8px">Strong foundation. Plug critical gaps.</p>
+        <div class="card" style="text-align:center;border-color:rgba(79,70,229,.2)">
+          <div class="icon" style="margin:0 auto 14px;background:rgba(236,72,153,.12);border-color:rgba(236,72,153,.25)">&#128279;</div>
+          <h3>Co-failure Patterns</h3>
+          <p>Discovers topic pairs that students consistently get wrong together — revealing conceptual gaps that span chapters.</p>
         </div>
-        <div class="lv" style="background:rgba(234,179,8,.08);border-color:rgba(234,179,8,.25)">
-          <span class="lv-letter" style="color:#fbbf24">D</span>
-          <span class="lv-name" style="color:#fbbf24">Developing</span>
-          <span class="lv-range">45 – 64</span>
-          <p style="font-size:.78rem;color:#64748b;margin-top:8px">Building blocks in place. Targeted practice.</p>
-        </div>
-        <div class="lv" style="background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.25)">
-          <span class="lv-letter" style="color:#60a5fa">W</span>
-          <span class="lv-name" style="color:#60a5fa">Weak</span>
-          <span class="lv-range">25 – 44</span>
-          <p style="font-size:.78rem;color:#64748b;margin-top:8px">Needs structured intervention &amp; re-learning.</p>
-        </div>
-        <div class="lv" style="background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.25)">
-          <span class="lv-letter" style="color:#7c3aed">C</span>
-          <span class="lv-name" style="color:#7c3aed">Critical</span>
-          <span class="lv-range">0 – 24</span>
-          <p style="font-size:.78rem;color:#64748b;margin-top:8px">Urgent focus. Foundational rebuilding required.</p>
+        <div class="card" style="text-align:center">
+          <div class="icon" style="margin:0 auto 14px;background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.25)">&#128680;</div>
+          <h3>At-risk Flagging</h3>
+          <p>Automatically flags students whose danger-zone count exceeds thresholds, surfacing them on the org dashboard for intervention.</p>
         </div>
       </div>
+      <p style="margin-top:20px;font-size:.78rem;color:#475569">Model: amanrr48/prajna-mistake-predictor on HuggingFace &middot; Per-student logistic regression with topic-level features</p>
     </div>
 
-    <!-- SLIDE 6 — SLM Intelligence -->
+    <!-- SLIDE 10 — Tech Stack -->
     <div class="slide">
-      <div class="tag">SLM Intelligence</div>
-      <h2>What the Model Does</h2>
-      <p class="lead">PRAJNA's Small Language Model goes far beyond scoring — it reasons about your learning trajectory.</p>
-      <ul class="slm-list">
-        <li>
-          <div class="bullet">🔮</div>
-          <div><strong>Chapter-Level Predictions</strong>Identifies which chapters are most likely to appear based on syllabus cycle, past paper patterns and difficulty entropy.</div>
-        </li>
-        <li>
-          <div class="bullet">📊</div>
-          <div><strong>Rank Forecasting</strong>Estimates JEE / NEET rank bands using your score trajectory, cohort percentile and historical correlation data.</div>
-        </li>
-        <li>
-          <div class="bullet">💡</div>
-          <div><strong>Personalised Insights</strong>Generates natural-language study nudges, concept-gap explanations and revision priority lists unique to each student.</div>
-        </li>
-      </ul>
+      <div class="tag">Tech Stack</div>
+      <h2>Full-Stack, Purpose-Built</h2>
+      <p class="lead">Next.js portal, Python prediction engine, local LLM, and two SQLite databases.</p>
+      <div class="g4" style="max-width:960px">
+        <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
+          <div style="font-size:1.8rem">&#9662;</div>
+          <div><div style="font-weight:700;color:#1e293b">Next.js 16</div><div style="font-size:.75rem;color:#64748b">App Router + Tailwind v4</div></div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
+          <div style="font-size:1.8rem">&#128640;</div>
+          <div><div style="font-weight:700;color:#1e293b">Python FastAPI</div><div style="font-size:.75rem;color:#64748b">Predictions + QBank + Copilot</div></div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
+          <div style="font-size:1.8rem">&#9889;</div>
+          <div><div style="font-weight:700;color:#1e293b">Node.js Express</div><div style="font-size:.75rem;color:#64748b">Auth + Student data API</div></div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
+          <div style="font-size:1.8rem">&#129302;</div>
+          <div><div style="font-weight:700;color:#1e293b">Ollama + Llama 3.2</div><div style="font-size:.75rem;color:#64748b">Local 3B LLM, fully offline</div></div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
+          <div style="font-size:1.8rem">&#128451;</div>
+          <div><div style="font-weight:700;color:#1e293b">SQLite x2</div><div style="font-size:.75rem;color:#64748b">exam.db (23K) + qbg.db (1.14M)</div></div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
+          <div style="font-size:1.8rem">&#128200;</div>
+          <div><div style="font-weight:700;color:#1e293b">Recharts + KaTeX</div><div style="font-size:.75rem;color:#64748b">Charts + math rendering</div></div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
+          <div style="font-size:1.8rem">&#128230;</div>
+          <div><div style="font-weight:700;color:#1e293b">Zustand + TanStack</div><div style="font-size:.75rem;color:#64748b">State + data fetching</div></div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;gap:12px;padding:18px">
+          <div style="font-size:1.8rem">&#9729;&#65039;</div>
+          <div><div style="font-weight:700;color:#1e293b">Vercel + Railway</div><div style="font-size:.75rem;color:#64748b">Portal + API deployment</div></div>
+        </div>
+      </div>
+      <p style="margin-top:16px;font-size:.75rem;color:#475569">Also: shadcn/ui &middot; MLX LoRA fine-tuning &middot; PostgreSQL (Railway) &middot; HuggingFace model hub</p>
     </div>
 
-    <!-- SLIDE 7 — Team -->
+    <!-- SLIDE 11 — Team -->
     <div class="slide">
       <div class="tag">The Team</div>
       <h2>Built by Believers</h2>
@@ -460,8 +439,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#f8fafc;color:#1e293
           <img src="team-aman.jpg" alt="Aman Arora" class="avatar" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
           <div class="avatar-init" style="display:none;background:linear-gradient(135deg,#8b5cf6,#ec4899)">AA</div>
           <h3 style="margin-bottom:4px">Aman Arora</h3>
-          <span class="role">Founder · Product &amp; Engineering</span>
-          <p class="bio">Architects the SLM pipeline, analytics engine, multi-tenant dashboards, and drives product vision end-to-end.</p>
+          <span class="role">Founder &middot; Product &amp; Engineering</span>
+          <p class="bio">Architects the prediction engine, AI tutor pipeline, Next.js portal, multi-tenant dashboards, and drives product vision end-to-end.</p>
         </div>
         <div class="card team-card">
           <img src="team-himanshu.jpg" alt="Himanshu Sharma" class="avatar" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
@@ -473,33 +452,33 @@ html,body{width:100%;height:100%;overflow:hidden;background:#f8fafc;color:#1e293
       </div>
     </div>
 
-    <!-- SLIDE 8 — Get Started -->
+    <!-- SLIDE 12 — Get Started -->
     <div class="slide">
       <div class="tag">Get Started</div>
       <h2>Ready to Unlock PRAJNA?</h2>
-      <p class="lead">Log in with your credentials and let the intelligence begin.</p>
-      <a href="login.html" class="cta">Login to PRAJNA &nbsp;&#8594;</a>
-      <table class="cred-table">
-        <thead><tr><th>Role</th><th>Login ID Format</th><th>Default Password</th></tr></thead>
-        <tbody>
-          <tr><td>Central Admin</td><td>central@prajna.pw</td><td>Set by admin</td></tr>
-          <tr><td>Centre Head</td><td>centre_&lt;code&gt;@prajna.pw</td><td>Set by admin</td></tr>
-          <tr><td>Student</td><td>Student enrollment ID</td><td>DOB (DDMMYYYY)</td></tr>
-        </tbody>
-      </table>
-      <p style="margin-top:22px;font-size:.8rem;color:#475569">Questions? Reach out to your centre coordinator or PW academic ops team.</p>
+      <p class="lead">Log in to access predictions, AI tutoring, and 1.14M practice questions.</p>
+      <a href="login.html" class="cta">Login to PRAJNA &#8594;</a>
+      <div class="link-row">
+        <a href="https://prajna-portal.vercel.app" target="_blank" class="link-pill">Next.js Portal</a>
+        <a href="https://prajna-slm.vercel.app" target="_blank" class="link-pill">Static Site</a>
+        <a href="https://github.com/firnweh/prajna-slm" target="_blank" class="link-pill">GitHub: prajna-slm</a>
+        <a href="https://github.com/firnweh/prajna-portal" target="_blank" class="link-pill">GitHub: prajna-portal</a>
+        <a href="https://huggingface.co/amanrr48/prajna-v4-predictor" target="_blank" class="link-pill">HF: v4 Predictor</a>
+        <a href="https://huggingface.co/amanrr48/prajna-mistake-predictor" target="_blank" class="link-pill">HF: Mistake Model</a>
+      </div>
+      <p style="margin-top:28px;font-size:.8rem;color:#475569">Questions? Reach out to your centre coordinator or PW academic ops team.</p>
     </div>
 
   </div><!-- /track -->
 </div><!-- /carousel -->
 
 <script>
-const TOTAL = 12;
-let current = 0;
+const TOTAL=12;
+let current=0;
 let timer;
-const track = document.getElementById('track');
-const counter = document.getElementById('counter');
-const dotsEl = document.getElementById('dots');
+const track=document.getElementById('track');
+const counter=document.getElementById('counter');
+const dotsEl=document.getElementById('dots');
 
 // Build dots
 for(let i=0;i<TOTAL;i++){
